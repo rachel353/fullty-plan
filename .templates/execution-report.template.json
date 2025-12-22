@@ -1,0 +1,15 @@
+{
+  "executionName": "{{EXECUTION_NAME}}",
+  "startedAt": null,
+  "finishedAt": null,
+  "status": "pending",
+  "config": {},
+  "summary": {
+    "total": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0,
+    "aborted": 0
+  },
+  "results": []
+}

@@ -1,0 +1,9 @@
+{
+  "step": 0,
+  "testcaseId": "{{TESTCASE_ID}}",
+  "onFail": "continue",
+  "requiredRole": null,
+  "dependsOn": [],
+  "skipIf": null,
+  "phase": "{{PHASE}}"
+}

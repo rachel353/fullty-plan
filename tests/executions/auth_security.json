@@ -1,0 +1,166 @@
+{
+  "executionName": "auth_security",
+  "description": "인증 및 보안 테스트 - 로그인/로그아웃/권한 검증",
+  "createdAt": "2025-01-15T14:00:00Z",
+  "config": {
+    "baseUrl": "http://localhost:3001",
+    "defaultOnFail": "continue",
+    "timeout": 30000,
+    "viewport": "desktop"
+  },
+  "steps": [
+    {
+      "step": 1,
+      "testcaseId": "TC-001",
+      "onFail": "abort",
+      "requiredRole": null,
+      "dependsOn": [],
+      "skipIf": null,
+      "phase": "authentication"
+    },
+    {
+      "step": 2,
+      "testcaseId": "TC-002",
+      "onFail": "continue",
+      "requiredRole": null,
+      "dependsOn": [],
+      "skipIf": null,
+      "phase": "authentication"
+    },
+    {
+      "step": 3,
+      "testcaseId": "TC-003",
+      "onFail": "continue",
+      "requiredRole": null,
+      "dependsOn": [],
+      "skipIf": null,
+      "phase": "authentication"
+    },
+    {
+      "step": 4,
+      "testcaseId": "TC-004",
+      "onFail": "continue",
+      "requiredRole": null,
+      "dependsOn": [],
+      "skipIf": null,
+      "phase": "authentication"
+    },
+    {
+      "step": 5,
+      "testcaseId": "TC-005",
+      "onFail": "continue",
+      "requiredRole": null,
+      "dependsOn": [],
+      "skipIf": null,
+      "phase": "authentication"
+    },
+    {
+      "step": 6,
+      "testcaseId": "TC-006",
+      "onFail": "abort",
+      "requiredRole": null,
+      "dependsOn": ["TC-001"],
+      "skipIf": null,
+      "phase": "authentication"
+    },
+    {
+      "step": 7,
+      "testcaseId": "TC-007",
+      "onFail": "continue",
+      "requiredRole": null,
+      "dependsOn": ["TC-001"],
+      "skipIf": null,
+      "phase": "authentication"
+    },
+    {
+      "step": 8,
+      "testcaseId": "TC-015",
+      "onFail": "abort",
+      "requiredRole": "DESIGNER",
+      "dependsOn": ["TC-001"],
+      "skipIf": null,
+      "phase": "security_role_check"
+    },
+    {
+      "step": 9,
+      "testcaseId": "TC-027",
+      "onFail": "continue",
+      "requiredRole": "DESIGNER",
+      "dependsOn": ["TC-001"],
+      "skipIf": null,
+      "phase": "security_role_check"
+    },
+    {
+      "step": 10,
+      "testcaseId": "TC-030",
+      "onFail": "continue",
+      "requiredRole": "DESIGNER",
+      "dependsOn": ["TC-001"],
+      "skipIf": null,
+      "phase": "security_role_check"
+    },
+    {
+      "step": 11,
+      "testcaseId": "TC-042",
+      "onFail": "continue",
+      "requiredRole": "PM",
+      "dependsOn": ["TC-001"],
+      "skipIf": null,
+      "phase": "security_role_check"
+    },
+    {
+      "step": 12,
+      "testcaseId": "TC-044",
+      "onFail": "continue",
+      "requiredRole": "PM",
+      "dependsOn": ["TC-001"],
+      "skipIf": null,
+      "phase": "security_role_check"
+    },
+    {
+      "step": 13,
+      "testcaseId": "TC-059",
+      "onFail": "abort",
+      "requiredRole": "C_LEVEL",
+      "dependsOn": ["TC-001"],
+      "skipIf": null,
+      "phase": "security_settings"
+    },
+    {
+      "step": 14,
+      "testcaseId": "TC-060",
+      "onFail": "abort",
+      "requiredRole": "DEVELOPER",
+      "dependsOn": ["TC-001"],
+      "skipIf": null,
+      "phase": "security_settings"
+    },
+    {
+      "step": 15,
+      "testcaseId": "TC-065",
+      "onFail": "abort",
+      "requiredRole": "DEVELOPER",
+      "dependsOn": ["TC-001"],
+      "skipIf": null,
+      "phase": "security_url_access"
+    },
+    {
+      "step": 16,
+      "testcaseId": "TC-066",
+      "onFail": "abort",
+      "requiredRole": "MULTI",
+      "dependsOn": ["TC-001"],
+      "skipIf": null,
+      "phase": "security_multi_role"
+    },
+    {
+      "step": 17,
+      "testcaseId": "TC-067",
+      "onFail": "abort",
+      "requiredRole": "C_LEVEL",
+      "dependsOn": ["TC-001"],
+      "skipIf": null,
+      "phase": "security_data_masking"
+    }
+  ]
+}

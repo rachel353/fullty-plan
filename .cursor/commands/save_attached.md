@@ -1,0 +1,1 @@
+save attached file with the commandline. never print all file content. just copy paste it with terminal.

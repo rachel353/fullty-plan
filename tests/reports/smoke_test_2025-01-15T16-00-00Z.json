@@ -1,0 +1,338 @@
+{
+  "executionName": "smoke_test",
+  "startedAt": "2025-01-15T16:00:00Z",
+  "finishedAt": "2025-01-15T16:30:00Z",
+  "status": "completed",
+  "config": {
+    "baseUrl": "http://localhost:3001",
+    "defaultOnFail": "abort",
+    "timeout": 30000,
+    "viewport": "desktop"
+  },
+  "summary": {
+    "total": 30,
+    "passed": 3,
+    "failed": 4,
+    "skipped": 23,
+    "aborted": 0
+  },
+  "results": [
+    {
+      "step": 1,
+      "testcaseId": "TC-001",
+      "testcaseName": "로그인 - 성공 시나리오 (C-level)",
+      "status": "passed",
+      "phase": "authentication",
+      "logs": ["대시보드 페이지로 이동됨", "김대표 사용자 버튼 확인"],
+      "error": null
+    },
+    {
+      "step": 2,
+      "testcaseId": "TC-002",
+      "testcaseName": "로그인 - 빈 이메일 입력",
+      "status": "failed",
+      "phase": "authentication",
+      "logs": ["빈 이메일로 로그인 시도", "에러 메시지 미표시"],
+      "error": "폼 유효성 검증 미구현 - 이메일 필수 입력 에러 메시지 없음"
+    },
+    {
+      "step": 3,
+      "testcaseId": "TC-003",
+      "testcaseName": "로그인 - 빈 비밀번호 입력",
+      "status": "failed",
+      "phase": "authentication",
+      "logs": ["빈 비밀번호로 로그인 시도", "에러 메시지 미표시"],
+      "error": "폼 유효성 검증 미구현 - 비밀번호 필수 입력 에러 메시지 없음"
+    },
+    {
+      "step": 4,
+      "testcaseId": "TC-004",
+      "testcaseName": "로그인 - 잘못된 이메일 형식",
+      "status": "failed",
+      "phase": "authentication",
+      "logs": ["invalid-email 형식으로 로그인 시도", "에러 메시지 미표시"],
+      "error": "이메일 형식 검증 미구현"
+    },
+    {
+      "step": 5,
+      "testcaseId": "TC-005",
+      "testcaseName": "로그인 - 잘못된 계정 정보",
+      "status": "failed",
+      "phase": "authentication",
+      "logs": ["존재하지 않는 계정으로 로그인 시도", "에러 메시지 미표시"],
+      "error": "로그인 실패 에러 핸들링 미구현"
+    },
+    {
+      "step": 6,
+      "testcaseId": "TC-006",
+      "testcaseName": "로그아웃 기능 확인",
+      "status": "skipped",
+      "phase": "authentication",
+      "logs": ["사용자 버튼 클릭 시 드롭다운 미노출"],
+      "error": "로그아웃 UI 확인 불가 - 드롭다운 미구현"
+    },
+    {
+      "step": 7,
+      "testcaseId": "TC-008",
+      "testcaseName": "대시보드 - KPI 카드 노출 확인",
+      "status": "passed",
+      "phase": "dashboard_clevel",
+      "logs": ["대시보드 접속", "주요 메뉴 카드 (Projects, Finance, Workforce 등) 표시 확인"],
+      "error": null
+    },
+    {
+      "step": 8,
+      "testcaseId": "TC-059",
+      "testcaseName": "Settings - C-level/GA만 접근 가능",
+      "status": "passed",
+      "phase": "settings_clevel",
+      "logs": ["C-level 계정으로 Settings 메뉴 클릭", "/settings 페이지 정상 접근"],
+      "error": null
+    },
+    {
+      "step": 9,
+      "testcaseId": "TC-067",
+      "testcaseName": "민감정보 마스킹 - 실제 연봉 미노출",
+      "status": "skipped",
+      "phase": "security_clevel",
+      "logs": ["직원 목록 접근 필요"],
+      "error": "시간 제약으로 스킵"
+    },
+    {
+      "step": 10,
+      "testcaseId": "TC-011",
+      "testcaseName": "고객사 생성 - 법인 고객사 정상 생성",
+      "status": "skipped",
+      "phase": "crud_client_ga",
+      "logs": ["GA 계정 로그인 실패"],
+      "error": "로그인 기능 불안정으로 GA 계정 테스트 불가"
+    },
+    {
+      "step": 11,
+      "testcaseId": "TC-012",
+      "testcaseName": "고객사 생성 - 개인 고객사 정상 생성",
+      "status": "skipped",
+      "phase": "crud_client_ga",
+      "logs": [],
+      "error": "의존성 TC-011 스킵으로 인해 스킵"
+    },
+    {
+      "step": 12,
+      "testcaseId": "TC-013",
+      "testcaseName": "고객사 생성 - 필수 필드 누락 검증",
+      "status": "skipped",
+      "phase": "crud_client_ga",
+      "logs": [],
+      "error": "의존성 TC-011 스킵으로 인해 스킵"
+    },
+    {
+      "step": 13,
+      "testcaseId": "TC-043",
+      "testcaseName": "직원 추가 - GA만 버튼 노출",
+      "status": "skipped",
+      "phase": "crud_workforce_ga",
+      "logs": [],
+      "error": "GA 계정 로그인 불가"
+    },
+    {
+      "step": 14,
+      "testcaseId": "TC-045",
+      "testcaseName": "직원 추가 - 필수 필드 입력",
+      "status": "skipped",
+      "phase": "crud_workforce_ga",
+      "logs": [],
+      "error": "의존성 TC-043 스킵으로 인해 스킵"
+    },
+    {
+      "step": 15,
+      "testcaseId": "TC-037",
+      "testcaseName": "세금계산서 - GA 상태 변경 권한",
+      "status": "skipped",
+      "phase": "crud_finance_ga",
+      "logs": [],
+      "error": "의존성 TC-036 스킵으로 인해 스킵"
+    },
+    {
+      "step": 16,
+      "testcaseId": "TC-062",
+      "testcaseName": "Settings - 급여 레벨 생성",
+      "status": "skipped",
+      "phase": "settings_ga",
+      "logs": [],
+      "error": "GA 계정 로그인 불가"
+    },
+    {
+      "step": 17,
+      "testcaseId": "TC-020",
+      "testcaseName": "프로젝트 생성 - 기본 정보 입력",
+      "status": "skipped",
+      "phase": "crud_project_pm",
+      "logs": [],
+      "error": "의존성 TC-011 스킵으로 인해 스킵 (고객사 필요)"
+    },
+    {
+      "step": 18,
+      "testcaseId": "TC-021",
+      "testcaseName": "프로젝트 생성 - 고객사 필수 선택 검증",
+      "status": "skipped",
+      "phase": "crud_project_pm",
+      "logs": [],
+      "error": "의존성 TC-020 스킵으로 인해 스킵"
+    },
+    {
+      "step": 19,
+      "testcaseId": "TC-022",
+      "testcaseName": "프로젝트 단계 변경 - 상태 전이",
+      "status": "skipped",
+      "phase": "crud_project_pm",
+      "logs": [],
+      "error": "의존성 TC-020 스킵으로 인해 스킵"
+    },
+    {
+      "step": 20,
+      "testcaseId": "TC-031",
+      "testcaseName": "계약 생성 - 기본 정보 입력",
+      "status": "skipped",
+      "phase": "crud_finance_pm",
+      "logs": [],
+      "error": "의존성 TC-020 스킵으로 인해 스킵"
+    },
+    {
+      "step": 21,
+      "testcaseId": "TC-033",
+      "testcaseName": "마일스톤 생성 - 예정 금액/예정일 입력",
+      "status": "skipped",
+      "phase": "crud_finance_pm",
+      "logs": [],
+      "error": "의존성 TC-031 스킵으로 인해 스킵"
+    },
+    {
+      "step": 22,
+      "testcaseId": "TC-036",
+      "testcaseName": "세금계산서 생성 - 필수 필드 입력",
+      "status": "skipped",
+      "phase": "crud_finance_pm",
+      "logs": [],
+      "error": "의존성 TC-031 스킵으로 인해 스킵"
+    },
+    {
+      "step": 23,
+      "testcaseId": "TC-044",
+      "testcaseName": "직원 추가 - PM 계정 버튼 미노출",
+      "status": "skipped",
+      "phase": "security_pm",
+      "logs": [],
+      "error": "PM 계정 로그인 불가"
+    },
+    {
+      "step": 24,
+      "testcaseId": "TC-050",
+      "testcaseName": "태스크 생성 - 기본 정보 입력",
+      "status": "skipped",
+      "phase": "crud_task_developer",
+      "logs": [],
+      "error": "Developer 계정 로그인 불가"
+    },
+    {
+      "step": 25,
+      "testcaseId": "TC-052",
+      "testcaseName": "일별 투입 시간 기록 - 정상 입력",
+      "status": "skipped",
+      "phase": "crud_task_developer",
+      "logs": [],
+      "error": "의존성 TC-050 스킵으로 인해 스킵"
+    },
+    {
+      "step": 26,
+      "testcaseId": "TC-055",
+      "testcaseName": "리소스 배정 - 생성",
+      "status": "skipped",
+      "phase": "crud_resource_developer",
+      "logs": [],
+      "error": "Developer 계정 로그인 불가"
+    },
+    {
+      "step": 27,
+      "testcaseId": "TC-060",
+      "testcaseName": "Settings - Developer 계정 접근 차단",
+      "status": "skipped",
+      "phase": "security_developer",
+      "logs": [],
+      "error": "Developer 계정 로그인 불가"
+    },
+    {
+      "step": 28,
+      "testcaseId": "TC-065",
+      "testcaseName": "권한 - Developer Finance 직접 URL 접근 차단",
+      "status": "skipped",
+      "phase": "security_developer",
+      "logs": [],
+      "error": "Developer 계정 로그인 불가"
+    },
+    {
+      "step": 29,
+      "testcaseId": "TC-015",
+      "testcaseName": "고객사 - Designer/Developer/QA 조회만 가능",
+      "status": "skipped",
+      "phase": "security_designer",
+      "logs": [],
+      "error": "Designer 계정 로그인 불가"
+    },
+    {
+      "step": 30,
+      "testcaseId": "TC-066",
+      "testcaseName": "권한 - 다중 역할 합집합 적용",
+      "status": "skipped",
+      "phase": "security_multi",
+      "logs": [],
+      "error": "Multi 계정 로그인 불가"
+    }
+  ],
+  "issues": [
+    {
+      "severity": "critical",
+      "category": "Authentication",
+      "description": "로그인 폼 submit이 제대로 동작하지 않음",
+      "affectedTests": ["TC-001", "TC-006"],
+      "recommendation": "로그인 버튼 클릭 시 form submit 로직 확인 필요"
+    },
+    {
+      "severity": "high",
+      "category": "Form Validation",
+      "description": "로그인 폼에 클라이언트 사이드 유효성 검증이 없음",
+      "affectedTests": ["TC-002", "TC-003", "TC-004"],
+      "recommendation": "이메일/비밀번호 필드에 required 속성 및 이메일 형식 검증 추가"
+    },
+    {
+      "severity": "high",
+      "category": "Error Handling",
+      "description": "잘못된 계정 정보로 로그인 시도 시 사용자에게 피드백이 없음",
+      "affectedTests": ["TC-005"],
+      "recommendation": "서버 응답에 따른 에러 메시지 토스트 또는 alert 추가"
+    },
+    {
+      "severity": "medium",
+      "category": "UI/UX",
+      "description": "사용자 프로필 버튼 클릭 시 드롭다운 메뉴가 나타나지 않음",
+      "affectedTests": ["TC-006"],
+      "recommendation": "로그아웃 버튼이 있는 드롭다운 메뉴 구현 확인"
+    }
+  ],
+  "categoryAnalysis": {
+    "Authentication": { "total": 6, "passed": 1, "failed": 4, "skipped": 1, "passRate": "16.7%" },
+    "Dashboard": { "total": 1, "passed": 1, "failed": 0, "skipped": 0, "passRate": "100%" },
+    "Settings": { "total": 2, "passed": 1, "failed": 0, "skipped": 1, "passRate": "50%" },
+    "Client Management": { "total": 4, "passed": 0, "failed": 0, "skipped": 4, "passRate": "N/A" },
+    "Project Management": { "total": 3, "passed": 0, "failed": 0, "skipped": 3, "passRate": "N/A" },
+    "Finance": { "total": 4, "passed": 0, "failed": 0, "skipped": 4, "passRate": "N/A" },
+    "Workforce": { "total": 5, "passed": 0, "failed": 0, "skipped": 5, "passRate": "N/A" },
+    "Security": { "total": 5, "passed": 0, "failed": 0, "skipped": 5, "passRate": "N/A" }
+  },
+  "nextSteps": [
+    "🔴 CRITICAL: 로그인 기능 디버깅 - 폼 submit 동작 확인",
+    "🔴 HIGH: 로그인 폼 유효성 검증 추가 (required, email format)",
+    "🟠 MEDIUM: 로그인 실패 에러 메시지 UI 추가",
+    "🟠 MEDIUM: 사용자 프로필 드롭다운 메뉴 확인/구현",
+    "🟢 로그인 수정 후 전체 Smoke Test 재실행"
+  ]
+}

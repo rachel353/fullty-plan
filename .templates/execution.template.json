@@ -1,0 +1,12 @@
+{
+  "executionName": "{{EXECUTION_NAME}}",
+  "description": "{{DESCRIPTION}}",
+  "createdAt": "{{CREATED_AT}}",
+  "config": {
+    "baseUrl": "{{BASE_URL}}",
+    "defaultOnFail": "continue",
+    "timeout": 30000,
+    "viewport": "desktop"
+  },
+  "steps": []
+}

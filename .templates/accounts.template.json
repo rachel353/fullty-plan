@@ -1,0 +1,16 @@
+{
+  "accounts": [
+    {
+      "role": "admin",
+      "email": "admin@example.com",
+      "password": "{{ADMIN_PASSWORD}}",
+      "description": "Administrator Account"
+    },
+    {
+      "role": "user",
+      "email": "user@example.com",
+      "password": "{{USER_PASSWORD}}",
+      "description": "Regular User Account"
+    }
+  ]
+}

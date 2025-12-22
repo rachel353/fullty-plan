@@ -1,0 +1,778 @@
+{
+  "executionName": "full_regression",
+  "description": "전체 리그레션 테스트 - 85개 테스트케이스를 역할별/카테고리별 최적 순서로 실행",
+  "createdAt": "2025-01-15T14:00:00Z",
+  "config": {
+    "baseUrl": "http://localhost:3001",
+    "defaultOnFail": "continue",
+    "timeout": 30000,
+    "viewport": "desktop"
+  },
+  "steps": [
+    {
+      "step": 1,
+      "testcaseId": "TC-001",
+      "onFail": "abort",
+      "requiredRole": null,
+      "dependsOn": [],
+      "skipIf": null,
+      "phase": "authentication"
+    },
+    {
+      "step": 2,
+      "testcaseId": "TC-002",
+      "onFail": "continue",
+      "requiredRole": null,
+      "dependsOn": [],
+      "skipIf": null,
+      "phase": "authentication"
+    },
+    {
+      "step": 3,
+      "testcaseId": "TC-003",
+      "onFail": "continue",
+      "requiredRole": null,
+      "dependsOn": [],
+      "skipIf": null,
+      "phase": "authentication"
+    },
+    {
+      "step": 4,
+      "testcaseId": "TC-004",
+      "onFail": "continue",
+      "requiredRole": null,
+      "dependsOn": [],
+      "skipIf": null,
+      "phase": "authentication"
+    },
+    {
+      "step": 5,
+      "testcaseId": "TC-005",
+      "onFail": "continue",
+      "requiredRole": null,
+      "dependsOn": [],
+      "skipIf": null,
+      "phase": "authentication"
+    },
+    {
+      "step": 6,
+      "testcaseId": "TC-006",
+      "onFail": "abort",
+      "requiredRole": null,
+      "dependsOn": ["TC-001"],
+      "skipIf": null,
+      "phase": "authentication"
+    },
+    {
+      "step": 7,
+      "testcaseId": "TC-007",
+      "onFail": "continue",
+      "requiredRole": null,
+      "dependsOn": ["TC-001"],
+      "skipIf": null,
+      "phase": "authentication"
+    },
+    {
+      "step": 8,
+      "testcaseId": "TC-008",
+      "onFail": "abort",
+      "requiredRole": "C_LEVEL",
+      "dependsOn": ["TC-001"],
+      "skipIf": null,
+      "phase": "dashboard_clevel"
+    },
+    {
+      "step": 9,
+      "testcaseId": "TC-009",
+      "onFail": "continue",
+      "requiredRole": "C_LEVEL",
+      "dependsOn": ["TC-001"],
+      "skipIf": null,
+      "phase": "dashboard_clevel"
+    },
+    {
+      "step": 10,
+      "testcaseId": "TC-010",
+      "onFail": "continue",
+      "requiredRole": "C_LEVEL",
+      "dependsOn": ["TC-001"],
+      "skipIf": null,
+      "phase": "dashboard_clevel"
+    },
+    {
+      "step": 11,
+      "testcaseId": "TC-048",
+      "onFail": "continue",
+      "requiredRole": "C_LEVEL",
+      "dependsOn": ["TC-001"],
+      "skipIf": null,
+      "phase": "workforce_clevel"
+    },
+    {
+      "step": 12,
+      "testcaseId": "TC-059",
+      "onFail": "abort",
+      "requiredRole": "C_LEVEL",
+      "dependsOn": ["TC-001"],
+      "skipIf": null,
+      "phase": "settings_clevel"
+    },
+    {
+      "step": 13,
+      "testcaseId": "TC-067",
+      "onFail": "abort",
+      "requiredRole": "C_LEVEL",
+      "dependsOn": ["TC-001"],
+      "skipIf": null,
+      "phase": "security_clevel"
+    },
+    {
+      "step": 14,
+      "testcaseId": "TC-068",
+      "onFail": "continue",
+      "requiredRole": "C_LEVEL",
+      "dependsOn": ["TC-001"],
+      "skipIf": null,
+      "phase": "navigation_clevel"
+    },
+    {
+      "step": 15,
+      "testcaseId": "TC-011",
+      "onFail": "abort",
+      "requiredRole": "GA",
+      "dependsOn": ["TC-001"],
+      "skipIf": null,
+      "phase": "crud_client_ga"
+    },
+    {
+      "step": 16,
+      "testcaseId": "TC-012",
+      "onFail": "continue",
+      "requiredRole": "GA",
+      "dependsOn": ["TC-011"],
+      "skipIf": null,
+      "phase": "crud_client_ga"
+    },
+    {
+      "step": 17,
+      "testcaseId": "TC-013",
+      "onFail": "continue",
+      "requiredRole": "GA",
+      "dependsOn": ["TC-011"],
+      "skipIf": null,
+      "phase": "crud_client_ga"
+    },
+    {
+      "step": 18,
+      "testcaseId": "TC-014",
+      "onFail": "continue",
+      "requiredRole": "GA",
+      "dependsOn": ["TC-011"],
+      "skipIf": null,
+      "phase": "crud_client_ga"
+    },
+    {
+      "step": 19,
+      "testcaseId": "TC-016",
+      "onFail": "continue",
+      "requiredRole": "GA",
+      "dependsOn": ["TC-011"],
+      "skipIf": null,
+      "phase": "crud_client_ga"
+    },
+    {
+      "step": 20,
+      "testcaseId": "TC-017",
+      "onFail": "continue",
+      "requiredRole": "GA",
+      "dependsOn": ["TC-016"],
+      "skipIf": null,
+      "phase": "crud_client_ga"
+    },
+    {
+      "step": 21,
+      "testcaseId": "TC-018",
+      "onFail": "continue",
+      "requiredRole": "GA",
+      "dependsOn": ["TC-011"],
+      "skipIf": null,
+      "phase": "crud_client_ga"
+    },
+    {
+      "step": 22,
+      "testcaseId": "TC-019",
+      "onFail": "continue",
+      "requiredRole": "GA",
+      "dependsOn": ["TC-011"],
+      "skipIf": null,
+      "phase": "crud_client_ga"
+    },
+    {
+      "step": 23,
+      "testcaseId": "TC-043",
+      "onFail": "abort",
+      "requiredRole": "GA",
+      "dependsOn": ["TC-001"],
+      "skipIf": null,
+      "phase": "crud_workforce_ga"
+    },
+    {
+      "step": 24,
+      "testcaseId": "TC-045",
+      "onFail": "abort",
+      "requiredRole": "GA",
+      "dependsOn": ["TC-043"],
+      "skipIf": null,
+      "phase": "crud_workforce_ga"
+    },
+    {
+      "step": 25,
+      "testcaseId": "TC-046",
+      "onFail": "continue",
+      "requiredRole": "GA",
+      "dependsOn": ["TC-043"],
+      "skipIf": null,
+      "phase": "crud_workforce_ga"
+    },
+    {
+      "step": 26,
+      "testcaseId": "TC-047",
+      "onFail": "continue",
+      "requiredRole": "GA",
+      "dependsOn": ["TC-045"],
+      "skipIf": null,
+      "phase": "crud_workforce_ga"
+    },
+    {
+      "step": 27,
+      "testcaseId": "TC-037",
+      "onFail": "abort",
+      "requiredRole": "GA",
+      "dependsOn": ["TC-001"],
+      "skipIf": null,
+      "phase": "finance_ga"
+    },
+    {
+      "step": 28,
+      "testcaseId": "TC-041",
+      "onFail": "continue",
+      "requiredRole": "GA",
+      "dependsOn": ["TC-001"],
+      "skipIf": null,
+      "phase": "finance_ga"
+    },
+    {
+      "step": 29,
+      "testcaseId": "TC-061",
+      "onFail": "continue",
+      "requiredRole": "GA",
+      "dependsOn": ["TC-059"],
+      "skipIf": null,
+      "phase": "settings_ga"
+    },
+    {
+      "step": 30,
+      "testcaseId": "TC-062",
+      "onFail": "abort",
+      "requiredRole": "GA",
+      "dependsOn": ["TC-059"],
+      "skipIf": null,
+      "phase": "settings_ga"
+    },
+    {
+      "step": 31,
+      "testcaseId": "TC-063",
+      "onFail": "continue",
+      "requiredRole": "GA",
+      "dependsOn": ["TC-062"],
+      "skipIf": null,
+      "phase": "settings_ga"
+    },
+    {
+      "step": 32,
+      "testcaseId": "TC-064",
+      "onFail": "continue",
+      "requiredRole": "GA",
+      "dependsOn": ["TC-059"],
+      "skipIf": null,
+      "phase": "settings_ga"
+    },
+    {
+      "step": 33,
+      "testcaseId": "TC-020",
+      "onFail": "abort",
+      "requiredRole": "PM",
+      "dependsOn": ["TC-011"],
+      "skipIf": null,
+      "phase": "crud_project_pm"
+    },
+    {
+      "step": 34,
+      "testcaseId": "TC-021",
+      "onFail": "continue",
+      "requiredRole": "PM",
+      "dependsOn": ["TC-020"],
+      "skipIf": null,
+      "phase": "crud_project_pm"
+    },
+    {
+      "step": 35,
+      "testcaseId": "TC-022",
+      "onFail": "abort",
+      "requiredRole": "PM",
+      "dependsOn": ["TC-020"],
+      "skipIf": null,
+      "phase": "crud_project_pm"
+    },
+    {
+      "step": 36,
+      "testcaseId": "TC-023",
+      "onFail": "continue",
+      "requiredRole": "PM",
+      "dependsOn": ["TC-020"],
+      "skipIf": null,
+      "phase": "crud_project_pm"
+    },
+    {
+      "step": 37,
+      "testcaseId": "TC-024",
+      "onFail": "continue",
+      "requiredRole": "PM",
+      "dependsOn": ["TC-020"],
+      "skipIf": null,
+      "phase": "crud_project_pm"
+    },
+    {
+      "step": 38,
+      "testcaseId": "TC-025",
+      "onFail": "continue",
+      "requiredRole": "PM",
+      "dependsOn": ["TC-020"],
+      "skipIf": null,
+      "phase": "crud_project_pm"
+    },
+    {
+      "step": 39,
+      "testcaseId": "TC-026",
+      "onFail": "continue",
+      "requiredRole": "PM",
+      "dependsOn": ["TC-020"],
+      "skipIf": null,
+      "phase": "crud_project_pm"
+    },
+    {
+      "step": 40,
+      "testcaseId": "TC-028",
+      "onFail": "continue",
+      "requiredRole": "PM",
+      "dependsOn": ["TC-020"],
+      "skipIf": null,
+      "phase": "crud_project_pm"
+    },
+    {
+      "step": 41,
+      "testcaseId": "TC-029",
+      "onFail": "continue",
+      "requiredRole": "PM",
+      "dependsOn": ["TC-022"],
+      "skipIf": null,
+      "phase": "crud_project_pm"
+    },
+    {
+      "step": 42,
+      "testcaseId": "TC-031",
+      "onFail": "abort",
+      "requiredRole": "PM",
+      "dependsOn": ["TC-020"],
+      "skipIf": null,
+      "phase": "crud_finance_pm"
+    },
+    {
+      "step": 43,
+      "testcaseId": "TC-032",
+      "onFail": "continue",
+      "requiredRole": "PM",
+      "dependsOn": ["TC-031"],
+      "skipIf": null,
+      "phase": "crud_finance_pm"
+    },
+    {
+      "step": 44,
+      "testcaseId": "TC-033",
+      "onFail": "abort",
+      "requiredRole": "PM",
+      "dependsOn": ["TC-031"],
+      "skipIf": null,
+      "phase": "crud_finance_pm"
+    },
+    {
+      "step": 45,
+      "testcaseId": "TC-034",
+      "onFail": "continue",
+      "requiredRole": "PM",
+      "dependsOn": ["TC-033"],
+      "skipIf": null,
+      "phase": "crud_finance_pm"
+    },
+    {
+      "step": 46,
+      "testcaseId": "TC-035",
+      "onFail": "continue",
+      "requiredRole": "PM",
+      "dependsOn": ["TC-033"],
+      "skipIf": null,
+      "phase": "crud_finance_pm"
+    },
+    {
+      "step": 47,
+      "testcaseId": "TC-036",
+      "onFail": "abort",
+      "requiredRole": "PM",
+      "dependsOn": ["TC-031"],
+      "skipIf": null,
+      "phase": "crud_finance_pm"
+    },
+    {
+      "step": 48,
+      "testcaseId": "TC-038",
+      "onFail": "continue",
+      "requiredRole": "PM",
+      "dependsOn": ["TC-036"],
+      "skipIf": null,
+      "phase": "crud_finance_pm"
+    },
+    {
+      "step": 49,
+      "testcaseId": "TC-039",
+      "onFail": "continue",
+      "requiredRole": "PM",
+      "dependsOn": ["TC-036"],
+      "skipIf": null,
+      "phase": "crud_finance_pm"
+    },
+    {
+      "step": 50,
+      "testcaseId": "TC-040",
+      "onFail": "continue",
+      "requiredRole": "PM",
+      "dependsOn": ["TC-031"],
+      "skipIf": null,
+      "phase": "crud_finance_pm"
+    },
+    {
+      "step": 51,
+      "testcaseId": "TC-042",
+      "onFail": "continue",
+      "requiredRole": "PM",
+      "dependsOn": ["TC-040"],
+      "skipIf": null,
+      "phase": "crud_finance_pm"
+    },
+    {
+      "step": 52,
+      "testcaseId": "TC-044",
+      "onFail": "continue",
+      "requiredRole": "PM",
+      "dependsOn": ["TC-001"],
+      "skipIf": null,
+      "phase": "security_pm"
+    },
+    {
+      "step": 53,
+      "testcaseId": "TC-027",
+      "onFail": "continue",
+      "requiredRole": "DESIGNER",
+      "dependsOn": ["TC-020"],
+      "skipIf": null,
+      "phase": "security_designer"
+    },
+    {
+      "step": 54,
+      "testcaseId": "TC-030",
+      "onFail": "continue",
+      "requiredRole": "DESIGNER",
+      "dependsOn": ["TC-020"],
+      "skipIf": null,
+      "phase": "security_designer"
+    },
+    {
+      "step": 55,
+      "testcaseId": "TC-015",
+      "onFail": "abort",
+      "requiredRole": "DESIGNER",
+      "dependsOn": ["TC-011"],
+      "skipIf": null,
+      "phase": "security_designer"
+    },
+    {
+      "step": 56,
+      "testcaseId": "TC-049",
+      "onFail": "continue",
+      "requiredRole": "DESIGNER",
+      "dependsOn": ["TC-045"],
+      "skipIf": null,
+      "phase": "workforce_designer"
+    },
+    {
+      "step": 57,
+      "testcaseId": "TC-060",
+      "onFail": "abort",
+      "requiredRole": "DEVELOPER",
+      "dependsOn": ["TC-001"],
+      "skipIf": null,
+      "phase": "security_developer"
+    },
+    {
+      "step": 58,
+      "testcaseId": "TC-065",
+      "onFail": "abort",
+      "requiredRole": "DEVELOPER",
+      "dependsOn": ["TC-001"],
+      "skipIf": null,
+      "phase": "security_developer"
+    },
+    {
+      "step": 59,
+      "testcaseId": "TC-050",
+      "onFail": "abort",
+      "requiredRole": "DEVELOPER",
+      "dependsOn": ["TC-001"],
+      "skipIf": null,
+      "phase": "crud_task_developer"
+    },
+    {
+      "step": 60,
+      "testcaseId": "TC-051",
+      "onFail": "continue",
+      "requiredRole": "DEVELOPER",
+      "dependsOn": ["TC-050"],
+      "skipIf": null,
+      "phase": "crud_task_developer"
+    },
+    {
+      "step": 61,
+      "testcaseId": "TC-052",
+      "onFail": "abort",
+      "requiredRole": "DEVELOPER",
+      "dependsOn": ["TC-050"],
+      "skipIf": null,
+      "phase": "crud_task_developer"
+    },
+    {
+      "step": 62,
+      "testcaseId": "TC-053",
+      "onFail": "continue",
+      "requiredRole": "DEVELOPER",
+      "dependsOn": ["TC-052"],
+      "skipIf": null,
+      "phase": "crud_task_developer"
+    },
+    {
+      "step": 63,
+      "testcaseId": "TC-054",
+      "onFail": "continue",
+      "requiredRole": "DEVELOPER",
+      "dependsOn": ["TC-052"],
+      "skipIf": null,
+      "phase": "crud_task_developer"
+    },
+    {
+      "step": 64,
+      "testcaseId": "TC-055",
+      "onFail": "abort",
+      "requiredRole": "DEVELOPER",
+      "dependsOn": ["TC-001"],
+      "skipIf": null,
+      "phase": "crud_resource_developer"
+    },
+    {
+      "step": 65,
+      "testcaseId": "TC-056",
+      "onFail": "continue",
+      "requiredRole": "DEVELOPER",
+      "dependsOn": ["TC-055"],
+      "skipIf": null,
+      "phase": "crud_resource_developer"
+    },
+    {
+      "step": 66,
+      "testcaseId": "TC-057",
+      "onFail": "continue",
+      "requiredRole": "DEVELOPER",
+      "dependsOn": ["TC-001"],
+      "skipIf": null,
+      "phase": "workforce_developer"
+    },
+    {
+      "step": 67,
+      "testcaseId": "TC-058",
+      "onFail": "continue",
+      "requiredRole": "DEVELOPER",
+      "dependsOn": ["TC-057"],
+      "skipIf": null,
+      "phase": "workforce_developer"
+    },
+    {
+      "step": 68,
+      "testcaseId": "TC-066",
+      "onFail": "abort",
+      "requiredRole": "MULTI",
+      "dependsOn": ["TC-001"],
+      "skipIf": null,
+      "phase": "security_multi"
+    },
+    {
+      "step": 69,
+      "testcaseId": "TC-069",
+      "onFail": "continue",
+      "requiredRole": null,
+      "dependsOn": ["TC-001"],
+      "skipIf": null,
+      "phase": "navigation"
+    },
+    {
+      "step": 70,
+      "testcaseId": "TC-070",
+      "onFail": "continue",
+      "requiredRole": null,
+      "dependsOn": ["TC-020"],
+      "skipIf": null,
+      "phase": "navigation"
+    },
+    {
+      "step": 71,
+      "testcaseId": "TC-071",
+      "onFail": "continue",
+      "requiredRole": null,
+      "dependsOn": ["TC-020"],
+      "skipIf": null,
+      "phase": "navigation"
+    },
+    {
+      "step": 72,
+      "testcaseId": "TC-075",
+      "onFail": "continue",
+      "requiredRole": null,
+      "dependsOn": ["TC-001"],
+      "skipIf": null,
+      "phase": "ui_ux"
+    },
+    {
+      "step": 73,
+      "testcaseId": "TC-076",
+      "onFail": "continue",
+      "requiredRole": null,
+      "dependsOn": ["TC-001"],
+      "skipIf": null,
+      "phase": "ui_ux"
+    },
+    {
+      "step": 74,
+      "testcaseId": "TC-077",
+      "onFail": "continue",
+      "requiredRole": null,
+      "dependsOn": ["TC-011"],
+      "skipIf": null,
+      "phase": "ui_ux"
+    },
+    {
+      "step": 75,
+      "testcaseId": "TC-078",
+      "onFail": "continue",
+      "requiredRole": null,
+      "dependsOn": ["TC-001"],
+      "skipIf": null,
+      "phase": "ui_ux"
+    },
+    {
+      "step": 76,
+      "testcaseId": "TC-079",
+      "onFail": "continue",
+      "requiredRole": null,
+      "dependsOn": ["TC-001"],
+      "skipIf": null,
+      "phase": "ui_ux"
+    },
+    {
+      "step": 77,
+      "testcaseId": "TC-085",
+      "onFail": "continue",
+      "requiredRole": null,
+      "dependsOn": ["TC-001"],
+      "skipIf": null,
+      "phase": "ui_ux"
+    },
+    {
+      "step": 78,
+      "testcaseId": "TC-080",
+      "onFail": "continue",
+      "requiredRole": null,
+      "dependsOn": ["TC-001"],
+      "skipIf": null,
+      "phase": "form_validation"
+    },
+    {
+      "step": 79,
+      "testcaseId": "TC-081",
+      "onFail": "continue",
+      "requiredRole": null,
+      "dependsOn": ["TC-031"],
+      "skipIf": null,
+      "phase": "form_validation"
+    },
+    {
+      "step": 80,
+      "testcaseId": "TC-082",
+      "onFail": "continue",
+      "requiredRole": null,
+      "dependsOn": ["TC-031"],
+      "skipIf": null,
+      "phase": "form_validation"
+    },
+    {
+      "step": 81,
+      "testcaseId": "TC-083",
+      "onFail": "continue",
+      "requiredRole": null,
+      "dependsOn": [],
+      "skipIf": null,
+      "phase": "error_handling"
+    },
+    {
+      "step": 82,
+      "testcaseId": "TC-084",
+      "onFail": "continue",
+      "requiredRole": null,
+      "dependsOn": [],
+      "skipIf": null,
+      "phase": "error_handling"
+    },
+    {
+      "step": 83,
+      "testcaseId": "TC-072",
+      "onFail": "continue",
+      "requiredRole": null,
+      "dependsOn": ["TC-001"],
+      "skipIf": null,
+      "phase": "responsive_mobile"
+    },
+    {
+      "step": 84,
+      "testcaseId": "TC-073",
+      "onFail": "continue",
+      "requiredRole": null,
+      "dependsOn": ["TC-001"],
+      "skipIf": null,
+      "phase": "responsive_desktop"
+    },
+    {
+      "step": 85,
+      "testcaseId": "TC-074",
+      "onFail": "continue",
+      "requiredRole": null,
+      "dependsOn": ["TC-001"],
+      "skipIf": null,
+      "phase": "responsive_tablet"
+    }
+  ]
+}

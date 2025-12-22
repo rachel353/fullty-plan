@@ -1,0 +1,19 @@
+{
+  "projectName": "{{PROJECT_NAME}}",
+  "baseUrl": "{{BASE_URL}}",
+  "environment": "production",
+  "viewports": {
+    "desktop": { "width": 1920, "height": 1080 },
+    "tablet": { "width": 768, "height": 1024 },
+    "mobile": { "width": 375, "height": 812 }
+  },
+  "testViewports": ["desktop", "mobile"],
+  "features": {
+    "auth": true,
+    "responsive": true,
+    "payment": false
+  },
+  "createdAt": "{{CREATED_AT}}",
+  "lastTestedAt": null
+}
+
