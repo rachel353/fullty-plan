@@ -1,0 +1,218 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Frontend Development Workflow",
+  "description": "프론트엔드 개발 워크플로우 Phase 관리 스키마",
+  "type": "object",
+  "required": ["version", "projectName", "phases"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "projectName": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "currentPhase": {
+      "type": ["string", "null"],
+      "description": "현재 진행 중인 Phase ID"
+    },
+    "completedPhases": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "완료된 Phase ID 목록"
+    },
+    "phases": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/phase"
+      }
+    },
+    "designGuide": {
+      "$ref": "#/definitions/designGuide"
+    },
+    "commands": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    }
+  },
+  "definitions": {
+    "phase": {
+      "type": "object",
+      "required": ["id", "name", "order", "status", "dependencies", "skill", "input", "output", "validation"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^phase-\\d+$"
+        },
+        "name": {
+          "type": "string"
+        },
+        "order": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "status": {
+          "type": "string",
+          "enum": ["pending", "in_progress", "completed", "skipped", "failed"]
+        },
+        "dependencies": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "선행 Phase ID 목록"
+        },
+        "skill": {
+          "type": "string",
+          "description": "실행할 skill 이름"
+        },
+        "input": {
+          "type": "object",
+          "properties": {
+            "required": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/inputFile"
+              }
+            },
+            "optional": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/inputFile"
+              }
+            }
+          }
+        },
+        "output": {
+          "type": "object",
+          "properties": {
+            "files": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/outputFile"
+              }
+            }
+          }
+        },
+        "validation": {
+          "type": "object",
+          "properties": {
+            "rules": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/validationRule"
+              }
+            }
+          }
+        },
+        "completedAt": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        },
+        "notes": {
+          "type": ["string", "null"]
+        }
+      }
+    },
+    "inputFile": {
+      "type": "object",
+      "required": ["path", "description", "type"],
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["file", "glob", "directory"]
+        }
+      }
+    },
+    "outputFile": {
+      "type": "object",
+      "required": ["path", "description"],
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "validationRule": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["file_exists", "pattern_count", "json_array_count", "custom"]
+        },
+        "path": {
+          "type": "string"
+        },
+        "pattern": {
+          "type": "string"
+        },
+        "minCount": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "jsonPath": {
+          "type": "string",
+          "description": "JSONPath 표현식"
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "designGuide": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "basePath": {
+          "type": "string"
+        },
+        "usage": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "use": {
+                "type": "string",
+                "enum": ["reference", "active", "primary"]
+              },
+              "files": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "sections": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "purpose": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

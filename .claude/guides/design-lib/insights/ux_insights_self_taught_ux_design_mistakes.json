@@ -1,0 +1,347 @@
+{
+  "document_identity": {
+    "document_id": "self_taught_ux_design_mistakes",
+    "document_type": "ui_ux_design_insight",
+    "source": {
+      "video_title": "독학으로 UX 디자인하면 무조건 발생하는 문제",
+      "url": "https://www.youtube.com/watch?v=Ah5mgWM8Cuc"
+    }
+  },
+  "usage_context": {
+    "applicable_when": {
+      "domain": [
+        "fashion_magazine",
+        "content_portal",
+        "media_gallery",
+        "editorial_website"
+      ],
+      "primary_content": [
+        "image",
+        "video",
+        "editorial_text"
+      ],
+      "user_decision_model": [
+        "visual_first",
+        "browse_and_discover",
+        "scan_then_click"
+      ],
+      "page_goal": [
+        "content_consumption",
+        "discovery",
+        "brand_experience"
+      ],
+      "ui_focus": [
+        "image_immersion",
+        "typography_hierarchy",
+        "whitespace_balance"
+      ]
+    },
+    "not_applicable_when": {
+      "domain": [
+        "saas_dashboard",
+        "admin_panel",
+        "data_analytics"
+      ],
+      "primary_content": [
+        "table",
+        "metrics",
+        "form_heavy"
+      ],
+      "user_decision_model": [
+        "task_execution",
+        "data_analysis"
+      ],
+      "page_goal": [
+        "workflow_completion",
+        "monitoring"
+      ]
+    },
+    "interpretation": "이 문서는 이미지 중심의 콘텐츠 사이트(패션 매거진, 미디어 갤러리 등)에 적용한다. 과도한 이펙트를 걷어내고 본질(이미지, 타이포, 여백)에 집중하는 디자인 원칙을 담고 있다."
+  },
+  "domain": {
+    "id": "fashion_magazine_website",
+    "name": "Fashion Magazine / Editorial Website",
+    "description": "패션 콘텐츠를 소개하는 매거진 스타일 웹사이트. 이미지 몰입감과 브랜드 감성이 핵심이며, 과도한 장식보다 본질적인 비주얼과 타이포그래피가 중요하다.",
+    "characteristics": [
+      "image_first",
+      "editorial_tone",
+      "brand_focused",
+      "visual_storytelling",
+      "minimal_decoration"
+    ]
+  },
+  "user": {
+    "primary": {
+      "role": "Fashion Content Consumer",
+      "skill_level": "beginner"
+    },
+    "goals": [
+      "discover_fashion_content",
+      "experience_brand_aesthetic",
+      "consume_visual_storytelling",
+      "browse_magazine_articles"
+    ],
+    "behavior_flow": [
+      "Landing on main billboard",
+      "Visual scanning of hero image",
+      "Scroll to category section",
+      "Browse thumbnails",
+      "Click for detail content",
+      "Watch video or read article"
+    ]
+  },
+  "product": {
+    "type": "editorial_content_platform",
+    "examples": [
+      "fashion_magazine_website",
+      "brand_lookbook",
+      "editorial_portfolio"
+    ],
+    "evaluation_logic": {
+      "primary": "visual_immersion_quality",
+      "secondary": "typography_readability",
+      "tertiary": "navigation_clarity"
+    }
+  },
+  "features": [
+    {
+      "id": "immersive_billboard_image",
+      "name": "Immersive Billboard Image",
+      "purpose": "메인 빌보드에서 사용자의 시선을 잡아 몰입감을 제공",
+      "priority": "highest",
+      "design_rules": [
+        "배경이 깔끔하면서 인물에 집중되는 이미지 선택",
+        "약간의 원근감이 느껴지는 구도 활용",
+        "이미지를 작게 여러 개 나열하지 말고 하나에 집중",
+        "방해하는 이펙트(블러, 그라디언트, 글래스모피즘) 최소화",
+        "텍스트 가독성을 위해 필요시 하단에만 딤드/그라디언트 적용"
+      ],
+      "ux_intent": "사용자가 페이지에 도착하자마자 시각적으로 빵 하고 잡히는 경험을 제공",
+      "ui_implications": [
+        "GNB 높이는 64px 이하로 줄여 빌보드 방해 최소화",
+        "로고는 좌측, 아이콘은 우측 배치",
+        "인디케이터는 라인 형태로 얇게 처리"
+      ]
+    },
+    {
+      "id": "typography_line_spacing",
+      "name": "Typography Line/Letter Spacing",
+      "purpose": "텍스트 가독성을 높이고 답답함 해소",
+      "priority": "highest",
+      "design_rules": [
+        "행간(line-height)을 오토로 두지 말고 130% 이상 지정",
+        "자간(letter-spacing)도 약간 벌려서 글이 숨 쉬게 함",
+        "폰트 사이즈 36은 큰 편, 32 정도로 조절 권장",
+        "본문 폰트 14는 허용 범위, 굵기는 레귤러",
+        "정렬은 가운데보다 좌측 정렬 선호"
+      ],
+      "ux_intent": "글자가 숨을 쉬어야 읽기 편하고, 시각적 여유가 생긴다",
+      "ui_implications": [
+        "텍스트는 첫 번째 라인뿐 아니라 두 번째 라인까지 걸쳐 배치",
+        "밝은 이미지 위 텍스트는 뒤에 딤드/그라디언트 필요"
+      ]
+    },
+    {
+      "id": "remove_unnecessary_effects",
+      "name": "Remove Unnecessary Effects",
+      "purpose": "과도한 장식을 걷어내 본질에 집중",
+      "priority": "highest",
+      "design_rules": [
+        "블러 + 컬러 + 그라디언트를 동시에 쓰지 않음",
+        "글래스모피즘은 과감히 제거 또는 최소화",
+        "라인(구분선)은 전체에 쓰지 말고 포인트로만 1-2군데",
+        "이펙트를 많이 준다고 집중도가 높아지는 것이 아님",
+        "필요한 이펙트는 하나씩만 정리해서 사용"
+      ],
+      "ux_intent": "이펙트를 더한다고 디자인이 완성되는 것이 아니다. 불필요한 장식을 걷어내고 본질에 집중해야 한다.",
+      "ui_implications": [
+        "배경 블러 사용 시 불투명도 60% + 살짝 블러만",
+        "딤드는 20% 정도로 가볍게"
+      ]
+    },
+    {
+      "id": "category_color_reduction",
+      "name": "Category Color Reduction",
+      "purpose": "색상 과다로 인한 시각적 단절 해소",
+      "priority": "high",
+      "design_rules": [
+        "카테고리 바에 컬러, 라인, 굵은 폰트 동시 사용 금지",
+        "폰트 컬러는 블랙으로, 배경은 화이트 계열로 통일",
+        "폰트 사이즈 16, 여백 위아래 30 정도로 넉넉하게",
+        "색은 줄이고 구조와 타이포로 정리"
+      ],
+      "ux_intent": "상단과 하단이 따로 노는 느낌을 없애고 페이지 전체가 하나로 연결되게 함",
+      "ui_implications": [
+        "폰트 굵기는 레귤러 또는 미디움까지만",
+        "이미지 톤도 전체 페이지와 맞게 조정"
+      ]
+    },
+    {
+      "id": "icon_text_logical_connection",
+      "name": "Icon-Text Logical Connection",
+      "purpose": "아이콘과 텍스트의 의미적 연결 확보",
+      "priority": "high",
+      "design_rules": [
+        "아이콘은 옆 텍스트 내용과 같은 방향을 가리켜야 함",
+        "사용자가 아이콘만 보고도 기능 성격을 연상할 수 있어야 함",
+        "화살표 아이콘이 텍스트보다 두껍거나 진하면 안 됨",
+        "아이콘 두께와 색을 낮춰 보조 역할만 하게 조정"
+      ],
+      "ux_intent": "아이콘과 텍스트가 다른 이야기를 하면 사용자가 혼란스럽다",
+      "ui_implications": [
+        "아이콘이 내용보다 도드라지지 않게 조절",
+        "의미가 맞지 않는 아이콘은 과감히 교체"
+      ]
+    },
+    {
+      "id": "overlap_layout",
+      "name": "Overlap Layout Strategy",
+      "purpose": "세로로 늘어진 레이아웃을 한 화면에 담기",
+      "priority": "high",
+      "pattern": "overlap_on_image",
+      "design_rules": [
+        "이미지를 크게 깔고 그 위에 타이틀, 텍스트, 탭을 오버랩",
+        "이미지 아래에 요소를 계속 쌓지 말 것",
+        "한 화면에 전체 코너가 보이도록 레이아웃 조정",
+        "탭은 한 칸씩 이동하는 인터랙션 패턴 적용"
+      ],
+      "ux_intent": "정보 구조는 유지하면서 시각적으로 한 화면에 깔끔하게 정리",
+      "ui_implications": [
+        "빌보드 이미지는 시원하게 크게 채움",
+        "가운데 라인 같은 요소는 삭제",
+        "텍스트는 화이트로, 여백은 8 정도"
+      ]
+    },
+    {
+      "id": "tab_design_optimization",
+      "name": "Tab Design Optimization",
+      "purpose": "탭 UI를 가볍고 명확하게 만들기",
+      "priority": "high",
+      "design_rules": [
+        "탭은 선택 상태를 알려주는 보조 UI, 메인 타이틀처럼 존재감 주지 말 것",
+        "텍스트 크기 줄이고 굵기는 레귤러, 선택된 것만 미디움",
+        "라인은 전부 삭제",
+        "폰트 사이즈 18을 15로 줄임",
+        "선택된 탭만 블랙 배경 + 화이트 텍스트"
+      ],
+      "ux_intent": "탭이 브랜드명을 크게 박을 필요 없이, 선택 상태만 명확하면 된다",
+      "ui_implications": [
+        "라운드 100으로 동그랗게 버튼 느낌",
+        "슬라이드 대신 4개 펼쳐서 보여주고 더보기 버튼 사용 가능"
+      ]
+    },
+    {
+      "id": "text_grouping",
+      "name": "Text Grouping Logic",
+      "purpose": "텍스트 요소를 논리적 그룹으로 묶어 가독성 향상",
+      "priority": "high",
+      "design_rules": [
+        "메타 정보(날짜, 카테고리, 아이콘)는 한 블록에 묶음",
+        "타이틀과 본문 텍스트는 별도 그룹으로 분리",
+        "타이틀 사이즈를 키워 이미지와 시각적 무게 균형 맞춤",
+        "텍스트 블록 사이 여백 24-32 확보"
+      ],
+      "ux_intent": "정보끼리 묶이고 그룹끼리는 분리되어야 한 번에 인지 가능",
+      "ui_implications": [
+        "날짜 폰트는 세미볼드 불필요, 아이콘과 같은 덩어리로",
+        "타이틀은 세미볼드, 서브 정보는 레귤러로 위계 형성"
+      ]
+    },
+    {
+      "id": "video_section_refinement",
+      "name": "Video Section UI Refinement",
+      "purpose": "영상 코너의 과밀한 정보를 정리",
+      "priority": "medium",
+      "design_rules": [
+        "라인, 강한 굵기 폰트, 과한 카드 배경 제거",
+        "행간은 오토 대신 퍼센트/픽셀 값 지정",
+        "좌우 여백 16 이상 확보",
+        "플레이 버튼보다 썸네일을 크게",
+        "글래스모피즘 제거, 딤드 20%로 대체"
+      ],
+      "ux_intent": "한눈에 많은 정보가 보인다고 가독성이 좋은 것이 아니다",
+      "ui_implications": [
+        "타이틀과 설명 텍스트 분리하여 사이즈 따로 조절",
+        "라인은 아주 가볍게, 연한 그레이로만"
+      ]
+    },
+    {
+      "id": "instagram_style_selection_ui",
+      "name": "Instagram Style Selection UI",
+      "purpose": "선택 상태를 명확하게 표시하는 갤러리 UI",
+      "priority": "medium",
+      "pattern": "selection_state_clarity",
+      "design_rules": [
+        "선택된 카드는 스트로크 또는 살짝 확대/밝아지게",
+        "썸네일 위 글래스 박스로 가리지 말고 이미지를 더 보여줌",
+        "타이틀과 버튼이 둘 다 강한 블랙이면 경쟁 상황 발생",
+        "카드 안 텍스트는 좌측 정렬, 여백 넉넉히"
+      ],
+      "ux_intent": "내가 지금 뭘 선택했는지가 명확해야 한다. 단순하지만 상태가 명확한 구성.",
+      "ui_implications": [
+        "인디케이터는 카드 안 하단에 배치",
+        "버튼 라운드 크게, 블러 살짝, 오퍼시티 낮춤"
+      ]
+    }
+  ],
+  "layout_strategy": {
+    "name": "whitespace_focused_overlap",
+    "explicit_grid_system": false,
+    "perceived_grid": true,
+    "notes": "여백을 넉넉하게 주고, 요소를 아래로 계속 쌓지 말고 이미지 위에 오버랩하여 한 화면에 담는 전략"
+  },
+  "interaction_hierarchy": {
+    "strong": [
+      "main_billboard_image",
+      "primary_content_title"
+    ],
+    "medium": [
+      "category_tabs",
+      "thumbnail_selection",
+      "play_button"
+    ],
+    "weak": [
+      "meta_information",
+      "indicator_dots",
+      "secondary_links"
+    ]
+  },
+  "information_density": {
+    "rule": "less_is_more_with_breathing_room",
+    "notes": "한눈에 많은 정보가 보인다고 가독성이 좋은 것이 아니다. 여백을 통해 요소가 숨 쉴 수 있게 해야 한다."
+  },
+  "non_goals": [
+    "excessive_glassmorphism_effects",
+    "blur_color_gradient_combined",
+    "lines_everywhere",
+    "auto_line_height",
+    "bold_everything",
+    "cramped_spacing",
+    "mismatched_icon_text",
+    "vertically_stacked_endless_layout"
+  ],
+  "design_philosophy": {
+    "keywords": [
+      "essence_over_decoration",
+      "typography_fundamentals",
+      "whitespace_breathing",
+      "visual_immersion",
+      "clarity_through_reduction"
+    ],
+    "summary": "이펙트를 더한다고 디자인이 완성되는 것이 아니다. 불필요한 장식을 걷어내고 본질(이미지의 힘, 여백, 타이포의 균형)에 집중하라."
+  },
+  "implementation_guardrails": {
+    "apply_when": [
+      "이미지 중심의 콘텐츠 사이트 디자인 시",
+      "매거진/에디토리얼 스타일 페이지 제작 시",
+      "과도한 이펙트로 무거워진 디자인 리팩토링 시",
+      "타이포그래피 가독성 개선이 필요할 때"
+    ],
+    "do_not_apply_when": [
+      "데이터 대시보드 디자인 시",
+      "어드민 패널 제작 시",
+      "폼 중심의 태스크 완료 UI 시",
+      "정보 밀도가 의도적으로 높아야 하는 경우"
+    ]
+  }
+}

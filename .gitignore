@@ -1,0 +1,10 @@
+# .claude, .cursor 폴더만 무시하고 나머지는 모두 포함
+
+.claude/
+.cursor/
+
+# 나머지 모든 파일은 Git에 포함
+!.gitignore
+!*/
+
+# 위 두 줄은 .gitignore 파일 자체와 루트 하위 폴더(.claude/, .cursor/ 제외)를 포함시키기 위함
