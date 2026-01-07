@@ -1,0 +1,1367 @@
+{
+  "metadata": {
+    "created_at": "2026-01-06T00:00:00",
+    "last_updated": "2026-01-07T12:00:00",
+    "version": "1.0",
+    "project": "쟈근친구들 V2 (Conture)",
+    "total_tasks": 92
+  },
+  "features": [
+    {
+      "name": "프로젝트 설정",
+      "tasks": [
+        {
+          "id": "task-001",
+          "title": "Next.js 14 프로젝트 초기화 및 기본 설정",
+          "status": "pending",
+          "priority": "high",
+          "dependencies": [],
+          "files": [
+            "next.config.js",
+            "package.json",
+            "tsconfig.json"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-002",
+          "title": "Tailwind CSS 설정 및 디자인 토큰 정의",
+          "status": "pending",
+          "priority": "high",
+          "dependencies": [
+            "task-001"
+          ],
+          "files": [
+            "tailwind.config.ts",
+            "app/globals.css"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-003",
+          "title": "shadcn/ui 설치 및 기본 UI 컴포넌트 설정",
+          "status": "pending",
+          "priority": "high",
+          "dependencies": [
+            "task-002"
+          ],
+          "files": [
+            "components/ui/button.tsx",
+            "components/ui/card.tsx",
+            "components/ui/dialog.tsx",
+            "components/ui/input.tsx",
+            "components.json"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-004",
+          "title": "TypeScript 타입 정의 (Conceptual Model 기반)",
+          "status": "in_progress",
+          "priority": "high",
+          "dependencies": [
+            "task-001"
+          ],
+          "files": [
+            "types/user.ts",
+            "types/wallet.ts",
+            "types/story.ts",
+            "types/episode.ts",
+            "types/proposal.ts",
+            "types/backing.ts",
+            "types/index.ts"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-07T00:00:00",
+          "notes": "user.ts, story.ts, index.ts 완료. 나머지 타입 추가 필요"
+        },
+        {
+          "id": "task-005",
+          "title": "Zustand 스토어 설정 (Auth, UI)",
+          "status": "completed",
+          "priority": "high",
+          "dependencies": [
+            "task-004"
+          ],
+          "files": [
+            "stores/authStore.ts",
+            "stores/uiStore.ts",
+            "stores/index.ts"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-07T00:00:00"
+        },
+        {
+          "id": "task-006",
+          "title": "TanStack Query Provider 설정",
+          "status": "completed",
+          "priority": "high",
+          "dependencies": [
+            "task-001"
+          ],
+          "files": [
+            "app/providers.tsx",
+            "lib/queryClient.ts"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-07T00:00:00"
+        }
+      ]
+    },
+    {
+      "name": "레이아웃",
+      "tasks": [
+        {
+          "id": "task-007",
+          "title": "Root Layout 및 Provider 통합",
+          "status": "completed",
+          "priority": "high",
+          "dependencies": [
+            "task-005",
+            "task-006"
+          ],
+          "files": [
+            "app/layout.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-07T00:00:00"
+        },
+        {
+          "id": "task-008",
+          "title": "Public Layout (비인증 영역)",
+          "status": "pending",
+          "priority": "high",
+          "dependencies": [
+            "task-007"
+          ],
+          "files": [
+            "app/(public)/layout.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-009",
+          "title": "Auth Layout (인증 체크)",
+          "status": "completed",
+          "priority": "high",
+          "dependencies": [
+            "task-007"
+          ],
+          "files": [
+            "app/(auth)/layout.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-07T00:00:00"
+        },
+        {
+          "id": "task-010",
+          "title": "Creator Layout (작가 전용)",
+          "status": "pending",
+          "priority": "medium",
+          "dependencies": [
+            "task-009"
+          ],
+          "files": [
+            "app/(creator)/layout.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-011",
+          "title": "Admin Layout (관리자 전용)",
+          "status": "pending",
+          "priority": "medium",
+          "dependencies": [
+            "task-009"
+          ],
+          "files": [
+            "app/(admin)/layout.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-012",
+          "title": "Bottom Navigation 컴포넌트",
+          "status": "in_progress",
+          "priority": "high",
+          "dependencies": [
+            "task-003"
+          ],
+          "files": [
+            "components/layout/BottomNav.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-07T12:00:00",
+          "notes": "[변경] 4탭→3탭으로 수정 필요. /shop 탭 제거 (change-2026-01-07-1200)"
+        },
+        {
+          "id": "task-013",
+          "title": "Side Navigation 컴포넌트 (Creator/Admin)",
+          "status": "pending",
+          "priority": "medium",
+          "dependencies": [
+            "task-003"
+          ],
+          "files": [
+            "components/layout/SideNav.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-014",
+          "title": "Header 컴포넌트",
+          "status": "pending",
+          "priority": "high",
+          "dependencies": [
+            "task-003"
+          ],
+          "files": [
+            "components/layout/Header.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        }
+      ]
+    },
+    {
+      "name": "인증",
+      "tasks": [
+        {
+          "id": "task-015",
+          "title": "Login Page UI",
+          "status": "pending",
+          "priority": "high",
+          "dependencies": [
+            "task-008"
+          ],
+          "files": [
+            "app/(public)/login/page.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-016",
+          "title": "LoginForm 컴포넌트",
+          "status": "pending",
+          "priority": "high",
+          "dependencies": [
+            "task-003"
+          ],
+          "files": [
+            "components/auth/LoginForm.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-017",
+          "title": "SocialLoginButtons 컴포넌트",
+          "status": "pending",
+          "priority": "high",
+          "dependencies": [
+            "task-003"
+          ],
+          "files": [
+            "components/auth/SocialLoginButtons.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-018",
+          "title": "Signup Page UI",
+          "status": "pending",
+          "priority": "high",
+          "dependencies": [
+            "task-008"
+          ],
+          "files": [
+            "app/(public)/signup/page.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-019",
+          "title": "SignupForm 컴포넌트",
+          "status": "pending",
+          "priority": "high",
+          "dependencies": [
+            "task-003"
+          ],
+          "files": [
+            "components/auth/SignupForm.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-020",
+          "title": "Terms Page UI",
+          "status": "pending",
+          "priority": "medium",
+          "dependencies": [
+            "task-008"
+          ],
+          "files": [
+            "app/(public)/terms/page.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-021",
+          "title": "ProfileSetup Page UI",
+          "status": "pending",
+          "priority": "high",
+          "dependencies": [
+            "task-009"
+          ],
+          "files": [
+            "app/(auth)/profile/setup/page.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-022",
+          "title": "ProfileSetupForm 컴포넌트",
+          "status": "pending",
+          "priority": "high",
+          "dependencies": [
+            "task-003"
+          ],
+          "files": [
+            "components/auth/ProfileSetupForm.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-023",
+          "title": "useAuth Hook 구현",
+          "status": "pending",
+          "priority": "high",
+          "dependencies": [
+            "task-005"
+          ],
+          "files": [
+            "hooks/useAuth.ts"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-024",
+          "title": "Auth Service (Mock API)",
+          "status": "pending",
+          "priority": "high",
+          "dependencies": [
+            "task-004"
+          ],
+          "files": [
+            "services/authService.ts"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        }
+      ]
+    },
+    {
+      "name": "독자 코어",
+      "tasks": [
+        {
+          "id": "task-025",
+          "title": "Home Page UI",
+          "status": "completed",
+          "priority": "high",
+          "dependencies": [
+            "task-009",
+            "task-012"
+          ],
+          "files": [
+            "app/(auth)/home/page.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-07T00:00:00"
+        },
+        {
+          "id": "task-026",
+          "title": "StoryBanner 컴포넌트",
+          "status": "completed",
+          "priority": "high",
+          "dependencies": [
+            "task-003"
+          ],
+          "files": [
+            "components/story/StoryBanner.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-07T00:00:00"
+        },
+        {
+          "id": "task-027",
+          "title": "StoryCard 컴포넌트",
+          "status": "completed",
+          "priority": "high",
+          "dependencies": [
+            "task-003"
+          ],
+          "files": [
+            "components/story/StoryCard.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-07T00:00:00"
+        },
+        {
+          "id": "task-028",
+          "title": "StoryList 컴포넌트",
+          "status": "completed",
+          "priority": "high",
+          "dependencies": [
+            "task-027"
+          ],
+          "files": [
+            "components/story/StoryList.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-07T00:00:00"
+        },
+        {
+          "id": "task-029",
+          "title": "Explore Page UI",
+          "status": "completed",
+          "priority": "high",
+          "dependencies": [
+            "task-009",
+            "task-028"
+          ],
+          "files": [
+            "app/(auth)/explore/page.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-07T00:00:00"
+        },
+        {
+          "id": "task-030",
+          "title": "Search Page UI",
+          "status": "completed",
+          "priority": "medium",
+          "dependencies": [
+            "task-009",
+            "task-028"
+          ],
+          "files": [
+            "app/(auth)/search/page.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-07T00:00:00"
+        },
+        {
+          "id": "task-031",
+          "title": "Story Detail Page UI",
+          "status": "pending",
+          "priority": "high",
+          "dependencies": [
+            "task-009"
+          ],
+          "files": [
+            "app/(auth)/stories/[storyId]/page.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-032",
+          "title": "StoryDetail 컴포넌트 (작가 링크 포함)",
+          "status": "pending",
+          "priority": "high",
+          "dependencies": [
+            "task-027"
+          ],
+          "files": [
+            "components/story/StoryDetail.tsx"
+          ],
+          "notes": "작가 정보 클릭 시 /creators/:creatorId로 이동하는 링크 포함",
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-033",
+          "title": "EpisodeCard 컴포넌트",
+          "status": "pending",
+          "priority": "high",
+          "dependencies": [
+            "task-003"
+          ],
+          "files": [
+            "components/episode/EpisodeCard.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-034",
+          "title": "EpisodeList 컴포넌트",
+          "status": "pending",
+          "priority": "high",
+          "dependencies": [
+            "task-033"
+          ],
+          "files": [
+            "components/episode/EpisodeList.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-035",
+          "title": "Episode Viewer Page UI",
+          "status": "pending",
+          "priority": "high",
+          "dependencies": [
+            "task-009"
+          ],
+          "files": [
+            "app/(auth)/stories/[storyId]/episodes/[episodeId]/page.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-036",
+          "title": "ContentRenderer 컴포넌트",
+          "status": "pending",
+          "priority": "high",
+          "dependencies": [
+            "task-003"
+          ],
+          "files": [
+            "components/episode/ContentRenderer.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-037",
+          "title": "ActionBar 컴포넌트",
+          "status": "pending",
+          "priority": "high",
+          "dependencies": [
+            "task-003"
+          ],
+          "files": [
+            "components/episode/ActionBar.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-038",
+          "title": "Story Service (Mock API)",
+          "status": "completed",
+          "priority": "high",
+          "dependencies": [
+            "task-004"
+          ],
+          "files": [
+            "services/storyService.ts"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-07T00:00:00"
+        },
+        {
+          "id": "task-039",
+          "title": "Episode Service (Mock API)",
+          "status": "pending",
+          "priority": "high",
+          "dependencies": [
+            "task-004"
+          ],
+          "files": [
+            "services/episodeService.ts"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-089",
+          "title": "Creator Detail Page UI",
+          "status": "pending",
+          "priority": "medium",
+          "dependencies": [
+            "task-009",
+            "task-028"
+          ],
+          "files": [
+            "app/(auth)/creators/[creatorId]/page.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-090",
+          "title": "CreatorProfile 컴포넌트",
+          "status": "pending",
+          "priority": "medium",
+          "dependencies": [
+            "task-003"
+          ],
+          "files": [
+            "components/creator/CreatorProfile.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-091",
+          "title": "CreatorStoryList 컴포넌트",
+          "status": "pending",
+          "priority": "medium",
+          "dependencies": [
+            "task-027"
+          ],
+          "files": [
+            "components/creator/CreatorStoryList.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-092",
+          "title": "Creator Service (Mock API)",
+          "status": "pending",
+          "priority": "medium",
+          "dependencies": [
+            "task-004"
+          ],
+          "files": [
+            "services/creatorService.ts"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        }
+      ]
+    },
+    {
+      "name": "지갑/결제",
+      "tasks": [
+        {
+          "id": "task-040",
+          "title": "MyPage UI",
+          "status": "pending",
+          "priority": "high",
+          "dependencies": [
+            "task-009",
+            "task-012"
+          ],
+          "files": [
+            "app/(auth)/mypage/page.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-07T12:00:00",
+          "notes": "[변경] Ink 충전 바로가기 UI 포함 필요 (change-2026-01-07-1200)"
+        },
+        {
+          "id": "task-041",
+          "title": "Wallet Page UI",
+          "status": "pending",
+          "priority": "high",
+          "dependencies": [
+            "task-040"
+          ],
+          "files": [
+            "app/(auth)/mypage/wallet/page.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-042",
+          "title": "BalanceCard 컴포넌트",
+          "status": "pending",
+          "priority": "high",
+          "dependencies": [
+            "task-003"
+          ],
+          "files": [
+            "components/wallet/BalanceCard.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-043",
+          "title": "TransactionList 컴포넌트",
+          "status": "pending",
+          "priority": "high",
+          "dependencies": [
+            "task-003"
+          ],
+          "files": [
+            "components/wallet/TransactionList.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-044",
+          "title": "Shop Page UI",
+          "status": "pending",
+          "priority": "high",
+          "dependencies": [
+            "task-009"
+          ],
+          "files": [
+            "app/(auth)/shop/page.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-045",
+          "title": "InkShop 컴포넌트",
+          "status": "pending",
+          "priority": "high",
+          "dependencies": [
+            "task-003"
+          ],
+          "files": [
+            "components/wallet/InkShop.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-046",
+          "title": "Wallet Service (Mock API)",
+          "status": "pending",
+          "priority": "high",
+          "dependencies": [
+            "task-004"
+          ],
+          "files": [
+            "services/walletService.ts"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-047",
+          "title": "Transaction Service (Mock API)",
+          "status": "pending",
+          "priority": "medium",
+          "dependencies": [
+            "task-004"
+          ],
+          "files": [
+            "services/transactionService.ts"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-048",
+          "title": "Payment Service (Mock API)",
+          "status": "pending",
+          "priority": "high",
+          "dependencies": [
+            "task-004"
+          ],
+          "files": [
+            "services/paymentService.ts"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        }
+      ]
+    },
+    {
+      "name": "인터벤션",
+      "tasks": [
+        {
+          "id": "task-049",
+          "title": "ProposalCard 컴포넌트",
+          "status": "pending",
+          "priority": "high",
+          "dependencies": [
+            "task-003"
+          ],
+          "files": [
+            "components/proposal/ProposalCard.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-050",
+          "title": "ProposalList 컴포넌트",
+          "status": "pending",
+          "priority": "high",
+          "dependencies": [
+            "task-049"
+          ],
+          "files": [
+            "components/proposal/ProposalList.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-051",
+          "title": "ProposalModal 컴포넌트",
+          "status": "pending",
+          "priority": "high",
+          "dependencies": [
+            "task-003"
+          ],
+          "files": [
+            "components/proposal/ProposalModal.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-052",
+          "title": "BackingModal 컴포넌트",
+          "status": "pending",
+          "priority": "high",
+          "dependencies": [
+            "task-003"
+          ],
+          "files": [
+            "components/proposal/BackingModal.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-053",
+          "title": "DirectBackingModal 컴포넌트",
+          "status": "pending",
+          "priority": "high",
+          "dependencies": [
+            "task-003"
+          ],
+          "files": [
+            "components/proposal/DirectBackingModal.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-054",
+          "title": "CreditSection 컴포넌트",
+          "status": "pending",
+          "priority": "high",
+          "dependencies": [
+            "task-003"
+          ],
+          "files": [
+            "components/episode/CreditSection.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-055",
+          "title": "Proposal Service (Mock API)",
+          "status": "pending",
+          "priority": "high",
+          "dependencies": [
+            "task-004"
+          ],
+          "files": [
+            "services/proposalService.ts"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-056",
+          "title": "Backing Service (Mock API)",
+          "status": "pending",
+          "priority": "high",
+          "dependencies": [
+            "task-004"
+          ],
+          "files": [
+            "services/backingService.ts"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-057",
+          "title": "useProposals Hook 구현",
+          "status": "pending",
+          "priority": "high",
+          "dependencies": [
+            "task-055"
+          ],
+          "files": [
+            "hooks/useProposals.ts"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-058",
+          "title": "Episode Viewer 통합 (Proposal + Credit)",
+          "status": "pending",
+          "priority": "high",
+          "dependencies": [
+            "task-035",
+            "task-050",
+            "task-054"
+          ],
+          "files": [
+            "app/(auth)/stories/[storyId]/episodes/[episodeId]/page.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        }
+      ]
+    },
+    {
+      "name": "크리에이터 스튜디오",
+      "tasks": [
+        {
+          "id": "task-059",
+          "title": "Studio Dashboard Page UI",
+          "status": "pending",
+          "priority": "high",
+          "dependencies": [
+            "task-010",
+            "task-013"
+          ],
+          "files": [
+            "app/(creator)/studio/page.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-060",
+          "title": "Episode Management Page UI",
+          "status": "pending",
+          "priority": "high",
+          "dependencies": [
+            "task-059"
+          ],
+          "files": [
+            "app/(creator)/studio/episodes/page.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-061",
+          "title": "CreatorEpisodeList 컴포넌트",
+          "status": "pending",
+          "priority": "high",
+          "dependencies": [
+            "task-033"
+          ],
+          "files": [
+            "components/episode/CreatorEpisodeList.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-062",
+          "title": "Episode Editor Page UI",
+          "status": "pending",
+          "priority": "high",
+          "dependencies": [
+            "task-060"
+          ],
+          "files": [
+            "app/(creator)/studio/episodes/[episodeId]/edit/page.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-063",
+          "title": "EpisodeEditor 컴포넌트",
+          "status": "pending",
+          "priority": "high",
+          "dependencies": [
+            "task-003"
+          ],
+          "files": [
+            "components/episode/EpisodeEditor.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-064",
+          "title": "ContentUploader 컴포넌트",
+          "status": "pending",
+          "priority": "high",
+          "dependencies": [
+            "task-003"
+          ],
+          "files": [
+            "components/episode/ContentUploader.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-065",
+          "title": "Proposal Management Page UI",
+          "status": "pending",
+          "priority": "high",
+          "dependencies": [
+            "task-059"
+          ],
+          "files": [
+            "app/(creator)/studio/proposals/page.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-066",
+          "title": "ProposalManagementList 컴포넌트",
+          "status": "pending",
+          "priority": "high",
+          "dependencies": [
+            "task-049"
+          ],
+          "files": [
+            "components/proposal/ProposalManagementList.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-067",
+          "title": "DealConfirmModal 컴포넌트",
+          "status": "pending",
+          "priority": "high",
+          "dependencies": [
+            "task-003"
+          ],
+          "files": [
+            "components/proposal/DealConfirmModal.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-068",
+          "title": "DropConfirmModal 컴포넌트",
+          "status": "pending",
+          "priority": "high",
+          "dependencies": [
+            "task-003"
+          ],
+          "files": [
+            "components/proposal/DropConfirmModal.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-069",
+          "title": "Settlement Page UI",
+          "status": "pending",
+          "priority": "high",
+          "dependencies": [
+            "task-059"
+          ],
+          "files": [
+            "app/(creator)/studio/settlements/page.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-070",
+          "title": "SettlementSummary 컴포넌트",
+          "status": "pending",
+          "priority": "high",
+          "dependencies": [
+            "task-003"
+          ],
+          "files": [
+            "components/settlement/SettlementSummary.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-071",
+          "title": "SettlementList 컴포넌트",
+          "status": "pending",
+          "priority": "high",
+          "dependencies": [
+            "task-003"
+          ],
+          "files": [
+            "components/settlement/SettlementList.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-072",
+          "title": "WithdrawalModal 컴포넌트",
+          "status": "pending",
+          "priority": "high",
+          "dependencies": [
+            "task-003"
+          ],
+          "files": [
+            "components/settlement/WithdrawalModal.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-073",
+          "title": "Episode Management Service (Mock API)",
+          "status": "pending",
+          "priority": "high",
+          "dependencies": [
+            "task-039"
+          ],
+          "files": [
+            "services/episodeService.ts"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-074",
+          "title": "Settlement Service (Mock API)",
+          "status": "pending",
+          "priority": "high",
+          "dependencies": [
+            "task-004"
+          ],
+          "files": [
+            "services/settlementService.ts"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        }
+      ]
+    },
+    {
+      "name": "관리자",
+      "tasks": [
+        {
+          "id": "task-075",
+          "title": "Admin Dashboard Page UI",
+          "status": "pending",
+          "priority": "medium",
+          "dependencies": [
+            "task-011",
+            "task-013"
+          ],
+          "files": [
+            "app/(admin)/admin/page.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-076",
+          "title": "DashboardStats 컴포넌트",
+          "status": "pending",
+          "priority": "medium",
+          "dependencies": [
+            "task-003"
+          ],
+          "files": [
+            "components/admin/DashboardStats.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-077",
+          "title": "User Management Page UI",
+          "status": "pending",
+          "priority": "medium",
+          "dependencies": [
+            "task-075"
+          ],
+          "files": [
+            "app/(admin)/admin/users/page.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-078",
+          "title": "UserTable 컴포넌트",
+          "status": "pending",
+          "priority": "medium",
+          "dependencies": [
+            "task-003"
+          ],
+          "files": [
+            "components/admin/UserTable.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-079",
+          "title": "SanctionModal 컴포넌트",
+          "status": "pending",
+          "priority": "medium",
+          "dependencies": [
+            "task-003"
+          ],
+          "files": [
+            "components/admin/SanctionModal.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-080",
+          "title": "Content Management Page UI",
+          "status": "pending",
+          "priority": "medium",
+          "dependencies": [
+            "task-075"
+          ],
+          "files": [
+            "app/(admin)/admin/contents/page.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-081",
+          "title": "ContentTable 컴포넌트",
+          "status": "pending",
+          "priority": "medium",
+          "dependencies": [
+            "task-003"
+          ],
+          "files": [
+            "components/admin/ContentTable.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-082",
+          "title": "DeleteConfirmModal 컴포넌트",
+          "status": "pending",
+          "priority": "medium",
+          "dependencies": [
+            "task-003"
+          ],
+          "files": [
+            "components/admin/DeleteConfirmModal.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-083",
+          "title": "Payment Management Page UI",
+          "status": "pending",
+          "priority": "medium",
+          "dependencies": [
+            "task-075"
+          ],
+          "files": [
+            "app/(admin)/admin/payments/page.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-084",
+          "title": "PaymentTable 컴포넌트",
+          "status": "pending",
+          "priority": "medium",
+          "dependencies": [
+            "task-003"
+          ],
+          "files": [
+            "components/admin/PaymentTable.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-085",
+          "title": "Settlement Management Page UI",
+          "status": "pending",
+          "priority": "medium",
+          "dependencies": [
+            "task-075"
+          ],
+          "files": [
+            "app/(admin)/admin/settlements/page.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-086",
+          "title": "SettlementTable 컴포넌트",
+          "status": "pending",
+          "priority": "medium",
+          "dependencies": [
+            "task-003"
+          ],
+          "files": [
+            "components/admin/SettlementTable.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-087",
+          "title": "SettlementDetailModal 컴포넌트",
+          "status": "pending",
+          "priority": "medium",
+          "dependencies": [
+            "task-003"
+          ],
+          "files": [
+            "components/admin/SettlementDetailModal.tsx"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        },
+        {
+          "id": "task-088",
+          "title": "Admin Service (Mock API)",
+          "status": "pending",
+          "priority": "medium",
+          "dependencies": [
+            "task-004"
+          ],
+          "files": [
+            "services/adminService.ts"
+          ],
+          "created_at": "2026-01-06T00:00:00",
+          "updated_at": "2026-01-06T00:00:00"
+        }
+      ]
+    }
+  ]
+}

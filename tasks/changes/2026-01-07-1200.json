@@ -1,0 +1,58 @@
+{
+  "id": "change-2026-01-07-1200",
+  "createdAt": "2026-01-07T12:00:00",
+  "status": "in-review",
+  "title": "Reader 하단 네비게이션 구조 변경",
+  "items": [
+    {
+      "id": "CI-001",
+      "type": "Removed",
+      "summary": "하단 네비게이션에서 '충전' 탭 제거",
+      "quote": "'충전' 탭을 하단 네비게이션에서 삭제",
+      "affectedModules": ["Component-BottomNav"],
+      "impact": {
+        "routes": [],
+        "components": [{"name": "BottomNav", "action": "modify"}],
+        "state": [],
+        "style": [{"name": "BottomNav 레이아웃", "action": "modify"}]
+      }
+    },
+    {
+      "id": "CI-002",
+      "type": "Modified",
+      "summary": "마이페이지 내 Ink 충전 진입점 추가",
+      "quote": "'충전' 기능을 '마이페이지' 탭 내부로 이동",
+      "affectedModules": ["Route-/mypage", "Component-MyPage", "US-005"],
+      "impact": {
+        "routes": [{"path": "/mypage", "action": "modify"}],
+        "components": [{"name": "MyPage", "action": "modify"}],
+        "state": [],
+        "style": [{"name": "마이페이지 레이아웃", "action": "modify"}]
+      }
+    },
+    {
+      "id": "CI-003",
+      "type": "Impact-shift",
+      "summary": "/shop 라우트 접근 경로 변경",
+      "quote": "/shop 라우트로 Ink 충전 페이지에 접근. 이를 마이페이지 내부 기능으로 통합",
+      "affectedModules": ["Route-/shop", "ia_structure.md"],
+      "impact": {
+        "routes": [{"path": "/shop", "action": "modify"}],
+        "components": [],
+        "state": [],
+        "style": []
+      }
+    }
+  ],
+  "dependencies": [
+    {"from": "BottomNav", "to": "navItems 배열", "reason": "충전 탭 항목 제거"},
+    {"from": "MyPage", "to": "/shop 라우트", "reason": "마이페이지에서 충전 페이지로 이동하는 링크 추가"},
+    {"from": "ia_structure.md", "to": "Navigation Structure", "reason": "문서 정합성 업데이트 필요"}
+  ],
+  "tbd": [
+    {"id": "TBD-001", "content": "마이페이지 내 충전 진입점 UI 형태 (버튼 vs 카드 vs 메뉴 항목)", "resolved": false},
+    {"id": "TBD-002", "content": "마이페이지 내 충전 버튼 위치 (상단 잔액 옆 vs 별도 섹션)", "resolved": false},
+    {"id": "TBD-003", "content": "/shop 라우트를 /mypage/shop으로 변경할지 여부", "resolved": false}
+  ],
+  "affectedTasks": ["task-012", "task-040"]
+}

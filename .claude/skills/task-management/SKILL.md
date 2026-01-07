@@ -1,6 +1,6 @@
 ---
 name: task-management
-description: Task 생성 기준과 완료 판단 기준을 정의합니다. dev-planner agent가 Task를 생성하고, 상태를 판단할 때 사용합니다. 적절한 Task 크기, 우선순위 판단, 의존성 파악, 완료 조건 등을 표준화합니다.
+description: "Task 생성 기준, 완료 판단, 상태 업데이트, 진행상황 확인. 트리거: 상태 업데이트, update, 완료 체크, done 확인, 진행상황, progress, 현황, Task 목록"
 ---
 
 # Task Management Skill
@@ -298,3 +298,37 @@ Task 완료 판단 시:
 - [ ] 기본 로직이 구현되었는가?
 - [ ] 명백한 에러가 없는가?
 - [ ] TODO/FIXME 주석이 남아있지 않은가?
+
+---
+
+## Part 4: 상태 업데이트
+
+트리거: "상태 업데이트", "update", "완료 체크", "done 확인"
+
+### 워크플로우
+
+```
+1. Task 목록 확인 → 2. 파일 확인 → 3. done 조건 체크 → 4. 상태 업데이트
+```
+
+### CLI 명령어
+
+```bash
+python scripts/task_manager.py update task-001 --status done
+python scripts/task_manager.py update task-003 --status blocked --blocked-reason "task-001 완료 필요"
+```
+
+---
+
+## Part 5: 진행상황 확인
+
+트리거: "진행상황", "progress", "현황", "Task 목록"
+
+### CLI 명령어
+
+```bash
+python scripts/task_manager.py list                    # 전체 목록
+python scripts/task_manager.py list --status pending   # 상태별 필터
+python scripts/task_manager.py list --feature "인증"   # 기능별 필터
+python scripts/task_manager.py show task-001           # 상세 보기
+```

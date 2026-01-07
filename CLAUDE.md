@@ -1,0 +1,15 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Project: 쟈근친구들 V2 (Jyageunfriends)
+
+웹툰/스토리 플랫폼 프론트엔드 (Next.js 14 + React 19 + TypeScript)
+
+## References
+
+**코드 작성/개발 요청 시** → `@jyageunfriends/CLAUDE-FE-DEV.md` 참고
+
+**docs 폴더 참고:** 프로젝트 관련 문서는 `@docs` 폴더에서 확인하세요.
+
+**Task 목록 확인** → `@tasks/tasks.json` 참고

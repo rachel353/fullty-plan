@@ -44,6 +44,8 @@
       "Skill(webapp-testing:*)",
       "Skill(design-guide)",
       "Skill(design-guide:*)",
+      "Skill(frontend-design)",
+      "Skill(frontend-design:*)",
       "mcp__plugin_playwright_playwright__*"
     ]
   }

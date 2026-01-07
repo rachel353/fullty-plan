@@ -62,7 +62,7 @@ Phase 5: Dev Plan 수립
 ### Phase 5: Dev Plan 수립
 - **Skill**: `dev-planner`
 - **입력**: `docs/ia_structure.md`, `docs/logical_architecture.md`
-- **출력**: `docs/dev_plan.md`, `tasks/tasks.json`
+- **출력**: `tasks/tasks.json`
 - **검증**: Task 5개 이상
 - **Design Guide 활용**: 디자인 토큰을 Task에 첨부
 
