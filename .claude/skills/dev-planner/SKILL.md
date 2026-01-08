@@ -142,7 +142,9 @@ python scripts/task_manager.py add \
   },
   "features": [
     {
+      "number": "F00",
       "name": "프로젝트 설정",
+      "design_validation_required": false,
       "tasks": [
         {
           "id": "task-001",
@@ -157,7 +159,9 @@ python scripts/task_manager.py add \
       ]
     },
     {
+      "number": "F01",
       "name": "공통 컴포넌트",
+      "design_validation_required": false,
       "tasks": [
         {
           "id": "task-002",
@@ -172,15 +176,17 @@ python scripts/task_manager.py add \
       ]
     },
     {
-      "name": "페이지 UI",
+      "number": "F02",
+      "name": "홈페이지",
+      "design_validation_required": true,
       "tasks": [
         {
           "id": "task-003",
-          "title": "설문 페이지 UI 구현",
+          "title": "홈페이지 UI 구현",
           "status": "blocked",
           "priority": "medium",
           "dependencies": ["task-002"],
-          "files": ["app/survey/page.tsx"],
+          "files": ["app/page.tsx"],
           "blocked_reason": "task-002 완료 필요",
           "created_at": "2025-01-01T00:00:00",
           "updated_at": "2025-01-01T00:00:00"
@@ -194,7 +200,9 @@ python scripts/task_manager.py add \
 | 필드 | 타입 | 설명 |
 |------|------|------|
 | features | array | Feature별로 그룹화된 Task 목록 |
+| features[].number | string | Feature 번호 (예: "F01", "F02") |
 | features[].name | string | Feature 이름 (기능/도메인, 예: "F01 인증", "프로젝트 설정") |
+| features[].design_validation_required | boolean | 디자인 검증 화면 여부 (true: Home, Landing, Dashboard 등) |
 | features[].tasks | array | 해당 Feature의 Task 목록 |
 | features[].tasks[].id | string | 고유 ID (task-XXX) |
 | features[].tasks[].title | string | Task 제목 (한 문장) |

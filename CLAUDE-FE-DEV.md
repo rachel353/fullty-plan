@@ -37,15 +37,6 @@ jyageunfriends/
 
 **Page**: Uses custom hooks, skeleton loading, `max-w-3xl` container
 
-## Design Requirements
-
-- **Monochrome only** - no accent colors
-- **Images → gray boxes** - use `bg-muted` placeholder divs
-- **Minimal & reactive** - focus on layout, hierarchy, spacing
-- **Follow globals.css** - use existing color tokens (foreground, background, muted, border)
-- **Component by component** - implement incrementally
-- **No decorative elements** - keep styling clean and restrained
-
 ## Type References
 - `StoryCardData`: id, title, thumbnailUrl, creatorName, totalBackingAmount, category?
 - `StoryCategory`: romance | fantasy | action | drama | comedy | thriller | slice_of_life
