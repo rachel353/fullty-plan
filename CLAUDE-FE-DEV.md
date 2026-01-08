@@ -50,3 +50,4 @@ jyageunfriends/
 - `StoryCardData`: id, title, thumbnailUrl, creatorName, totalBackingAmount, category?
 - `StoryCategory`: romance | fantasy | action | drama | comedy | thriller | slice_of_life
 - `StorySortOption`: popular | latest | backing | views
+
