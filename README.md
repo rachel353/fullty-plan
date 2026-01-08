@@ -12,17 +12,8 @@
 - 디자인 검수용 페이지의 경우, `"design_validation_required": true`
     
     ```
-      /feature-executor
-      Develop all features in @tasks/tasks.json where design_validation_required = true.
-
-      Also develop the minimal set of prerequisite features required to complete them.
-      Do NOT develop unrelated features.
-
-      Handle dependencies at the task level:
-      - If a task’s dependencies are satisfied, develop it immediately.
-      - If it depends on an unfinished feature, mark the task as blocked and skip it.
-      - Do not block an entire feature due to a single blocked task.
-      - Resume blocked tasks once their dependencies are completed.
+    execute workflow. @.claude/scripts/workflow/workflow.json with @seed_docs folder.
+    don't bother me untill you finish.
     ```
     
 ### 3. planning 피드백 **HITL**
@@ -34,7 +25,16 @@
         
       ```
       /feature-executor
-      @tasks/tasks.json에서 design_validation_required = true로설정된 feature들까지 개발해줘
+      Develop all features in @tasks/tasks.json where design_validation_required = true.
+
+      Also develop the minimal set of prerequisite features required to complete them.
+      Do NOT develop unrelated features.
+
+      Handle dependencies at the task level:
+      - If a task’s dependencies are satisfied, develop it immediately.
+      - If it depends on an unfinished feature, mark the task as blocked and skip it.
+      - Do not block an entire feature due to a single blocked task.
+      - Resume blocked tasks once their dependencies are completed.
       ```
         
 ### 5. Feedback Loop **→ 여기는 여러번 돌수있음.**
