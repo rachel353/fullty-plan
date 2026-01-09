@@ -131,42 +131,43 @@ python scripts/task_manager.py add \
 
 ## Task JSON 스키마
 
-> **IMPORTANT**: tasks.json 파일을 생성/수정할 때는 반드시 `@tasks/schema.json` 스키마를 준수해야 합니다.
+> **IMPORTANT**: tasks.json 파일을 생성/수정할 때는 반드시 아래 스키마를 준수해야 합니다.
 
 파일: `tasks/tasks.json`
-스키마: `tasks/schema.json` (JSON Schema Draft-07)
+스키마: `@reference/schema.json` (JSON Schema Draft-07)
+템플릿: `@reference/template.json` (복사해서 사용 가능)
 
-### 스키마 예시
+### 예시 구조
 
 ```json
 {
-  "meta": {
-    "version": "2026-01-09.2",
-    "lastChange": "change-2026-01-09-1137",
-    "lastUpdated": "2026-01-09T11:37:00",
-    "project": "쟈근친구들 V2 (Conture)",
-    "totalTasks": 95
+  "metadata": {
+    "created_at": "2025-01-01T00:00:00",
+    "last_updated": "2025-01-01T00:00:00",
+    "version": "1.0"
   },
   "features": [
     {
+      "number": "F00",
       "name": "프로젝트 설정",
+      "design_validation_required": false,
       "tasks": [
         {
           "id": "task-001",
           "title": "TailwindCSS 설정",
-          "status": "completed",
+          "status": "done",
           "priority": "high",
           "dependencies": [],
           "files": ["tailwind.config.js"],
-          "created_at": "2026-01-06T00:00:00",
-          "updated_at": "2026-01-08T00:00:00",
-          "completed_at": "2026-01-08T00:00:00",
-          "notes": "optional field"
+          "created_at": "2025-01-01T00:00:00",
+          "updated_at": "2025-01-01T00:00:00"
         }
       ]
     },
     {
+      "number": "F01",
       "name": "공통 컴포넌트",
+      "design_validation_required": false,
       "tasks": [
         {
           "id": "task-002",
@@ -175,8 +176,25 @@ python scripts/task_manager.py add \
           "priority": "high",
           "dependencies": ["task-001"],
           "files": ["components/ui/Button.tsx"],
-          "created_at": "2026-01-06T00:00:00",
-          "updated_at": "2026-01-08T00:00:00"
+          "created_at": "2025-01-01T00:00:00",
+          "updated_at": "2025-01-01T00:00:00"
+        }
+      ]
+    },
+    {
+      "number": "F02",
+      "name": "홈페이지",
+      "design_validation_required": true,
+      "tasks": [
+        {
+          "id": "task-003",
+          "title": "홈페이지 UI 구현",
+          "status": "blocked",
+          "priority": "medium",
+          "dependencies": ["task-002"],
+          "files": ["app/page.tsx"],
+          "created_at": "2025-01-01T00:00:00",
+          "updated_at": "2025-01-01T00:00:00"
         }
       ]
     }
@@ -184,37 +202,17 @@ python scripts/task_manager.py add \
 }
 ```
 
-### 필드 정의
-
-#### meta (required)
-
-| 필드 | 타입 | 필수 | 설명 |
-|------|------|------|------|
-| version | string | ✓ | 버전 정보 (형식: YYYY-MM-DD.N) |
-| lastChange | string | ✓ | 마지막 변경 ID (형식: change-YYYY-MM-DD-HHMM) |
-| lastUpdated | string | ✓ | 마지막 업데이트 시간 (ISO 8601) |
-| project | string | ✓ | 프로젝트 이름 |
-| totalTasks | integer | ✓ | 전체 Task 개수 |
-
-#### features[] (required)
-
-| 필드 | 타입 | 필수 | 설명 |
-|------|------|------|------|
-| name | string | ✓ | 기능 이름 (예: "프로젝트 설정", "레이아웃") |
-| tasks | array | ✓ | 해당 기능의 Task 목록 |
-
-#### tasks[] (required)
-
-| 필드 | 타입 | 필수 | 설명 |
-|------|------|------|------|
-| id | string | ✓ | 고유 ID (형식: task-XXX) |
-| title | string | ✓ | Task 제목 (한 문장) |
-| status | enum | ✓ | pending, in_progress, completed, blocked |
-| priority | enum | ✓ | high, medium, low |
-| dependencies | string[] | ✓ | 의존하는 Task ID 목록 (빈 배열 가능) |
-| files | string[] | ✓ | 관련 파일 경로 목록 |
-| created_at | string | ✓ | 생성 시간 (ISO 8601) |
-| updated_at | string | ✓ | 수정 시간 (ISO 8601) |
-| completed_at | string | | 완료 시간 (status=completed일 때만) |
-| notes | string | | Task 관련 메모 또는 추가 정보 |
-| blocked_reason | string | | blocked 상태일 때 사유 |
+| 필드 | 타입 | 설명 |
+|------|------|------|
+| features | array | Feature별로 그룹화된 Task 목록 |
+| features[].number | string | Feature 번호 (예: "F01", "F02") |
+| features[].name | string | Feature 이름 (기능/도메인, 예: "F01 인증", "프로젝트 설정") |
+| features[].design_validation_required | boolean | 디자인 검증 화면 여부 (true: Home, Landing, Dashboard 등) |
+| features[].tasks | array | 해당 Feature의 Task 목록 |
+| features[].tasks[].id | string | 고유 ID (task-XXX) |
+| features[].tasks[].title | string | Task 제목 (한 문장) |
+| features[].tasks[].status | enum | pending, in_progress, done, blocked |
+| features[].tasks[].priority | enum | high, medium, low |
+| features[].tasks[].dependencies | string[] | 의존하는 Task ID 목록 |
+| features[].tasks[].files | string[] | 관련 파일 경로 |
+| features[].tasks[].blocked_reason | string? | blocked 상태일 때 사유 |
