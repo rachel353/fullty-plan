@@ -6,16 +6,20 @@ Task Manager CLI
 Usage:
     python3 scripts/task_manager.py add --title "Task 제목" --priority high --feature "기능명"
     python3 scripts/task_manager.py update <task_id> --status done
+    python3 scripts/task_manager.py update <task_id> --status done --no-commit  # 커밋 없이 상태만 변경
     python3 scripts/task_manager.py list [--status pending|in_progress|done|blocked] [--feature "기능명"]
     python3 scripts/task_manager.py show <task_id>
+
+자동 커밋:
+    - Task가 done이 되면 자동으로 커밋: task({task_id}): {title}
+    - Feature의 모든 Task가 done이면 추가 커밋: feat({feature}): Complete feature
 """
 
 import argparse
 import json
-import os
+import subprocess
 from datetime import datetime
 from pathlib import Path
-from typing import Optional
 
 
 def get_project_root() -> Path:
@@ -60,6 +64,124 @@ def save_tasks(data: dict):
     data["metadata"]["last_updated"] = datetime.now().isoformat()
     with open(TASKS_FILE, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
+
+
+# =============================================================================
+# Git 자동 커밋 기능
+# =============================================================================
+
+def git_add_and_commit(files: list, message: str) -> bool:
+    """파일들을 stage하고 커밋
+    
+    Args:
+        files: stage할 파일 목록 (빈 리스트면 전체 변경사항)
+        message: 커밋 메시지
+    
+    Returns:
+        성공 여부
+    """
+    try:
+        # git add
+        if files:
+            # 지정된 파일들만 추가
+            subprocess.run(
+                ["git", "add"] + files,
+                cwd=PROJECT_ROOT,
+                check=True,
+                capture_output=True
+            )
+        else:
+            # 전체 변경사항 추가
+            subprocess.run(
+                ["git", "add", "."],
+                cwd=PROJECT_ROOT,
+                check=True,
+                capture_output=True
+            )
+        
+        # git commit
+        result = subprocess.run(
+            ["git", "commit", "-m", message],
+            cwd=PROJECT_ROOT,
+            capture_output=True,
+            text=True
+        )
+        
+        # 커밋할 변경사항이 없는 경우
+        if result.returncode != 0:
+            if "nothing to commit" in result.stdout or "nothing to commit" in result.stderr:
+                return False
+            # 다른 에러인 경우
+            return False
+        
+        return True
+    except subprocess.CalledProcessError:
+        return False
+    except FileNotFoundError:
+        # git이 설치되지 않은 경우
+        print("⚠️ git 명령을 찾을 수 없습니다.")
+        return False
+
+
+def commit_task(task: dict) -> bool:
+    """Task 완료 시 자동 커밋
+    
+    커밋 메시지 형식: task({task_id}): {title}
+    
+    Args:
+        task: 완료된 Task 정보
+    
+    Returns:
+        커밋 성공 여부
+    """
+    task_id = task["id"]
+    title = task["title"]
+    files = task.get("files", [])
+    
+    message = f"task({task_id}): {title}"
+    
+    success = git_add_and_commit(files, message)
+    if success:
+        print(f"✅ Task 커밋: {message}")
+    else:
+        print(f"⚠️ Task 커밋 스킵 (변경사항 없음)")
+    
+    return success
+
+
+def check_and_commit_feature(feature: str, all_tasks: list) -> bool:
+    """Feature의 모든 Task가 done이면 Feature 커밋
+    
+    커밋 메시지 형식: feat({feature}): Complete feature
+    
+    Args:
+        feature: Feature 이름
+        all_tasks: 전체 Task 목록
+    
+    Returns:
+        Feature 커밋 성공 여부
+    """
+    if not feature:
+        return False
+    
+    # 해당 Feature의 Task들 필터링
+    feature_tasks = [t for t in all_tasks if t.get("feature") == feature]
+    
+    if not feature_tasks:
+        return False
+    
+    # 모든 Task가 done인지 확인
+    all_done = all(t["status"] == "done" for t in feature_tasks)
+    
+    if all_done:
+        message = f"feat({feature}): Complete feature"
+        # tasks.json 변경사항만 커밋 (--allow-empty 대신)
+        success = git_add_and_commit([str(TASKS_FILE)], message)
+        if success:
+            print(f"🎉 Feature 커밋: {message}")
+        return success
+    
+    return False
 
 
 def generate_task_id(tasks: list) -> str:
@@ -112,9 +234,13 @@ def cmd_update(args):
     data = load_tasks()
 
     task_found = False
+    updated_task = None
+    old_status = None
+    
     for task in data["tasks"]:
         if task["id"] == args.task_id:
             task_found = True
+            updated_task = task
 
             if args.status:
                 old_status = task["status"]
@@ -154,6 +280,15 @@ def cmd_update(args):
 
     save_tasks(data)
     print(f"Task {args.task_id} 업데이트됨")
+    
+    # 자동 커밋 로직 (status가 done으로 변경된 경우)
+    no_commit = getattr(args, 'no_commit', False)
+    if args.status == "done" and old_status != "done" and not no_commit:
+        # Task 커밋
+        commit_task(updated_task)
+        # Feature 완료 체크 및 커밋
+        check_and_commit_feature(updated_task.get("feature"), data["tasks"])
+    
     return 0
 
 
@@ -338,6 +473,7 @@ def main():
     update_parser.add_argument("--depends", "-d", help="의존성 Task IDs (쉼표 구분)")
     update_parser.add_argument("--files", help="관련 파일 (쉼표 구분)")
     update_parser.add_argument("--blocked-reason", "-b", help="차단 사유")
+    update_parser.add_argument("--no-commit", action="store_true", help="자동 커밋 비활성화")
 
     # list 명령어
     list_parser = subparsers.add_parser("list", help="Task 목록")
