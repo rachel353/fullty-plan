@@ -32,9 +32,9 @@
 
       Handle dependencies at the task level:
       - If a task’s dependencies are satisfied, develop it immediately.
-      - If it depends on an unfinished feature, mark the task as blocked and skip it.
-      - Do not block an entire feature due to a single blocked task.
-      - Resume blocked tasks once their dependencies are completed.
+      - If it depends on an unfinished feature, mark the task as pending and skip it.
+      - Do not block an entire feature due to a single pending task.
+      - Resume pending tasks once their dependencies are completed.
       ```
         
 ### 5. Feedback Loop **→ 여기는 여러번 돌수있음.**
