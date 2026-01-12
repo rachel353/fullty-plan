@@ -1,65 +1,186 @@
-# Workflow
-### 1. PRD/SRS 생성 및 Seeding, tweakcn 설치
-1. tweakcn 설치는 아래 프롬프트 붙여서 실행
-        
-      ```
-      아래 명령어로 tweakcn을 먼저 설치해
-      `pnpm dlx shadcn@latest add <https://tweakcn.com/r/themes/cmk2dt04m000f04lbc9x47d7f> `
-      ```
-        
-### 2. planning(workflow)
-- 개발문서 (FE관련)
-- 디자인 검수용 페이지의 경우, `"design_validation_required": true`
+# AI-Driven FRONTEND Development Workflow (HITL)
+
+이 프로젝트는 **PRD → Planning → 개발 → 피드백 → 재개발** 전 과정을
+
+AI가 주도하고, **Human은 문서·의사결정에만 개입(HITL)** 하는 구조를 따른다.
+
+---
+
+## 🎯 Core Principles
+
+- **Single Source of Truth**: `tasks/tasks.json`
+- **Human-in-the-loop(HITL)**:
+    
+    문서 변경 · 요구사항 수정 · 승인 단계에만 개입
+    
+- **Implementation Autonomy**:
+    
+    개발 단계에서는 AI가 확인 요청 없이 자율 실행
+    
+- **Design-first Validation**:
+    
+    디자인 검수 대상 feature를 우선 개발
+    
+
+---
+
+## 📁 Key Artifacts
+
+```
+seed_docs/          # 초기 PRD / SRS 시드
+docs/               # 요구사항, 설계, 변경 문서
+tasks/tasks.json    # 전체 개발 상태의 단일 기준
+.claude/scripts/    # workflow, executor 스크립트
+
+```
+
+---
+
+## 1️⃣ PRD / SRS 생성 & 프로젝트 시딩
+
+### 1. 문서 시딩
+
+- PRD / SRS를 `seed_docs/` 기준으로 생성
+
+### 2. tweakcn 테마 설치 (선행 필수)
+
+```bash
+pnpm dlx shadcn@latest add https://tweakcn.com/r/themes/cmk2dt04m000f04lbc9x47d7f
+
+```
+
+---
+
+## 2️⃣ Planning (Workflow 실행)
+
+### 목적
+
+- FE 개발 문서 생성
+- Feature 단위 plan / spec 정리
+- `tasks/tasks.json` 자동 생성
+
+### 규칙
+
+- **디자인 검수 대상 페이지**
+    
+    ```json
+    "design_validation_required": true
     
     ```
-    execute workflow. @.claude/scripts/workflow/workflow.json with @seed_docs folder.
-    don't bother me untill you finish.
-    ```
     
-### 3. planning 피드백 **HITL**
-- **여기서는 Human이 지호가 만든 커맨드로 계속해서 개발문서, tasks.json이 적절하게 변경되는것이 핵심**
-- Signal 발송후 바로 3번으로 넘어감
 
-### 4. tasks/tasks.json 에서 디자인 검수 페이지가 설정된 feature들 먼저 개발
-- design_validation_required = true인 feature들 모두 개발완료되어야만 종료
-        
-      ```
-      /feature-executor
-      Develop all features in @tasks/tasks.json where design_validation_required = true.
+### 실행
 
-      Also develop the minimal set of prerequisite features required to complete them.
-      Do NOT develop unrelated features.
+```markdown
+execute workflow. @.claude/scripts/workflow/workflow.json with @seed_docs folder.
+don't bother me untill you finish.
 
-      Handle dependencies at the task level:
-      - If a task’s dependencies are satisfied, develop it immediately.
-      - If it depends on an unfinished feature, mark the task as pending and skip it.
-      - Do not block an entire feature due to a single pending task.
-      - Resume pending tasks once their dependencies are completed.
-      ```
-        
-### 5. Feedback Loop **→ 여기는 여러번 돌수있음.**
-1. Replan **HITL (고객 Confirm)**
-      - ‘요구사항 및 디자인 수정 반영’ 커맨드 실행
-      - 승인시 Loop 탈출
-      - **여기서는 Human이 지호가 만든 커맨드로 계속해서 개발문서, tasks.json이 적절하게 변경되는것이 핵심**
-2. 남은 task 개발
-        
-      ```
-        /feature-executor
-        
-        Use @tasks/tasks.json as the single source of truth.
-        
-        Execution rules:
-        
-        1. A feature is considered "remaining" if it contains at least one task with status != "completed".
-        2. Execute all remaining features.
-        3. For each feature:
-           - If a feature plan/spec already exists, DO NOT run /feature-spec.
-           - If no plan/spec exists, run /feature-spec first.
-        4. After plan resolution, develop at the task level.
-        5. Skip tasks already marked as "completed".
-        6. Execute tasks in logical order within a feature, considering dependencies.
-        7. If tasks are independent, execute them in parallel.
-        8. Do NOT ask the user for confirmation unless information is missing.
-        
-      ```
+```
+
+---
+
+## 3️⃣ Planning 피드백 (HITL)
+
+### 목적
+
+- Human이 커맨드를 통해
+    
+    **문서 + tasks.json을 구조적으로 수정**
+    
+
+### 사용 커맨드
+
+```markdown
+/change-doc
+<피드백 내용>
+
+```
+
+### 결과
+
+- `docs/` 문서 업데이트
+- `tasks/tasks.json` 자동 반영
+
+---
+
+## 4️⃣ 디자인 검수 대상 Feature 우선 개발
+
+### 조건
+
+- `design_validation_required = true`
+- 해당 feature **전부 완료 시 종료**
+
+### 실행
+
+```markdown
+/feature-executor
+@tasks/tasks.json에서 design_validation_required = true로설정된 feature들까지 개발해줘
+
+```
+
+---
+
+## 5️⃣ Feedback Loop (반복 가능)
+
+### 5-1. Replan HITL (Confirm 단계)
+
+### 목적
+
+- 요구사항 변경
+- 디자인 수정
+- TBD 정리
+
+### 실행
+
+```markdown
+/change-analyzer
+<피드백 내용>
+```
+
+### 처리 내용
+
+- 변경사항 요구사항 문서화
+- 디자인 인사이트 저장 (필요 시)
+- TBD 질문 정리
+- `/change-docs` 자동 호출
+
+👉 승인 시 Loop 종료
+
+---
+
+### 5-2. Remaining Task 개발
+
+```markdown
+/feature-executor
+
+Use @tasks/tasks.json as the single source of truth.
+
+Execution rules:
+
+1. A feature is "remaining" if at least one task is not completed.
+2. Execute all remaining features.
+3. If a feature spec exists, DO NOT run /feature-spec.
+4. If no spec exists, run /feature-spec first.
+5. Skip completed tasks.
+6. Respect task dependencies.
+7. Run independent tasks in parallel.
+8. Do NOT ask for confirmation unless information is missing.
+
+```
+
+---
+
+## ✅ 종료 조건
+
+- `design_validation_required` feature 전부 완료
+- Replan 승인 완료
+- `tasks/tasks.json` 내 **모든 task = completed**
+
+---
+
+## 🧠 Why This Works
+
+- Human은 **결정·검증·변경 관리**에만 집중
+- AI는 **계획 → 실행 → 반복**을 자동 수행
+- 문서 ↔ task ↔ 코드 간 정합성 유지
+- 회의가 아닌 **커맨드 기반 개발 운영**
