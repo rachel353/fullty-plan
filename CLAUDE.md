@@ -2,9 +2,6 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Project: 쟈근친구들 V2 (Jyageunfriends)
-
-웹툰/스토리 플랫폼 프론트엔드 (Next.js 14 + React 19 + TypeScript)
 
 ## References
 

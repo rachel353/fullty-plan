@@ -10,13 +10,13 @@ npm run lint     # ESLint check
 ```
 
 ## Tech Stack
-- Next.js 14 (App Router), React 19, TypeScript
+- Next.js 16.x 중에서 가장 최신 Stable 버전 (App Router), React 19, TypeScript, Zod
 - TanStack Query (server state), Zustand (client state)
 - Tailwind CSS 4, Lucide React icons
 
 ## Project Structure
 ```
-jyageunfriends/
+my-app/
 ├── app/(auth)/          # Authenticated routes (home, explore, search, stories, creators)
 ├── app/(public)/        # Public routes (login, signup)
 ├── components/          # React components by domain (story/, episode/, layout/, auth/)
