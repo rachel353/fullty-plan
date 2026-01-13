@@ -1,0 +1,329 @@
+{
+  "$schema": "./workflow.schema.json",
+  "version": "1.0.0",
+  "projectName": "쟈근친구들 V2",
+  "description": "프론트엔드 개발 워크플로우 - Phase 순서 강제 실행",
+  "currentPhase": null,
+  "completedPhases": [],
+
+  "phases": [
+    {
+      "id": "phase-1",
+      "name": "User Story 생성",
+      "order": 1,
+      "status": "pending",
+      "dependencies": [],
+      "skill": "user-story",
+      "input": {
+        "required": [
+          {
+            "path": "seed-docs/*.md",
+            "description": "시드 문서들 (기능명세서, IA, 제안내용 등)",
+            "type": "glob"
+          }
+        ],
+        "optional": []
+      },
+      "output": {
+        "files": [
+          {
+            "path": "docs/user_stories.md",
+            "description": "User Story 문서"
+          },
+          {
+            "path": "docs/user_stories_data.json",
+            "description": "User Story 구조화 데이터"
+          }
+        ]
+      },
+      "validation": {
+        "rules": [
+          {
+            "type": "file_exists",
+            "path": "docs/user_stories.md"
+          },
+          {
+            "type": "pattern_count",
+            "path": "docs/user_stories.md",
+            "pattern": "As a",
+            "minCount": 3,
+            "description": "User Story 3개 이상 존재"
+          }
+        ]
+      },
+      "completedAt": null,
+      "notes": null
+    },
+    {
+      "id": "phase-2",
+      "name": "Conceptual Model 설계",
+      "order": 2,
+      "status": "pending",
+      "dependencies": ["phase-1"],
+      "skill": "conceptual-model",
+      "input": {
+        "required": [
+          {
+            "path": "docs/user_stories.md",
+            "description": "User Story 문서",
+            "type": "file"
+          }
+        ],
+        "optional": [
+          {
+            "path": "docs/user_stories_data.json",
+            "description": "User Story 구조화 데이터",
+            "type": "file"
+          }
+        ]
+      },
+      "output": {
+        "files": [
+          {
+            "path": "docs/conceptual_model.md",
+            "description": "Conceptual Model 문서"
+          },
+          {
+            "path": "docs/conceptual_model.json",
+            "description": "Conceptual Model 구조화 데이터"
+          }
+        ]
+      },
+      "validation": {
+        "rules": [
+          {
+            "type": "file_exists",
+            "path": "docs/conceptual_model.md"
+          },
+          {
+            "type": "pattern_count",
+            "path": "docs/conceptual_model.md",
+            "pattern": "## (Entity|Concept|개체)",
+            "minCount": 3,
+            "description": "Entity 3개 이상 정의"
+          }
+        ]
+      },
+      "completedAt": null,
+      "notes": null
+    },
+    {
+      "id": "phase-3",
+      "name": "IA Structure 설계",
+      "order": 3,
+      "status": "pending",
+      "dependencies": ["phase-1", "phase-2"],
+      "skill": "ia-structure",
+      "input": {
+        "required": [
+          {
+            "path": "docs/user_stories.md",
+            "description": "User Story 문서",
+            "type": "file"
+          },
+          {
+            "path": "docs/conceptual_model.md",
+            "description": "Conceptual Model 문서",
+            "type": "file"
+          }
+        ],
+        "optional": []
+      },
+      "output": {
+        "files": [
+          {
+            "path": "docs/ia_structure.md",
+            "description": "Information Architecture 문서"
+          },
+          {
+            "path": "docs/file_structure.md",
+            "description": "파일/폴더 구조 문서"
+          }
+        ]
+      },
+      "validation": {
+        "rules": [
+          {
+            "type": "file_exists",
+            "path": "docs/ia_structure.md"
+          },
+          {
+            "type": "file_exists",
+            "path": "docs/file_structure.md"
+          },
+          {
+            "type": "pattern_count",
+            "path": "docs/ia_structure.md",
+            "pattern": "(Page|Screen|페이지|화면)",
+            "minCount": 3,
+            "description": "Page/Screen 3개 이상 정의"
+          }
+        ]
+      },
+      "completedAt": null,
+      "notes": null
+    },
+    {
+      "id": "phase-4",
+      "name": "Logical Architecture 설계",
+      "order": 4,
+      "status": "pending",
+      "dependencies": ["phase-1", "phase-2", "phase-3"],
+      "skill": "logical-architecture",
+      "input": {
+        "required": [
+          {
+            "path": "docs/user_stories.md",
+            "description": "User Story 문서",
+            "type": "file"
+          },
+          {
+            "path": "docs/conceptual_model.md",
+            "description": "Conceptual Model 문서",
+            "type": "file"
+          },
+          {
+            "path": "docs/ia_structure.md",
+            "description": "IA Structure 문서",
+            "type": "file"
+          }
+        ],
+        "optional": [
+          {
+            "path": "docs/design-guide/*/design-guide.md",
+            "description": "Design Guide 문서",
+            "type": "glob"
+          }
+        ]
+      },
+      "output": {
+        "files": [
+          {
+            "path": "docs/logical_architecture.md",
+            "description": "Logical Architecture 문서"
+          }
+        ]
+      },
+      "validation": {
+        "rules": [
+          {
+            "type": "file_exists",
+            "path": "docs/logical_architecture.md"
+          },
+          {
+            "type": "pattern_count",
+            "path": "docs/logical_architecture.md",
+            "pattern": "(Component|컴포넌트|<[A-Z][a-zA-Z]+)",
+            "minCount": 3,
+            "description": "Component 3개 이상 정의"
+          }
+        ]
+      },
+      "completedAt": null,
+      "notes": "Design Guide의 Component Patterns 섹션을 참고하여 UI 컴포넌트 설계"
+    },
+    {
+      "id": "phase-5",
+      "name": "Dev Plan 수립",
+      "order": 5,
+      "status": "pending",
+      "dependencies": ["phase-3", "phase-4"],
+      "skill": "dev-planner",
+      "input": {
+        "required": [
+          {
+            "path": "docs/ia_structure.md",
+            "description": "IA Structure 문서",
+            "type": "file"
+          },
+          {
+            "path": "docs/logical_architecture.md",
+            "description": "Logical Architecture 문서",
+            "type": "file"
+          }
+        ],
+        "optional": [
+          {
+            "path": "docs/design-guide/*/design-guide.md",
+            "description": "Design Guide 문서",
+            "type": "glob"
+          },
+          {
+            "path": "docs/user_stories.md",
+            "description": "User Story 문서 (우선순위 참조)",
+            "type": "file"
+          }
+        ]
+      },
+      "output": {
+        "files": [
+          {
+            "path": "docs/dev_plan.md",
+            "description": "개발 계획 문서"
+          },
+          {
+            "path": "tasks/tasks.json",
+            "description": "Task 목록 (JSON)"
+          }
+        ]
+      },
+      "validation": {
+        "rules": [
+          {
+            "type": "file_exists",
+            "path": "docs/dev_plan.md"
+          },
+          {
+            "type": "file_exists",
+            "path": "tasks/tasks.json"
+          },
+          {
+            "type": "json_array_count",
+            "path": "tasks/tasks.json",
+            "jsonPath": "$.tasks",
+            "minCount": 5,
+            "description": "Task 5개 이상 생성"
+          }
+        ]
+      },
+      "completedAt": null,
+      "notes": "Design Guide의 디자인 토큰을 Task에 포함시켜 구현 시 참조할 수 있도록 함"
+    }
+  ],
+
+  "designGuide": {
+    "description": "Design Guide 활용 가이드",
+    "basePath": "docs/design-guide",
+    "usage": {
+      "phase-3": {
+        "use": "reference",
+        "files": ["viewport_screenshot.png", "responsive_*.png"],
+        "purpose": "화면 구조 및 레이아웃 파악"
+      },
+      "phase-4": {
+        "use": "active",
+        "files": ["design-guide.md"],
+        "sections": ["Component Patterns", "Color System", "Typography System"],
+        "purpose": "UI 컴포넌트 정의 시 디자인 스펙 참조"
+      },
+      "phase-5": {
+        "use": "active",
+        "files": ["design-guide.md", "design_data.json"],
+        "purpose": "Task별 디자인 스펙 첨부"
+      },
+      "development": {
+        "use": "primary",
+        "files": ["design-guide.md", "design_data.json", "*.png"],
+        "purpose": "실제 구현 시 디자인 토큰, 스타일, 반응형 참조"
+      }
+    }
+  },
+
+  "commands": {
+    "startPhase": "워크플로우의 다음 Phase 시작",
+    "validatePhase": "현재 Phase 검증",
+    "skipPhase": "Phase 스킵 (의존성 무시, 권장하지 않음)",
+    "resetPhase": "Phase 상태 초기화",
+    "showStatus": "전체 워크플로우 상태 표시"
+  }
+}

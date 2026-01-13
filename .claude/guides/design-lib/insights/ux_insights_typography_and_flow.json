@@ -1,0 +1,399 @@
+{
+  "document_identity": {
+    "document_id": "typography_and_flow",
+    "document_type": "ui_ux_design_insight",
+    "source": {
+      "video_title": "화려한 디자인보다 중요한건 언어와 흐름입니다",
+      "url": "https://www.youtube.com/watch?v=ENIvZFD9iLM",
+      "channel": "디자이너 마디아"
+    }
+  },
+  "usage_context": {
+    "applicable_when": {
+      "domain": ["ai_chat_interface", "messenger_app", "search_interface", "conversational_ui", "saas_application"],
+      "primary_content": ["text", "chat_messages", "search_results", "user_input", "ai_responses"],
+      "user_decision_model": ["conversation_flow", "question_answer", "information_scanning", "task_execution"],
+      "page_goal": ["information_exchange", "search_completion", "task_completion", "conversation"],
+      "ui_focus": ["text_readability", "message_alignment", "input_field_clarity", "visual_hierarchy"]
+    },
+    "not_applicable_when": {
+      "domain": ["image_gallery", "video_streaming", "artistic_portfolio"],
+      "primary_content": ["primarily_visual_content", "media_heavy_pages"],
+      "user_decision_model": ["visual_browsing_only"],
+      "page_goal": ["aesthetic_appreciation"]
+    },
+    "interpretation": "이 인사이트는 텍스트 기반 UI, 특히 AI 챗봇, 메신저, 검색 인터페이스에 적용됩니다. UX 디자인의 80%는 텍스트이므로, 폰트 계층과 정렬이 가장 중요합니다."
+  },
+  "domain": {
+    "id": "conversational_ui_design",
+    "name": "대화형 UI 디자인",
+    "description": "AI 챗봇, 메신저 등 질문-답변 형식의 대화형 인터페이스 디자인. 내가 질문하면 답변해주는 주고받는 메신저 같은 느낌의 UI입니다.",
+    "characteristics": ["text_dominant", "conversation_flow", "question_answer_pattern", "sequential_messages", "input_focused"]
+  },
+  "user": {
+    "primary": {
+      "role": "UX/UI Designer",
+      "skill_level": "beginner_to_intermediate"
+    },
+    "goals": [
+      "폰트 계층 체계 수립",
+      "대화형 UI의 정렬 패턴 이해",
+      "입력 필드와 메시지 구분 명확화",
+      "아이콘 일관성 확보",
+      "가독성 중심 디자인 구현"
+    ],
+    "behavior_flow": [
+      "폰트 사이즈와 계층 검토",
+      "정렬 패턴 확인 (좌측/우측/가운데)",
+      "입력 필드 명확성 검토",
+      "아이콘 통일성 확인",
+      "여백과 구분자 추가"
+    ]
+  },
+  "product": {
+    "type": "AI Chat Interface / Conversational UI",
+    "examples": ["ChatGPT", "Gemini", "AI 검색 서비스", "메신저 앱"],
+    "evaluation_logic": {
+      "primary": "질문과 답변이 명확히 구분되는가",
+      "secondary": "폰트 계층이 정보 중요도를 반영하는가",
+      "tertiary": "입력 필드가 명확하고 사용하기 쉬운가"
+    }
+  },
+  "features": [
+    {
+      "id": "typography_is_80_percent",
+      "name": "UX 디자인의 80%는 텍스트",
+      "purpose": "UX 디자인의 본질이 텍스트임을 인식하고 폰트에 집중합니다.",
+      "priority": "highest",
+      "design_rules": [
+        "UX 디자인의 80% 이상은 텍스트로 구성됨",
+        "색깔, 크기는 내용의 가독성을 위한 서포트일 뿐",
+        "버튼, 배너의 내용(텍스트)으로 사용자가 이해함",
+        "폰트가 안 보이면 의미가 없음",
+        "폰트를 작게 쓰면 작은 디자인밖에 못 함 - 성장 불가"
+      ],
+      "ux_intent": "화려함보다 텍스트 가독성이 UX의 근본이다.",
+      "ui_implications": [
+        "폰트 사이즈를 충분히 크게",
+        "폰트 계층 명확히",
+        "색상보다 텍스트에 집중"
+      ]
+    },
+    {
+      "id": "font_size_standards",
+      "name": "폰트 사이즈 기준",
+      "purpose": "각 요소별 최소 폰트 사이즈를 정의합니다.",
+      "priority": "highest",
+      "design_rules": [
+        "13px는 너무 작음 - 최소 14px 이상",
+        "상세 답변/본문: 16px 이상 (정보량 많으면 더 커야 함)",
+        "타이틀: 16px 이상",
+        "폰트를 크게 쓰는 게 어려워도 크게 써야 성장함",
+        "폰트 사이즈 작으면 가독성 떨어짐"
+      ],
+      "ux_intent": "작은 폰트는 가독성을 해치고 디자이너의 성장도 막는다.",
+      "ui_implications": [
+        "본문 최소 14px, 권장 16px",
+        "정보량 많은 영역은 16px 필수",
+        "작다 싶으면 한 단계 키우기"
+      ]
+    },
+    {
+      "id": "font_hierarchy_system",
+      "name": "폰트 계층 시스템",
+      "purpose": "정보의 중요도에 따라 폰트 계층을 명확히 구분합니다.",
+      "priority": "highest",
+      "design_rules": [
+        "타이틀/본문/캡션이 고만고만하면 계층이 안 보임",
+        "중요한 내용은 볼드 또는 세미볼드 + 사이즈 키우기",
+        "덜 중요한 내용은 다운시키기 (사이즈, 컬러)",
+        "볼드보다는 세미볼드 + 폰트 사이즈 키우기 권장",
+        "GPT처럼 중요도에 따라 계층 나누기"
+      ],
+      "ux_intent": "사용자가 무엇이 중요한지 폰트만 봐도 알 수 있어야 한다.",
+      "ui_implications": [
+        "질문/답변/부가정보 계층 구분",
+        "타이틀은 세미볼드 + 큰 사이즈",
+        "부가 정보는 레귤러 + 작은 사이즈"
+      ]
+    },
+    {
+      "id": "chat_message_alignment",
+      "name": "대화형 UI 정렬 원칙",
+      "purpose": "AI 챗봇에서 질문과 답변을 명확히 구분하는 정렬 패턴을 정의합니다.",
+      "priority": "highest",
+      "design_rules": [
+        "AI 대화는 메신저처럼 주고받는 형식",
+        "가운데 정렬은 절대 금지 - 질문/답변 구분 불가",
+        "내 질문: 우측 정렬",
+        "AI 답변: 좌측 정렬",
+        "쌓일수록 뭐가 질문이고 답변인지 구분 안 감"
+      ],
+      "ux_intent": "대화 흐름에서 누가 말한 것인지 시각적으로 즉시 구분되어야 한다.",
+      "ui_implications": [
+        "질문은 우측, 답변은 좌측 배치",
+        "가운데 정렬 사용 금지",
+        "메신저 패턴 참고"
+      ]
+    },
+    {
+      "id": "input_field_clarity",
+      "name": "입력 필드 명확성",
+      "purpose": "입력 영역을 명확하게 구분하여 사용자가 어디에 입력하는지 즉시 알 수 있게 합니다.",
+      "priority": "highest",
+      "design_rules": [
+        "입력 공간이 좁으면 안 됨 - 충분한 높이 확보",
+        "입력 필드는 화이트 배경으로 정확하게 잡기",
+        "대충 하면 안 됨 - 명확한 경계 필요",
+        "입력 중에는 추천 검색어 숨기기",
+        "입력 완료 시 보내기/확인 버튼 표시"
+      ],
+      "ux_intent": "입력 영역은 사용자의 주요 인터랙션 포인트이므로 가장 명확해야 한다.",
+      "ui_implications": [
+        "입력 필드 배경 화이트",
+        "충분한 높이와 패딩",
+        "상태별 UI 변화 (빈 상태/입력 중/입력 완료)"
+      ]
+    },
+    {
+      "id": "state_based_ui_design",
+      "name": "상태 기반 UI 설계",
+      "purpose": "입력 상태에 따라 UI가 적절히 변화해야 합니다.",
+      "priority": "high",
+      "design_rules": [
+        "입력 전: 추천 검색어 표시",
+        "입력 중: 키보드 표시, 추천 검색어 숨김",
+        "입력 완료: 보내기 버튼 활성화",
+        "마이크 → 화살표(보내기)로 아이콘 전환",
+        "있을 수 없는 화면 조합 체크 (예: 입력 중 + 추천 검색어)"
+      ],
+      "ux_intent": "각 상태에서 사용자가 할 수 있는 행동이 명확해야 한다.",
+      "ui_implications": [
+        "상태별 화면 분리 디자인",
+        "불가능한 상태 조합 제거",
+        "아이콘/버튼 상태 전환"
+      ]
+    },
+    {
+      "id": "icon_consistency",
+      "name": "아이콘 일관성 원칙",
+      "purpose": "아이콘의 스타일, 두께, 형태를 통일합니다.",
+      "priority": "high",
+      "design_rules": [
+        "라인 아이콘이면 모두 라인, 면이면 모두 면",
+        "라인 두께 통일 (2px면 다 2px, 1.5와 2 혼용 금지)",
+        "소수점 피하기 - 깔끔한 정수 사용",
+        "아이콘은 복잡하면 안 됨 - 작게 들어가면 뭉개짐",
+        "기본부터 깔끔하게 - 어려운 것 그리지 말 것"
+      ],
+      "ux_intent": "아이콘 스타일이 통일되어야 전문적으로 보인다.",
+      "ui_implications": [
+        "라인 두께 통일 (2px 권장)",
+        "면/라인 스타일 통일",
+        "복잡한 디테일 제거"
+      ]
+    },
+    {
+      "id": "stroke_for_visibility",
+      "name": "가독성을 위한 스트록",
+      "purpose": "스트록(테두리)은 이쁘기 위해서가 아니라 안 보여서 넣는 것입니다.",
+      "priority": "high",
+      "design_rules": [
+        "스트록은 이뻐서 넣는 게 아님",
+        "안 보여서 넣는 것 - 구분이 필요할 때",
+        "테두리 없는 깔끔함도 좋지만 가독성이 떨어지면 넣어야 함",
+        "모든 디자인 요소에는 넣는 이유가 있어야 함",
+        "명분 없는 디자인 요소 금지"
+      ],
+      "ux_intent": "디자인 요소 하나하나에 이유가 있어야 한다.",
+      "ui_implications": [
+        "구분이 필요하면 스트록 추가",
+        "깔끔함 vs 가독성 중 가독성 우선",
+        "레이어/팝업에 경계선 고려"
+      ]
+    },
+    {
+      "id": "visual_separator_system",
+      "name": "시각적 구분자 시스템",
+      "purpose": "정보 그룹 간 명확한 구분을 제공합니다.",
+      "priority": "high",
+      "design_rules": [
+        "구분이 필요한 내용에는 구분자 필수",
+        "같은 색상이면 구분자 없이 겹쳐 보임",
+        "카드로 묶거나 여백으로 구분",
+        "질문/검색결과/상세답변 각각 구분",
+        "섀도우 약하게 + 구분만 될 정도"
+      ],
+      "ux_intent": "정보의 경계가 명확해야 사용자가 구조를 이해한다.",
+      "ui_implications": [
+        "카드 또는 배경색으로 그룹핑",
+        "섀도우는 약하게",
+        "구분자 라인 또는 여백 활용"
+      ]
+    },
+    {
+      "id": "bottom_sheet_usage",
+      "name": "바텀시트 사용 원칙",
+      "purpose": "바텀시트를 사용할 때 명확한 이유가 있어야 합니다.",
+      "priority": "medium",
+      "design_rules": [
+        "바텀으로 뜨는 이유가 있어야 함",
+        "남들이 다 바텀하니까 나도 바텀 = 안 됨",
+        "화면을 다 가릴 정도면 풀팝업이 더 깔끔",
+        "간단한 항목은 일반 레이어로 충분",
+        "채팅창을 다 가리면서까지 뜰 필요 없음"
+      ],
+      "ux_intent": "UI 패턴 선택에는 명확한 이유가 있어야 한다.",
+      "ui_implications": [
+        "바텀시트 vs 풀팝업 vs 레이어 선택 기준 수립",
+        "간단한 메뉴는 작은 레이어로",
+        "히스토리 등 복잡한 내용은 풀팝업"
+      ]
+    },
+    {
+      "id": "gradient_for_scroll_fade",
+      "name": "스크롤 페이드 그라디언트",
+      "purpose": "긴 콘텐츠에서 스크롤 영역의 끝을 자연스럽게 처리합니다.",
+      "priority": "medium",
+      "design_rules": [
+        "AI 답변은 스크롤이 매우 김",
+        "상단/하단에 그라디언트로 페이드 처리",
+        "안 보이는 부분은 가려버리기",
+        "탑 버튼 필수 (위로 올라가기)",
+        "하단 버튼도 필요 (아래로 내려가기)"
+      ],
+      "ux_intent": "긴 콘텐츠에서 현재 위치와 이동 수단을 명확히 제공한다.",
+      "ui_implications": [
+        "상단/하단 그라디언트 마스크",
+        "탑/바텀 이동 버튼",
+        "스크롤 위치에 따른 버튼 방향 전환"
+      ]
+    },
+    {
+      "id": "simplicity_over_decoration",
+      "name": "장식보다 단순함",
+      "purpose": "불필요한 장식 요소를 제거하고 기능에 집중합니다.",
+      "priority": "high",
+      "design_rules": [
+        "추천 검색어에 색깔별 배리에이션 불필요",
+        "삐지(badge)가 왜 있는지 이유 없으면 제거",
+        "브랜드 톤을 버튼마다 넣을 필요 없음",
+        "레귤러+볼드 섞을 필요 없음",
+        "안 이뻐도 되니까 일단 편하게"
+      ],
+      "ux_intent": "편의성이 화려함보다 우선이다. 진입 장벽이 높아진 시대.",
+      "ui_implications": [
+        "장식용 색상 제거",
+        "불필요한 badge 제거",
+        "단순한 버튼 스타일"
+      ]
+    },
+    {
+      "id": "login_button_hierarchy",
+      "name": "로그인 버튼 계층",
+      "purpose": "SNS 로그인과 일반 로그인의 시각적 계층을 적절히 조정합니다.",
+      "priority": "medium",
+      "design_rules": [
+        "SNS 로그인에 힘을 실어주기 (주요 전환 경로)",
+        "일반 로그인은 계층 낮추기",
+        "로그인 버튼이 너무 세면 안 됨",
+        "삐지 빼고 단순하게",
+        "SNS 4개 가로 배치 시 확장성 고려 → 세로 배치 권장"
+      ],
+      "ux_intent": "사용자가 가장 많이 사용하는 경로를 강조한다.",
+      "ui_implications": [
+        "SNS 버튼 세로 배치",
+        "일반 로그인은 텍스트 링크 수준으로",
+        "주요 CTA 명확히"
+      ]
+    },
+    {
+      "id": "search_and_suggestion_separation",
+      "name": "검색창과 추천 검색어 분리",
+      "purpose": "검색창과 추천 검색어가 겹쳐 보이지 않도록 구분합니다.",
+      "priority": "high",
+      "design_rules": [
+        "검색창과 추천 검색어가 같은 디자인이면 겹쳐 보임",
+        "검색창은 크리티컬 - 가장 중요한 입력 영역",
+        "추천 검색어 색상 통일 (색깔별 베리에이션 불필요)",
+        "검색 후에는 관련 추천만 표시",
+        "질문 후 기존 추천 검색어 유지 = 논리적 오류"
+      ],
+      "ux_intent": "검색은 핵심 기능이므로 가장 명확해야 한다.",
+      "ui_implications": [
+        "검색창 스타일 차별화",
+        "추천 검색어 단색 처리",
+        "상태별 추천 검색어 업데이트"
+      ]
+    },
+    {
+      "id": "ai_button_emphasis",
+      "name": "AI 기능 버튼 강조",
+      "purpose": "AI 관련 주요 기능 버튼을 시각적으로 강조합니다.",
+      "priority": "medium",
+      "design_rules": [
+        "AI 아이콘이 있으면 강조 대상",
+        "그라디언트 스트록으로 차별화 (하늘색→보라색→자주색)",
+        "드롭 섀도우 살짝 추가",
+        "사이즈 32px 이상 (28px 너무 작음)",
+        "파일 첨부, 음성보다 AI 기능 강조"
+      ],
+      "ux_intent": "핵심 차별화 기능을 시각적으로 부각시킨다.",
+      "ui_implications": [
+        "그라디언트 테두리",
+        "충분한 버튼 사이즈",
+        "드롭 섀도우로 입체감"
+      ]
+    }
+  ],
+  "layout_strategy": {
+    "name": "Conversation-Flow Layout",
+    "explicit_grid_system": false,
+    "perceived_grid": true,
+    "notes": "대화형 UI는 좌/우 정렬로 발신자를 구분합니다. 가운데 정렬은 대화 흐름을 깨뜨립니다."
+  },
+  "interaction_hierarchy": {
+    "strong": ["Send button", "AI action button", "Primary input field", "User messages"],
+    "medium": ["SNS login buttons", "Search suggestions", "AI responses"],
+    "weak": ["Secondary login", "Metadata", "Timestamps", "File attachment"]
+  },
+  "information_density": {
+    "rule": "정보량이 많을수록 폰트를 키우고 여백을 과감하게 벌려야 한다",
+    "notes": "AI 답변은 내용이 많아 가독성이 떨어지기 쉬우므로 폰트 16px 이상, 충분한 여백 필수"
+  },
+  "non_goals": [
+    "가운데 정렬로 대화 메시지 배치",
+    "폰트 사이즈 13px 이하 사용",
+    "이유 없는 장식 요소 추가",
+    "아이콘 스타일 혼용 (면+라인)",
+    "화려함을 위한 색상 베리에이션",
+    "남들이 하니까 따라하는 UI 패턴"
+  ],
+  "design_philosophy": {
+    "keywords": [
+      "typography_first",
+      "readability",
+      "conversation_flow",
+      "purposeful_design",
+      "simplicity",
+      "hierarchy",
+      "consistency"
+    ],
+    "summary": "UX 디자인의 80%는 텍스트다. 화려함보다 가독성, 장식보다 명확성. 모든 요소에는 이유가 있어야 한다."
+  },
+  "implementation_guardrails": {
+    "apply_when": [
+      "AI 챗봇 인터페이스 설계 시",
+      "메신저/대화형 UI 설계 시",
+      "검색 인터페이스 설계 시",
+      "텍스트 중심 UI 설계 시",
+      "입력 필드 디자인 시",
+      "아이콘 시스템 구축 시"
+    ],
+    "do_not_apply_when": [
+      "이미지/비디오 중심 갤러리",
+      "예술적 표현이 목적인 경우",
+      "대화형이 아닌 단방향 콘텐츠"
+    ]
+  }
+}

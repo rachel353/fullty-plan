@@ -1,0 +1,113 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Tasks JSON Schema",
+  "description": "프론트엔드 개발 Task 관리를 위한 JSON 스키마",
+  "type": "object",
+  "required": ["metadata", "features"],
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "required": ["created_at", "last_updated", "version"],
+      "properties": {
+        "created_at": {
+          "type": "string",
+          "description": "생성 시간 (ISO 8601)",
+          "format": "date-time"
+        },
+        "last_updated": {
+          "type": "string",
+          "description": "마지막 업데이트 시간 (ISO 8601)",
+          "format": "date-time"
+        },
+        "version": {
+          "type": "string",
+          "description": "버전 정보"
+        }, 
+        "TotalTasks": {
+          "type": "integer",
+          "description": "총 Task 개수"
+        }
+      }
+    },
+    "features": {
+      "type": "array",
+      "description": "기능 단위별로 그룹화된 Task 목록",
+      "items": {
+        "type": "object",
+        "required": ["name", "tasks"],
+        "properties": {
+          "number": {
+            "type": "string",
+            "description": "Feature 번호 (예: F01, F02)",
+            "pattern": "^F\\d{2}$"
+          },
+          "name": {
+            "type": "string",
+            "description": "기능 이름 (예: 프로젝트 설정, 인증, 공통 컴포넌트)"
+          },
+          "design_validation_required": {
+            "type": "boolean",
+            "description": "디자인 검증 화면 여부 (true: Home, Landing, Dashboard 등)",
+            "default": false
+          },
+          "tasks": {
+            "type": "array",
+            "description": "해당 기능의 Task 목록",
+            "items": {
+              "type": "object",
+              "required": ["id", "title", "status", "priority", "dependencies", "files", "created_at", "updated_at"],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "고유 Task ID (예: task-001)",
+                  "pattern": "^task-\\d{3}$"
+                },
+                "title": {
+                  "type": "string",
+                  "description": "Task 제목 (한 문장)",
+                  "minLength": 1
+                },
+                "status": {
+                  "type": "string",
+                  "description": "Task 상태",
+                  "enum": ["pending", "in_progress", "completed"]
+                },
+                "priority": {
+                  "type": "string",
+                  "description": "우선순위",
+                  "enum": ["high", "medium", "low"]
+                },
+                "dependencies": {
+                  "type": "array",
+                  "description": "의존하는 Task ID 목록",
+                  "items": {
+                    "type": "string",
+                    "pattern": "^task-\\d{3}$"
+                  }
+                },
+                "files": {
+                  "type": "array",
+                  "description": "관련 파일 경로 목록",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "created_at": {
+                  "type": "string",
+                  "description": "생성 시간 (ISO 8601)",
+                  "format": "date-time"
+                },
+                "updated_at": {
+                  "type": "string",
+                  "description": "수정 시간 (ISO 8601)",
+                  "format": "date-time"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
