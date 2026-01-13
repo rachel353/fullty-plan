@@ -5,14 +5,14 @@ Task Manager CLI
 
 Usage:
     python3 scripts/task_manager.py add --title "Task 제목" --priority high --feature "기능명"
-    python3 scripts/task_manager.py update <task_id> --status done
-    python3 scripts/task_manager.py update <task_id> --status done --no-commit  # 커밋 없이 상태만 변경
-    python3 scripts/task_manager.py list [--status pending|in_progress|done|blocked] [--feature "기능명"]
+    python3 scripts/task_manager.py update <task_id> --status completed
+    python3 scripts/task_manager.py update <task_id> --status completed --no-commit  # 커밋 없이 상태만 변경
+    python3 scripts/task_manager.py list [--status pending|in_progress|completed|blocked] [--feature "기능명"]
     python3 scripts/task_manager.py show <task_id>
 
 자동 커밋:
-    - Task가 done이 되면 자동으로 커밋: task({task_id}): {title}
-    - Feature의 모든 Task가 done이면 추가 커밋: feat({feature}): Complete feature
+    - Task가 completed가 되면 자동으로 커밋: task({task_id}): {title}
+    - Feature의 모든 Task가 completed이면 추가 커밋: feat({feature}): Complete feature
 """
 
 import argparse
@@ -150,7 +150,7 @@ def commit_task(task: dict) -> bool:
 
 
 def check_and_commit_feature(feature: str, all_tasks: list) -> bool:
-    """Feature의 모든 Task가 done이면 Feature 커밋
+    """Feature의 모든 Task가 completed이면 Feature 커밋
     
     커밋 메시지 형식: feat({feature}): Complete feature
     
@@ -170,10 +170,10 @@ def check_and_commit_feature(feature: str, all_tasks: list) -> bool:
     if not feature_tasks:
         return False
     
-    # 모든 Task가 done인지 확인
-    all_done = all(t["status"] == "done" for t in feature_tasks)
+    # 모든 Task가 completed인지 확인
+    all_completed = all(t["status"] == "completed" for t in feature_tasks)
     
-    if all_done:
+    if all_completed:
         message = f"feat({feature}): Complete feature"
         # tasks.json 변경사항만 커밋 (--allow-empty 대신)
         success = git_add_and_commit([str(TASKS_FILE)], message)
@@ -281,9 +281,9 @@ def cmd_update(args):
     save_tasks(data)
     print(f"Task {args.task_id} 업데이트됨")
     
-    # 자동 커밋 로직 (status가 done으로 변경된 경우)
+    # 자동 커밋 로직 (status가 completed로 변경된 경우)
     no_commit = getattr(args, 'no_commit', False)
-    if args.status == "done" and old_status != "done" and not no_commit:
+    if args.status == "completed" and old_status != "completed" and not no_commit:
         # Task 커밋
         commit_task(updated_task)
         # Feature 완료 체크 및 커밋
@@ -316,20 +316,20 @@ def cmd_list(args):
     tasks = sorted(tasks, key=lambda t: (priority_order.get(t.get("priority", "medium"), 1), t["id"]))
 
     # 상태별 통계
-    stats = {"pending": 0, "in_progress": 0, "done": 0, "blocked": 0}
+    stats = {"pending": 0, "in_progress": 0, "completed": 0, "blocked": 0}
     for t in data["tasks"]:
         stats[t["status"]] = stats.get(t["status"], 0) + 1
 
     print("=" * 70)
     print(f"📋 Task 목록 (총 {len(data['tasks'])}개)")
-    print(f"   pending: {stats['pending']} | in_progress: {stats['in_progress']} | done: {stats['done']} | blocked: {stats['blocked']}")
+    print(f"   pending: {stats['pending']} | in_progress: {stats['in_progress']} | completed: {stats['completed']} | blocked: {stats['blocked']}")
     print("=" * 70)
 
     # 상태별 아이콘
     status_icons = {
         "pending": "⬜",
         "in_progress": "🔄",
-        "done": "✅",
+        "completed": "✅",
         "blocked": "🚫"
     }
 
@@ -376,7 +376,7 @@ def cmd_show(args):
     status_icons = {
         "pending": "⬜ Pending",
         "in_progress": "🔄 In Progress",
-        "done": "✅ Done",
+        "completed": "✅ Completed",
         "blocked": "🚫 Blocked"
     }
 
@@ -428,20 +428,20 @@ def cmd_delete(args):
     return 0
 
 
-def cmd_clear_done(args):
+def cmd_clear_completed(args):
     """완료된 Task 모두 삭제"""
     data = load_tasks()
 
-    done_tasks = [t for t in data["tasks"] if t["status"] == "done"]
-    if not done_tasks:
+    completed_tasks = [t for t in data["tasks"] if t["status"] == "completed"]
+    if not completed_tasks:
         print("완료된 Task가 없습니다.")
         return 0
 
-    data["tasks"] = [t for t in data["tasks"] if t["status"] != "done"]
+    data["tasks"] = [t for t in data["tasks"] if t["status"] != "completed"]
     save_tasks(data)
 
-    print(f"완료된 Task {len(done_tasks)}개 삭제됨:")
-    for t in done_tasks:
+    print(f"완료된 Task {len(completed_tasks)}개 삭제됨:")
+    for t in completed_tasks:
         print(f"  - {t['id']}: {t['title']}")
 
     return 0
@@ -466,7 +466,7 @@ def main():
     # update 명령어
     update_parser = subparsers.add_parser("update", help="Task 업데이트")
     update_parser.add_argument("task_id", help="Task ID")
-    update_parser.add_argument("--status", "-s", choices=["pending", "in_progress", "done", "blocked"], help="상태")
+    update_parser.add_argument("--status", "-s", choices=["pending", "in_progress", "completed", "blocked"], help="상태")
     update_parser.add_argument("--title", "-t", help="제목")
     update_parser.add_argument("--priority", "-p", choices=["high", "medium", "low"], help="우선순위")
     update_parser.add_argument("--feature", "-f", help="관련 기능")
@@ -477,7 +477,7 @@ def main():
 
     # list 명령어
     list_parser = subparsers.add_parser("list", help="Task 목록")
-    list_parser.add_argument("--status", "-s", choices=["pending", "in_progress", "done", "blocked"], help="상태 필터")
+    list_parser.add_argument("--status", "-s", choices=["pending", "in_progress", "completed", "blocked"], help="상태 필터")
     list_parser.add_argument("--feature", "-f", help="기능 필터")
     list_parser.add_argument("--priority", "-p", choices=["high", "medium", "low"], help="우선순위 필터")
 
@@ -489,8 +489,8 @@ def main():
     delete_parser = subparsers.add_parser("delete", help="Task 삭제")
     delete_parser.add_argument("task_id", help="Task ID")
 
-    # clear-done 명령어
-    clear_parser = subparsers.add_parser("clear-done", help="완료된 Task 모두 삭제")
+    # clear-completed 명령어
+    clear_parser = subparsers.add_parser("clear-completed", help="완료된 Task 모두 삭제")
 
     args = parser.parse_args()
 
@@ -504,8 +504,8 @@ def main():
         return cmd_show(args)
     elif args.command == "delete":
         return cmd_delete(args)
-    elif args.command == "clear-done":
-        return cmd_clear_done(args)
+    elif args.command == "clear-completed":
+        return cmd_clear_completed(args)
     else:
         parser.print_help()
         return 0

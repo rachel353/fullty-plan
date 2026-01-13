@@ -92,14 +92,14 @@ def format_user_stories_for_prompt(story_ids: list[str]) -> str:
     return "\n".join(lines)
 
 
-def get_done_task_ids(tasks: list) -> set:
+def get_completed_task_ids(tasks: list) -> set:
     """완료된 task ID 집합 반환"""
-    return {t["id"] for t in tasks if t["status"] == "done"}
+    return {t["id"] for t in tasks if t["status"] == "completed"}
 
 
 def get_ready_tasks(tasks: list) -> list:
     """의존성이 충족된 pending task 목록 반환 (우선순위 순)"""
-    done_ids = get_done_task_ids(tasks)
+    completed_ids = get_completed_task_ids(tasks)
     ready = []
 
     priority_order = {"high": 0, "medium": 1, "low": 2}
@@ -109,7 +109,7 @@ def get_ready_tasks(tasks: list) -> list:
             continue
 
         deps = set(task.get("dependencies", []))
-        if deps.issubset(done_ids):
+        if deps.issubset(completed_ids):
             ready.append(task)
 
     # 우선순위 순 정렬
@@ -127,9 +127,9 @@ def get_task_by_id(tasks: list, task_id: str) -> Optional[dict]:
 
 def check_dependencies(task: dict, tasks: list) -> tuple[bool, list]:
     """의존성 체크. (충족 여부, 미완료 의존성 목록) 반환"""
-    done_ids = get_done_task_ids(tasks)
+    completed_ids = get_completed_task_ids(tasks)
     deps = set(task.get("dependencies", []))
-    missing = deps - done_ids
+    missing = deps - completed_ids
     return len(missing) == 0, list(missing)
 
 
@@ -194,7 +194,7 @@ def build_ui_prompt(task: dict) -> str:
 - docs/conceptual_model.md
 
 ## 완료 조건
-모든 단계가 완료되면: `python3 scripts/task_manager.py update {task['id']} --status done`
+모든 단계가 완료되면: `python3 scripts/task_manager.py update {task['id']} --status completed`
 """
     return prompt
 
@@ -225,7 +225,7 @@ def build_api_prompt(task: dict) -> str:
 - docs/conceptual_model.md
 
 ## 완료 조건
-구현 완료 후: `python3 scripts/task_manager.py update {task['id']} --status done`
+구현 완료 후: `python3 scripts/task_manager.py update {task['id']} --status completed`
 """
     return prompt
 
@@ -249,7 +249,7 @@ def build_config_prompt(task: dict) -> str:
 3. 환경 변수 설정 (필요시)
 
 ## 완료 조건
-설정 완료 후: `python3 scripts/task_manager.py update {task['id']} --status done`
+설정 완료 후: `python3 scripts/task_manager.py update {task['id']} --status completed`
 """
     return prompt
 
@@ -364,7 +364,7 @@ def run_single_task(task_id: str, dry_run: bool = False) -> bool:
         print(f"오류: 의존성 미충족 - {missing}")
         return False
 
-    if task["status"] == "done":
+    if task["status"] == "completed":
         print(f"Task '{task_id}'는 이미 완료되었습니다.")
         return True
 
@@ -427,7 +427,7 @@ def show_status():
     data = load_tasks()
     tasks = data["tasks"]
 
-    stats = {"pending": 0, "in_progress": 0, "done": 0, "blocked": 0}
+    stats = {"pending": 0, "in_progress": 0, "completed": 0, "blocked": 0}
     for t in tasks:
         stats[t["status"]] = stats.get(t["status"], 0) + 1
 
@@ -437,7 +437,7 @@ def show_status():
     print("Task 현황")
     print("="*50)
     print(f"총: {len(tasks)}개")
-    print(f"  - 완료: {stats['done']}개")
+    print(f"  - 완료: {stats['completed']}개")
     print(f"  - 진행중: {stats['in_progress']}개")
     print(f"  - 대기: {stats['pending']}개")
     print(f"  - 차단: {stats['blocked']}개")

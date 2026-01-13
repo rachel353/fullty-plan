@@ -1,6 +1,6 @@
 ---
 name: task-management
-description: "Task 생성 기준, 완료 판단, 상태 업데이트, 진행상황 확인. 트리거: 상태 업데이트, update, 완료 체크, done 확인, 진행상황, progress, 현황, Task 목록"
+description: "Task 생성 기준, 완료 판단, 상태 업데이트, 진행상황 확인. 트리거: 상태 업데이트, update, 완료 체크, completed 확인, 진행상황, progress, 현황, Task 목록"
 ---
 
 # Task Management Skill
@@ -112,14 +112,14 @@ Task가 다음 신호를 보이면 **분리 필요**:
 | `pending` | 시작 전 |
 | `in_progress` | 작업 중 |
 | `blocked` | 의존성으로 차단 |
-| `done` | 완료 |
+| `completed` | 완료 |
 
-### 2.2 Done 조건
+### 2.2 Completed 조건
 
-**모두 만족해야 done**:
+**모두 만족해야 completed**:
 
 ```
-✅ done 조건 체크리스트:
+✅ completed 조건 체크리스트:
 ├─ [1] 관련 파일 존재
 │   └─ 명시된 파일이 실제로 생성/수정됨
 ├─ [2] 기본 로직 구현됨
@@ -173,7 +173,7 @@ export function fetchUsers() {
 
 ### 2.4 Blocked 조건
 
-**의존성 Task가 done이 아님**:
+**의존성 Task가 completed가 아님**:
 
 ```
 🚫 blocked 조건:
@@ -182,7 +182,7 @@ export function fetchUsers() {
 └─ 필요한 타입/인터페이스가 정의 안됨
 ```
 
-**blocked 해제 조건**: 모든 Hard 의존성이 done
+**blocked 해제 조건**: 모든 Hard 의존성이 completed
 
 ---
 
@@ -215,7 +215,7 @@ export function fetchUsers() {
       "id": "task-001",
       "title": "NextAuth 설정 및 로그인 API 구현",
       "priority": "high",
-      "status": "done",
+      "status": "completed",
       "depends_on": [],
       "files": ["app/api/auth/[...nextauth]/route.ts"]
     },
@@ -223,7 +223,7 @@ export function fetchUsers() {
       "id": "task-002",
       "title": "공통 레이아웃 컴포넌트 구현",
       "priority": "high",
-      "status": "done",
+      "status": "completed",
       "depends_on": [],
       "files": ["components/layout/MainLayout.tsx"]
     },
@@ -261,7 +261,7 @@ Task 상태 판단 시작
 └─────────────────────┘
         │
         ▼
-  모든 의존성 done?
+  모든 의존성 completed?
     │         │
    No        Yes
     │         │
@@ -279,7 +279,7 @@ Task 상태 판단 시작
               │ in_progress
               │         │
               └────────▶│
-                       done
+                       completed
 ```
 
 ---
@@ -303,18 +303,18 @@ Task 완료 판단 시:
 
 ## Part 4: 상태 업데이트
 
-트리거: "상태 업데이트", "update", "완료 체크", "done 확인"
+트리거: "상태 업데이트", "update", "완료 체크", "completed 확인"
 
 ### 워크플로우
 
 ```
-1. Task 목록 확인 → 2. 파일 확인 → 3. done 조건 체크 → 4. 상태 업데이트
+1. Task 목록 확인 → 2. 파일 확인 → 3. completed 조건 체크 → 4. 상태 업데이트
 ```
 
 ### CLI 명령어
 
 ```bash
-python scripts/task_manager.py update task-001 --status done
+python scripts/task_manager.py update task-001 --status completed
 python scripts/task_manager.py update task-003 --status blocked --blocked-reason "task-001 완료 필요"
 ```
 

@@ -54,5 +54,5 @@ docs/conceptual_model.md    # Entity structure
 After Step 4:
 
 ```bash
-python3 scripts/task_manager.py update {task_id} --status done
+python3 scripts/task_manager.py update {task_id} --status completed
 ```

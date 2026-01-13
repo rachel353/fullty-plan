@@ -153,7 +153,7 @@ task-001 → task-002 → task-003
 ## Mode 2: 상태 업데이트
 
 ### 트리거 키워드
-- "상태 업데이트", "update", "완료 체크", "done 확인"
+- "상태 업데이트", "update", "완료 체크", "completed 확인"
 
 ### 워크플로우
 
@@ -164,25 +164,25 @@ task-001 → task-002 → task-003
 2. 각 Task의 파일 확인
    └─ Task에 명시된 파일들 Read
         ↓
-3. task-management skill의 done 조건 체크
+3. task-management skill의 completed 조건 체크
    ├─ [1] 파일 존재?
    ├─ [2] 기본 로직 구현됨?
    ├─ [3] 명백한 에러 없음?
    └─ [4] TODO/FIXME 없음?
         ↓
 4. 상태 결정
-   ├─ 모두 만족 → done
+   ├─ 모두 만족 → completed
    ├─ 파일 있지만 불완전 → in_progress 유지
    └─ 의존성 미완료 → blocked
         ↓
 5. Python CLI로 업데이트
-   └─ python scripts/task_manager.py update <task_id> --status done
+   └─ python scripts/task_manager.py update <task_id> --status completed
 ```
 
-### done 조건 체크리스트 (from task-management skill)
+### completed 조건 체크리스트 (from task-management skill)
 
 ```
-✅ done 조건:
+✅ completed 조건:
 ├─ [1] 관련 파일 존재
 ├─ [2] 기본 로직 구현됨 (import, 함수/컴포넌트 정의, export)
 ├─ [3] 명백한 에러 없음 (문법, import, 타입)
@@ -195,14 +195,14 @@ task-001 → task-002 → task-003
 └─ mock 데이터 사용 중
 
 🚫 blocked:
-└─ 의존성 Task가 done이 아님
+└─ 의존성 Task가 completed가 아님
 ```
 
 ### 실행 명령어
 
 ```bash
 # 상태 업데이트
-python scripts/task_manager.py update task-001 --status done
+python scripts/task_manager.py update task-001 --status completed
 
 # blocked 처리 (사유 포함)
 python scripts/task_manager.py update task-003 --status blocked --blocked-reason "task-001 완료 필요"
@@ -295,7 +295,7 @@ python scripts/task_manager.py show task-001
     {
       "id": "task-001",
       "title": "로그인 API 엔드포인트 구현",
-      "status": "done",
+      "status": "completed",
       "priority": "high",
       "feature": "인증",
       "dependencies": [],
@@ -313,7 +313,7 @@ python scripts/task_manager.py show task-001
 |------|------|------|
 | id | string | 고유 ID (task-XXX) |
 | title | string | Task 제목 (한 문장) |
-| status | enum | pending, in_progress, done, blocked |
+| status | enum | pending, in_progress, completed, blocked |
 | priority | enum | high, medium, low |
 | feature | string | 관련 기능/도메인 |
 | dependencies | string[] | 의존하는 Task ID 목록 |

@@ -155,7 +155,7 @@ python scripts/task_manager.py add \
         {
           "id": "task-001",
           "title": "TailwindCSS 설정",
-          "status": "done",
+          "status": "completed",
           "priority": "high",
           "dependencies": [],
           "files": ["tailwind.config.js"],
@@ -211,7 +211,7 @@ python scripts/task_manager.py add \
 | features[].tasks | array | 해당 Feature의 Task 목록 |
 | features[].tasks[].id | string | 고유 ID (task-XXX) |
 | features[].tasks[].title | string | Task 제목 (한 문장) |
-| features[].tasks[].status | enum | pending, in_progress, done, blocked |
+| features[].tasks[].status | enum | pending, in_progress, completed, blocked |
 | features[].tasks[].priority | enum | high, medium, low |
 | features[].tasks[].dependencies | string[] | 의존하는 Task ID 목록 |
 | features[].tasks[].files | string[] | 관련 파일 경로 |

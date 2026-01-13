@@ -69,7 +69,7 @@
         {
           "id": "task-004",
           "title": "홈페이지 데이터 연동",
-          "status": "done",
+          "status": "completed",
           "priority": "high",
           "dependencies": [
             "task-003"
