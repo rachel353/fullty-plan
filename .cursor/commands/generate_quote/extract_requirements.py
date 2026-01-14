@@ -52,6 +52,32 @@ def extract_requirement_content(requirements_content, req_id):
     return '\n'.join(result_lines).strip()
 
 
+def get_all_requirements_content(client_path):
+    """Read all requirements.md files from all meeting dates"""
+    meeting_scripts_dir = client_path / "meeting_scripts"
+    all_content = []
+    
+    if not meeting_scripts_dir.exists():
+        return ""
+    
+    # Get all meeting date folders and sort them
+    meeting_folders = sorted([
+        f for f in meeting_scripts_dir.iterdir() 
+        if f.is_dir()
+    ])
+    
+    for folder in meeting_folders:
+        req_file = folder / "requirements.md"
+        if req_file.exists():
+            content = read_file_content(req_file)
+            if content:
+                all_content.append(f"# From {folder.name}\n")
+                all_content.append(content)
+                all_content.append("\n")
+    
+    return '\n'.join(all_content)
+
+
 def build_requirements_reference(quote_content, requirements_content):
     """Build the requirements reference section"""
     req_ids = extract_req_ids_from_quote(quote_content)
@@ -78,20 +104,21 @@ def extract_requirements(client_folder, meeting_date):
     client_path = Path(client_folder)
     quotes_dir = client_path / "quotes"
     combined_file = quotes_dir / f"{meeting_date}_combined.md"
-    requirements_file = client_path / "meeting_scripts" / meeting_date / "requirements.md"
     
     # Check files exist
     if not combined_file.exists():
         print(f"Error: Combined quote not found: {combined_file}")
         sys.exit(1)
     
-    if not requirements_file.exists():
-        print(f"Error: Requirements file not found: {requirements_file}")
-        sys.exit(1)
-    
-    # Read files
+    # Read combined quote
     quote_content = read_file_content(combined_file)
-    requirements_content = read_file_content(requirements_file)
+    
+    # Read ALL requirements from all meeting dates
+    requirements_content = get_all_requirements_content(client_path)
+    
+    if not requirements_content:
+        print(f"Error: No requirements files found in meeting_scripts/")
+        sys.exit(1)
     
     # Check if requirements reference already exists
     if "## 10) Requirements Reference" in quote_content:

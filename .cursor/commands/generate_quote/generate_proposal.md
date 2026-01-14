@@ -1,43 +1,32 @@
-"""
-Generate a client proposal document based on the following inputs:
+# Generate Quote Proposal
 
-- Client Name: [CLIENT_NAME]
-- Proposal Overview/Content: [PROPOSAL_OVERVIEW]
+## Overview
+클라이언트 제안서 문서를 생성합니다. 회사 소개 자료와 프로젝트 관련 정보를 통합하여 종합적인 제안서를 작성합니다.
 
-Instructions:
+## Steps
+1. 클라이언트 폴더 찾기 (`YY_MM_CLIENT_NAME/`)
+2. 회사 소개 자료 읽기: `appendix/company_intro.md` 또는 `appendix/*.md`
+3. 프로젝트 관련 파일 읽기:
+   - `quotes/[MM.DD]/guide.md`
+   - `meeting_scripts/[MM.DD]/requirements.md`
+   - `meeting_scripts/[MM.DD]/summary.md`
+   - `quotes/[MM.DD]/note.md` (존재 시 최우선)
+   - 이전 견적서 파일들
+   - `appendix/requirements.md` (존재 시 필수)
+4. 제안서 생성:
+   - 표지 (프로젝트/클라이언트 이름, 날짜, 제목)
+   - 실행 요약
+   - 프로젝트 목표 및 가치 제안
+   - 제안 방법론
+   - 타임라인, 결과물, 팀 소개
+   - 가격 (있는 경우)
+   - 연락처 및 다음 단계
+5. `quotes/[MM.DD]/proposal.md` 저장
+6. `git status` 확인 → `git add` → `git commit`
 
-1. Locate the client folder formatted as `YY_MM_CLIENT_NAME/`.
-2. Read internal company introduction materials (e.g., `appendix/company_intro.md` or `appendix/*.md`) for up-to-date descriptions, history, achievements, team profiles, and core value proposition.
-3. Consult the following files for client/project-specific information:
-   - `quotes/[MM.DD]/guide.md` (for client priorities)
-   - `meeting_scripts/[MM.DD]/requirements.md` (for technical/functional requirements)
-   - `meeting_scripts/[MM.DD]/summary.md` (for meeting summary and relationship context)
-   - `quotes/[MM.DD]/note.md` (**if exists, this takes top priority for corrections or clarifications**)
-   - Any previous `quotes/*.md` files for historical reference 
-   - `appendix/requirements.md` (**if present, must be reflected**)
-4. Optionally, use `meeting_scripts/[MM.DD]/script.md` and any other `appendix/*.md` for detailed context.
-5. Synthesize and generate a comprehensive proposal document including:
-   - Cover page with project/client name, date, and title
-   - Executive summary leveraging both the provided content ([PROPOSAL_OVERVIEW]) and company strengths found in internal materials
-   - Project objectives, value propositions, and partnership rationale
-   - Proposed methodology/approach tailored to the client needs
-   - Timeline, deliverables, and team introduction (using latest company profiles)
-   - Pricing (if present in `specification_and_quote.md` or other quote docs)
-   - Contact information and next steps
-6. Save as `quotes/[MM.DD]/proposal.md` within the client folder.
-7. Use other commands (such as those for background generation, specification, etc.) where appropriate to enrich the document or fetch required sections.
-8. Ensure that content in `quotes/[MM.DD]/note.md` (if exists) overrides or corrects all other references on conflicting points.
-9. If any required file or folder does not exist, create it accordingly.
-10. Never output the full internal file contents; summarize, synthesize, and appropriately cite.
-
-Output format should resemble a complete, high-quality proposal in markdown, with logical structure and proper sections.
-
-Example Command Usage:
-
-```
-Generate a proposal for client [CLIENT_NAME] using provided proposal content, referencing company profile and all related quote/meeting materials as described above. Output file: quotes/[MM.DD]/proposal.md
-```
-(Note: The actual command should allow variable insertion for [CLIENT_NAME], [MM.DD], and [PROPOSAL_OVERVIEW].)
-
----
-
+## Checklist
+- [ ] 회사 소개 자료가 읽혔는가?
+- [ ] note.md가 읽혔는가? (존재 시)
+- [ ] appendix/requirements.md가 반영되었는가? (존재 시)
+- [ ] proposal.md가 올바른 구조로 생성되었는가?
+- [ ] 커밋까지 완료했는가?
