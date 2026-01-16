@@ -1,0 +1,2119 @@
+{
+  "meta": {
+    "name": "Jyageunfriends QC Test Cases",
+    "baseChange": "change-2026-01-15-1000",
+    "scope": {
+      "priority": ["P1"]
+    },
+    "sources": {
+      "userStories": "docs/user_stories.md",
+      "conceptualModel": "docs/conceptual_model.md",
+      "changes": "docs/changes/2026-01-15-1000.md",
+      "ia": "docs/ia_structure.md",
+      "credentials": "docs/test-credentials.md"
+    },
+    "idConvention": {
+      "testCaseId": "TC-<US>-<AC>-<NN>",
+      "status": ["todo", "in_progress", "pass", "fail", "blocked"]
+    },
+    "testCredentials": {
+      "reader": { "email": "reader@test.com", "password": "password123" },
+      "creator": { "email": "creator@test.com", "password": "password123" }
+    },
+    "generatedAt": "2026-01-16"
+  },
+  "userStories": [
+    {
+      "id": "US-001",
+      "priority": "P1",
+      "domain": "인증/회원",
+      "title": "회원가입",
+      "statement": "As a 독자, I want to 이메일 또는 소셜 계정으로 회원가입하다, So that 서비스를 이용하고 Ink를 소유할 수 있다",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-1",
+          "text": "이메일/비밀번호 입력 시 비밀번호 규칙 실시간 체크 (8자 이상, 영문, 숫자, 특수문자(선택))",
+          "testCases": [
+            {
+              "id": "TC-US-001-AC-1-01",
+              "title": "정상: 유효한 비밀번호 입력 시 규칙 통과 표시",
+              "type": "positive",
+              "precondition": "비로그인 상태, /signup 페이지",
+              "steps": ["1. /signup 접속", "2. 이메일 입력", "3. 'Test1234!' 비밀번호 입력"],
+              "expected": "비밀번호 규칙 체크 UI에 모든 조건 통과 표시 (8자 이상 ✓, 영문 ✓, 숫자 ✓)",
+              "status": "todo",
+              "tags": ["DR-001"]
+            },
+            {
+              "id": "TC-US-001-AC-1-02",
+              "title": "실패: 8자 미만 비밀번호 입력 시 규칙 미통과 표시",
+              "type": "negative",
+              "precondition": "비로그인 상태, /signup 페이지",
+              "steps": ["1. /signup 접속", "2. 이메일 입력", "3. 'Test12' 비밀번호 입력 (6자)"],
+              "expected": "비밀번호 규칙 체크 UI에 '8자 이상' 조건 미통과 표시",
+              "status": "todo",
+              "tags": []
+            },
+            {
+              "id": "TC-US-001-AC-1-03",
+              "title": "실패: 숫자 없는 비밀번호 입력 시 규칙 미통과 표시",
+              "type": "negative",
+              "precondition": "비로그인 상태, /signup 페이지",
+              "steps": ["1. /signup 접속", "2. 이메일 입력", "3. 'TestTest!' 비밀번호 입력"],
+              "expected": "비밀번호 규칙 체크 UI에 '숫자 포함' 조건 미통과 표시",
+              "status": "todo",
+              "tags": []
+            }
+          ]
+        },
+        {
+          "id": "AC-2",
+          "text": "비밀번호 확인 필드에서 불일치 시 즉시 에러 상태 표시",
+          "testCases": [
+            {
+              "id": "TC-US-001-AC-2-01",
+              "title": "정상: 비밀번호 일치 시 에러 없음",
+              "type": "positive",
+              "precondition": "비로그인 상태, /signup 페이지, 비밀번호 입력 완료",
+              "steps": ["1. 비밀번호 필드에 'Test1234!' 입력", "2. 비밀번호 확인 필드에 'Test1234!' 입력"],
+              "expected": "에러 상태 표시 없음, 비밀번호 확인 필드 정상 상태",
+              "status": "todo",
+              "tags": []
+            },
+            {
+              "id": "TC-US-001-AC-2-02",
+              "title": "실패: 비밀번호 불일치 시 즉시 에러 표시",
+              "type": "negative",
+              "precondition": "비로그인 상태, /signup 페이지, 비밀번호 입력 완료",
+              "steps": ["1. 비밀번호 필드에 'Test1234!' 입력", "2. 비밀번호 확인 필드에 'Test5678!' 입력"],
+              "expected": "비밀번호 확인 필드 하단에 '비밀번호가 일치하지 않습니다' 에러 즉시 표시",
+              "status": "todo",
+              "tags": []
+            }
+          ]
+        },
+        {
+          "id": "AC-3",
+          "text": "휴대폰 번호 입력 후 '인증번호 전송' 버튼 클릭 시 인증번호 발송 및 타이머 시작 (5분)",
+          "testCases": [
+            {
+              "id": "TC-US-001-AC-3-01",
+              "title": "정상: 유효한 휴대폰 번호로 인증번호 전송",
+              "type": "positive",
+              "precondition": "비로그인 상태, /signup 페이지",
+              "steps": ["1. 휴대폰 번호 '010-1234-5678' 입력", "2. '인증번호 전송' 버튼 클릭"],
+              "expected": "인증번호 입력 필드 활성화, 5분 타이머 시작 표시",
+              "status": "todo",
+              "tags": []
+            },
+            {
+              "id": "TC-US-001-AC-3-02",
+              "title": "실패: 잘못된 형식의 휴대폰 번호 입력 시 전송 불가",
+              "type": "negative",
+              "precondition": "비로그인 상태, /signup 페이지",
+              "steps": ["1. 휴대폰 번호 '0101234' 입력 (자릿수 부족)", "2. '인증번호 전송' 버튼 클릭"],
+              "expected": "'올바른 휴대폰 번호를 입력해주세요' 에러 표시 또는 버튼 비활성화",
+              "status": "todo",
+              "tags": []
+            },
+            {
+              "id": "TC-US-001-AC-3-03",
+              "title": "UX: 타이머 5분 카운트다운 동작 확인",
+              "type": "edge",
+              "precondition": "인증번호 전송 완료 상태",
+              "steps": ["1. 타이머 시작 확인", "2. 5분간 대기"],
+              "expected": "타이머가 5:00에서 0:00까지 카운트다운, 만료 시 재전송 버튼 활성화",
+              "status": "todo",
+              "tags": []
+            }
+          ]
+        },
+        {
+          "id": "AC-4",
+          "text": "인증번호 일치 시 회원가입 완료 버튼 활성화",
+          "testCases": [
+            {
+              "id": "TC-US-001-AC-4-01",
+              "title": "정상: 올바른 인증번호 입력 시 완료 버튼 활성화",
+              "type": "positive",
+              "precondition": "인증번호 전송 완료 상태",
+              "steps": ["1. 수신한 인증번호 입력"],
+              "expected": "회원가입 완료 버튼 활성화",
+              "status": "todo",
+              "tags": []
+            },
+            {
+              "id": "TC-US-001-AC-4-02",
+              "title": "실패: 잘못된 인증번호 입력 시 완료 버튼 비활성화 유지",
+              "type": "negative",
+              "precondition": "인증번호 전송 완료 상태",
+              "steps": ["1. 잘못된 인증번호 '999999' 입력"],
+              "expected": "회원가입 완료 버튼 비활성화 유지, 에러 메시지 표시",
+              "status": "todo",
+              "tags": []
+            }
+          ]
+        },
+        {
+          "id": "AC-5",
+          "text": "카카오/구글 소셜 로그인 버튼 클릭 시 해당 OAuth 인증 페이지로 리다이렉트",
+          "testCases": [
+            {
+              "id": "TC-US-001-AC-5-01",
+              "title": "정상: 카카오 버튼 클릭 시 OAuth 리다이렉트",
+              "type": "positive",
+              "precondition": "비로그인 상태, /signup 페이지",
+              "steps": ["1. '카카오로 시작하기' 버튼 클릭"],
+              "expected": "카카오 OAuth 인증 페이지로 리다이렉트",
+              "status": "todo",
+              "tags": []
+            },
+            {
+              "id": "TC-US-001-AC-5-02",
+              "title": "정상: 구글 버튼 클릭 시 OAuth 리다이렉트",
+              "type": "positive",
+              "precondition": "비로그인 상태, /signup 페이지",
+              "steps": ["1. '구글로 시작하기' 버튼 클릭"],
+              "expected": "구글 OAuth 인증 페이지로 리다이렉트",
+              "status": "todo",
+              "tags": []
+            }
+          ]
+        },
+        {
+          "id": "AC-6",
+          "text": "회원가입 완료 후 완료 페이지 표시 → 로그인 CTA 제공",
+          "testCases": [
+            {
+              "id": "TC-US-001-AC-6-01",
+              "title": "정상: 회원가입 완료 시 완료 페이지 표시",
+              "type": "positive",
+              "precondition": "모든 회원가입 필드 유효하게 입력 완료",
+              "steps": ["1. '회원가입 완료' 버튼 클릭"],
+              "expected": "/signup/complete 페이지로 이동, '회원가입이 완료되었습니다' 메시지 및 로그인 CTA 버튼 표시",
+              "status": "todo",
+              "tags": []
+            }
+          ]
+        },
+        {
+          "id": "AC-7",
+          "text": "에러 메시지는 필드 하단에 인라인 텍스트로 노출",
+          "testCases": [
+            {
+              "id": "TC-US-001-AC-7-01",
+              "title": "UX: 에러 메시지 위치 확인",
+              "type": "positive",
+              "precondition": "비로그인 상태, /signup 페이지",
+              "steps": ["1. 잘못된 이메일 형식 입력 (예: 'invalid')", "2. 다음 필드로 포커스 이동"],
+              "expected": "이메일 필드 바로 하단에 인라인으로 에러 메시지 표시 (팝업/토스트 아님)",
+              "status": "todo",
+              "tags": []
+            }
+          ]
+        }
+      ],
+      "tags": {
+        "routes": ["/signup", "/signup/complete"],
+        "changes": ["change-2026-01-14-1500"],
+        "domainRules": ["DR-001"]
+      }
+    },
+    {
+      "id": "US-002",
+      "priority": "P1",
+      "domain": "인증/회원",
+      "title": "로그인",
+      "statement": "As a 독자, I want to 로그인하다, So that 내 지갑과 기여 내역에 접근할 수 있다",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-1",
+          "text": "올바른 이메일/비밀번호 입력 시 JWT 토큰 발급 및 홈 화면으로 이동",
+          "testCases": [
+            {
+              "id": "TC-US-002-AC-1-01",
+              "title": "정상: 유효한 자격증명으로 로그인 성공",
+              "type": "positive",
+              "precondition": "비로그인 상태, /login 페이지, 가입된 계정 존재",
+              "steps": ["1. 이메일 'reader@test.com' 입력", "2. 비밀번호 'password123' 입력", "3. 로그인 버튼 클릭"],
+              "expected": "JWT 토큰 저장, /home 으로 이동",
+              "status": "todo",
+              "tags": []
+            },
+            {
+              "id": "TC-US-002-AC-1-02",
+              "title": "실패: SUSPENDED 제재 사용자 로그인 차단",
+              "type": "negative",
+              "precondition": "비로그인 상태, /login 페이지, status=SUSPENDED 계정",
+              "steps": ["1. SUSPENDED 상태 계정 이메일 입력", "2. 올바른 비밀번호 입력", "3. 로그인 버튼 클릭"],
+              "expected": "로그인 실패, '계정이 정지되었습니다' 에러 메시지 표시",
+              "status": "todo",
+              "tags": ["DR-013"]
+            },
+            {
+              "id": "TC-US-002-AC-1-03",
+              "title": "실패: PERMANENT_BAN 제재 사용자 로그인 차단",
+              "type": "negative",
+              "precondition": "비로그인 상태, /login 페이지, 영구 차단 제재 적용 계정",
+              "steps": ["1. 영구 차단된 계정 이메일 입력", "2. 올바른 비밀번호 입력", "3. 로그인 버튼 클릭"],
+              "expected": "로그인 실패, '영구 정지된 계정입니다' 에러 메시지 표시",
+              "status": "todo",
+              "tags": ["DR-013"]
+            }
+          ]
+        },
+        {
+          "id": "AC-2",
+          "text": "잘못된 비밀번호 입력 시 '비밀번호가 일치하지 않습니다' 에러 표시",
+          "testCases": [
+            {
+              "id": "TC-US-002-AC-2-01",
+              "title": "실패: 잘못된 비밀번호로 로그인 시도",
+              "type": "negative",
+              "precondition": "비로그인 상태, /login 페이지",
+              "steps": ["1. 이메일 'reader@test.com' 입력", "2. 잘못된 비밀번호 'wrongpassword' 입력", "3. 로그인 버튼 클릭"],
+              "expected": "'비밀번호가 일치하지 않습니다' 에러 메시지 표시",
+              "status": "todo",
+              "tags": []
+            }
+          ]
+        },
+        {
+          "id": "AC-3",
+          "text": "소셜 로그인 성공 시 3초 이내 홈 화면으로 이동",
+          "testCases": [
+            {
+              "id": "TC-US-002-AC-3-01",
+              "title": "정상: 소셜 로그인 후 3초 이내 홈 이동",
+              "type": "positive",
+              "precondition": "비로그인 상태, 소셜 계정 연동 완료",
+              "steps": ["1. 카카오/구글 소셜 로그인 버튼 클릭", "2. OAuth 인증 완료"],
+              "expected": "3초 이내 /home 으로 이동",
+              "status": "todo",
+              "tags": []
+            }
+          ]
+        },
+        {
+          "id": "AC-4",
+          "text": "비밀번호 찾기 버튼 클릭 시 비밀번호 재설정 페이지로 이동",
+          "testCases": [
+            {
+              "id": "TC-US-002-AC-4-01",
+              "title": "정상: 비밀번호 찾기 버튼 동작",
+              "type": "positive",
+              "precondition": "비로그인 상태, /login 페이지",
+              "steps": ["1. '비밀번호 찾기' 링크 클릭"],
+              "expected": "/password-reset 페이지로 이동",
+              "status": "todo",
+              "tags": []
+            }
+          ]
+        }
+      ],
+      "tags": {
+        "routes": ["/login", "/home"],
+        "changes": ["change-2026-01-14-1500"],
+        "domainRules": ["DR-013"]
+      }
+    },
+    {
+      "id": "US-002-1",
+      "priority": "P1",
+      "domain": "인증/회원",
+      "title": "비밀번호 재설정",
+      "statement": "As a 독자, I want to 비밀번호를 재설정하다, So that 비밀번호를 잊어버렸을 때 계정에 다시 접근할 수 있다",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-1",
+          "text": "휴대폰 번호 입력 후 '인증번호 전송' 클릭 시 SMS 발송 및 타이머 시작 (5분)",
+          "testCases": [
+            {
+              "id": "TC-US-002-1-AC-1-01",
+              "title": "정상: 휴대폰 인증번호 전송",
+              "type": "positive",
+              "precondition": "/password-reset 페이지",
+              "steps": ["1. 휴대폰 번호 입력", "2. '인증번호 전송' 버튼 클릭"],
+              "expected": "SMS 발송, 타이머 5분 시작",
+              "status": "todo",
+              "tags": []
+            }
+          ]
+        },
+        {
+          "id": "AC-2",
+          "text": "인증번호 일치 시 새 비밀번호 설정 화면으로 이동",
+          "testCases": [
+            {
+              "id": "TC-US-002-1-AC-2-01",
+              "title": "정상: 인증번호 확인 후 다음 단계 이동",
+              "type": "positive",
+              "precondition": "인증번호 전송 완료",
+              "steps": ["1. 올바른 인증번호 입력", "2. 확인 버튼 클릭"],
+              "expected": "/password-reset/new 페이지로 이동",
+              "status": "todo",
+              "tags": []
+            }
+          ]
+        },
+        {
+          "id": "AC-3",
+          "text": "새 비밀번호 입력 시 동일한 비밀번호 규칙 실시간 체크",
+          "testCases": [
+            {
+              "id": "TC-US-002-1-AC-3-01",
+              "title": "정상: 새 비밀번호 규칙 실시간 체크",
+              "type": "positive",
+              "precondition": "/password-reset/new 페이지",
+              "steps": ["1. 새 비밀번호 입력 (8자 이상, 영문+숫자)"],
+              "expected": "비밀번호 규칙 실시간 체크 UI 표시",
+              "status": "todo",
+              "tags": []
+            }
+          ]
+        },
+        {
+          "id": "AC-4",
+          "text": "비밀번호 재설정 완료 시 로그인 페이지로 이동",
+          "testCases": [
+            {
+              "id": "TC-US-002-1-AC-4-01",
+              "title": "정상: 재설정 완료 후 로그인 페이지 이동",
+              "type": "positive",
+              "precondition": "새 비밀번호 입력 완료",
+              "steps": ["1. '비밀번호 변경' 버튼 클릭"],
+              "expected": "/login 페이지로 이동, 성공 메시지 표시",
+              "status": "todo",
+              "tags": []
+            }
+          ]
+        }
+      ],
+      "tags": {
+        "routes": ["/password-reset", "/password-reset/verify", "/password-reset/new", "/login"],
+        "changes": ["change-2026-01-14-1500"],
+        "domainRules": []
+      }
+    },
+    {
+      "id": "US-003",
+      "priority": "P1",
+      "domain": "지갑/재화",
+      "title": "Ink 잔액 확인",
+      "statement": "As a 독자, I want to 내 Ink 잔액을 확인하다, So that 후원/제안에 사용 가능한 금액을 알 수 있다",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-1",
+          "text": "마이페이지 '내 지갑' 탭에서 Ink 잔액 정보를 구분하여 표시 (Available Ink, Pending Ink, Total Ink)",
+          "testCases": [
+            {
+              "id": "TC-US-003-AC-1-01",
+              "title": "정상: 지갑 잔액 3종 구분 표시",
+              "type": "positive",
+              "precondition": "로그인 상태, Ink 보유",
+              "steps": ["1. /mypage/wallet 접속"],
+              "expected": "Available Ink, Pending Ink, Total Ink 3가지 잔액 구분 표시",
+              "status": "todo",
+              "tags": []
+            }
+          ]
+        },
+        {
+          "id": "AC-2",
+          "text": "잔액은 소수점 없이 정수로 표시",
+          "testCases": [
+            {
+              "id": "TC-US-003-AC-2-01",
+              "title": "정상: 잔액 정수 표시",
+              "type": "positive",
+              "precondition": "로그인 상태",
+              "steps": ["1. /mypage/wallet 접속"],
+              "expected": "모든 잔액이 정수로 표시 (소수점 없음)",
+              "status": "todo",
+              "tags": []
+            }
+          ]
+        },
+        {
+          "id": "AC-3",
+          "text": "페이지 로드 시 2초 이내 잔액 정보 표시",
+          "testCases": [
+            {
+              "id": "TC-US-003-AC-3-01",
+              "title": "UX: 잔액 로딩 시간 2초 이내",
+              "type": "positive",
+              "precondition": "로그인 상태",
+              "steps": ["1. /mypage/wallet 접속", "2. 로딩 시간 측정"],
+              "expected": "2초 이내 잔액 정보 표시 완료",
+              "status": "todo",
+              "tags": []
+            }
+          ]
+        },
+        {
+          "id": "AC-4",
+          "text": "Pending Ink 영역은 클릭 가능한 UI로 표시 (화살표 아이콘 또는 터치 가능 표시)",
+          "testCases": [
+            {
+              "id": "TC-US-003-AC-4-01",
+              "title": "정상: Pending Ink 클릭 가능 UI",
+              "type": "positive",
+              "precondition": "로그인 상태, /mypage/wallet",
+              "steps": ["1. Pending Ink 영역 확인"],
+              "expected": "클릭 가능한 UI (화살표 아이콘 또는 커서 포인터)",
+              "status": "todo",
+              "tags": []
+            }
+          ]
+        }
+      ],
+      "tags": {
+        "routes": ["/mypage/wallet"],
+        "changes": [],
+        "domainRules": []
+      }
+    },
+    {
+      "id": "US-003-1",
+      "priority": "P1",
+      "domain": "지갑/재화",
+      "title": "진행 중인 제안 내역 확인",
+      "statement": "As a 독자, I want to 진행 중인 제안에 묶인 Ink 내역을 확인하다, So that 어떤 에피소드에 얼마를 제안/지지했는지 파악할 수 있다",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-1",
+          "text": "'내 지갑'에서 Pending Ink 영역 클릭 시 '진행 중인 제안 내역' 화면으로 이동",
+          "testCases": [
+            {
+              "id": "TC-US-003-1-AC-1-01",
+              "title": "정상: Pending Ink 클릭 시 내역 페이지 이동",
+              "type": "positive",
+              "precondition": "로그인 상태, /mypage/wallet",
+              "steps": ["1. Pending Ink 영역 클릭"],
+              "expected": "/mypage/wallet/pending 페이지로 이동",
+              "status": "todo",
+              "tags": []
+            }
+          ]
+        },
+        {
+          "id": "AC-2",
+          "text": "내역 리스트에 작품명/에피소드 제목, 제안 유형, 베팅/지지 금액, 제안 상태, 제안 마감일 표시",
+          "testCases": [
+            {
+              "id": "TC-US-003-1-AC-2-01",
+              "title": "정상: 내역 리스트 정보 표시",
+              "type": "positive",
+              "precondition": "로그인 상태, 진행 중인 제안 존재",
+              "steps": ["1. /mypage/wallet/pending 접속"],
+              "expected": "각 항목에 작품명, 에피소드 제목, 제안 유형(Proposal/Backing), 금액, 상태, 마감일 표시",
+              "status": "todo",
+              "tags": ["CI-007"]
+            }
+          ]
+        },
+        {
+          "id": "AC-3",
+          "text": "리스트 항목 클릭 시 해당 에피소드의 제안 상세 화면으로 이동",
+          "testCases": [
+            {
+              "id": "TC-US-003-1-AC-3-01",
+              "title": "정상: 항목 클릭 시 에피소드 이동",
+              "type": "positive",
+              "precondition": "진행 중인 제안 내역 존재",
+              "steps": ["1. 리스트 항목 클릭"],
+              "expected": "해당 에피소드 뷰어 페이지로 이동",
+              "status": "todo",
+              "tags": []
+            }
+          ]
+        },
+        {
+          "id": "AC-4",
+          "text": "빈 내역일 경우 '진행 중인 제안이 없습니다' 안내 메시지 표시",
+          "testCases": [
+            {
+              "id": "TC-US-003-1-AC-4-01",
+              "title": "정상: 빈 상태 메시지 표시",
+              "type": "positive",
+              "precondition": "로그인 상태, 진행 중인 제안 없음",
+              "steps": ["1. /mypage/wallet/pending 접속"],
+              "expected": "'진행 중인 제안이 없습니다' 안내 메시지 표시",
+              "status": "todo",
+              "tags": []
+            }
+          ]
+        },
+        {
+          "id": "AC-5",
+          "text": "페이지 로드 시 2초 이내 내역 리스트 표시",
+          "testCases": [
+            {
+              "id": "TC-US-003-1-AC-5-01",
+              "title": "UX: 내역 로딩 시간 2초 이내",
+              "type": "positive",
+              "precondition": "로그인 상태",
+              "steps": ["1. /mypage/wallet/pending 접속", "2. 로딩 시간 측정"],
+              "expected": "2초 이내 내역 리스트 표시 완료",
+              "status": "todo",
+              "tags": []
+            },
+            {
+              "id": "TC-US-003-1-AC-5-02",
+              "title": "정상: OPEN 상태 Proposal 철회 성공",
+              "type": "positive",
+              "precondition": "로그인 상태, OPEN 상태 에피소드에 본인 Proposal 존재",
+              "steps": ["1. /mypage/wallet/pending 접속", "2. Proposal 항목의 철회하기 버튼 클릭", "3. 확인 모달에서 철회 확정"],
+              "expected": "철회 완료 메시지 표시, Ink 반환, 리스트에서 해당 항목 제거",
+              "status": "todo",
+              "tags": ["DR-014", "CI-004"]
+            },
+            {
+              "id": "TC-US-003-1-AC-5-03",
+              "title": "정상: OPEN 상태 Backing 철회 성공",
+              "type": "positive",
+              "precondition": "로그인 상태, OPEN 상태 에피소드에 본인 Backing(지지) 존재",
+              "steps": ["1. /mypage/wallet/pending 접속", "2. Backing 항목의 철회하기 버튼 클릭", "3. 확인 모달에서 철회 확정"],
+              "expected": "철회 완료 메시지 표시, Ink 반환, 리스트에서 해당 항목 제거",
+              "status": "todo",
+              "tags": ["DR-014", "CI-004"]
+            },
+            {
+              "id": "TC-US-003-1-AC-5-04",
+              "title": "실패: Sponsor(직접후원) 철회 불가",
+              "type": "negative",
+              "precondition": "로그인 상태, 본인 Sponsor(직접후원) 존재",
+              "steps": ["1. /mypage/wallet/pending 접속", "2. Sponsor 항목 확인"],
+              "expected": "Sponsor 항목에는 철회하기 버튼 비노출",
+              "status": "todo",
+              "tags": ["DR-014", "CI-004"]
+            },
+            {
+              "id": "TC-US-003-1-AC-5-05",
+              "title": "실패: PUBLISHED 상태 Proposal 철회 불가",
+              "type": "negative",
+              "precondition": "로그인 상태, PUBLISHED 상태 에피소드에 본인 Proposal 존재",
+              "steps": ["1. /mypage/wallet/pending 접속", "2. PUBLISHED 상태 에피소드의 참여 항목 확인"],
+              "expected": "해당 항목에 철회하기 버튼 비노출 (PUBLISHED 상태는 pending 리스트에 미노출)",
+              "status": "todo",
+              "tags": ["DR-014"]
+            }
+          ]
+        }
+      ],
+      "tags": {
+        "routes": ["/mypage/wallet/pending"],
+        "changes": ["change-2026-01-15-1000"],
+        "domainRules": ["DR-014"]
+      }
+    },
+    {
+      "id": "US-005",
+      "priority": "P1",
+      "domain": "결제",
+      "title": "Ink 충전",
+      "statement": "As a 독자, I want to Ink를 충전하다, So that 후원/제안에 사용할 재화를 확보할 수 있다",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-1",
+          "text": "Ink 충전 상점에서 충전 금액 옵션(10/20/30/100 Ink) 선택 가능",
+          "testCases": [
+            {
+              "id": "TC-US-005-AC-1-01",
+              "title": "정상: 4가지 충전 옵션 표시",
+              "type": "positive",
+              "precondition": "로그인 상태, /shop 페이지",
+              "steps": ["1. /shop 접속"],
+              "expected": "10 Ink, 20 Ink, 30 Ink, 100 Ink 4가지 옵션 표시 (각각 1000원, 2000원, 3000원, 10000원)",
+              "status": "todo",
+              "tags": ["CI-014", "CI-015", "CI-016"]
+            },
+            {
+              "id": "TC-US-005-AC-1-02",
+              "title": "정상: 보너스/할인 없이 단순 표시",
+              "type": "positive",
+              "precondition": "로그인 상태, /shop 페이지",
+              "steps": ["1. /shop 접속", "2. 충전 옵션 카드 확인"],
+              "expected": "보너스, 할인, 추천, 이벤트 표기 없음, 동일한 시각적 위계",
+              "status": "todo",
+              "tags": ["CI-015"]
+            }
+          ]
+        },
+        {
+          "id": "AC-2",
+          "text": "PG사(토스/페이플) 결제 창 연동 후 결제 성공 시 즉시 Ink 잔액 증가",
+          "testCases": [
+            {
+              "id": "TC-US-005-AC-2-01",
+              "title": "정상: 결제 성공 시 Ink 잔액 증가",
+              "type": "positive",
+              "precondition": "로그인 상태, /shop/payment 페이지",
+              "steps": ["1. 충전 옵션 선택", "2. 결제 수단 선택", "3. 결제 완료"],
+              "expected": "Ink 잔액 즉시 증가",
+              "status": "todo",
+              "tags": []
+            }
+          ]
+        },
+        {
+          "id": "AC-3",
+          "text": "결제 완료 후 '충전이 완료되었습니다' 확인 메시지 표시",
+          "testCases": [
+            {
+              "id": "TC-US-005-AC-3-01",
+              "title": "정상: 결제 완료 메시지 표시",
+              "type": "positive",
+              "precondition": "결제 성공",
+              "steps": ["1. 결제 완료"],
+              "expected": "/shop/payment/complete 이동, '충전이 완료되었습니다' 메시지 표시",
+              "status": "todo",
+              "tags": []
+            }
+          ]
+        }
+      ],
+      "tags": {
+        "routes": ["/shop", "/shop/payment", "/shop/payment/complete"],
+        "changes": ["change-2026-01-15-1000"],
+        "domainRules": ["DR-015"]
+      }
+    },
+    {
+      "id": "US-006",
+      "priority": "P1",
+      "domain": "작품 탐색",
+      "title": "홈에서 추천/인기 작품 확인",
+      "statement": "As a 독자, I want to 홈에서 추천/인기 작품을 확인하다, So that 관심 있는 작품을 쉽게 발견할 수 있다",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-1",
+          "text": "메인 홈에 추천/인기 배너 영역 표시",
+          "testCases": [
+            {
+              "id": "TC-US-006-AC-1-01",
+              "title": "정상: 배너 영역 표시",
+              "type": "positive",
+              "precondition": "로그인 상태",
+              "steps": ["1. /home 접속"],
+              "expected": "추천/인기 배너 영역 표시",
+              "status": "todo",
+              "tags": []
+            }
+          ]
+        },
+        {
+          "id": "AC-2",
+          "text": "작품 리스트에 썸네일, 제목, 작가명, 현재 총 모금액 표시",
+          "testCases": [
+            {
+              "id": "TC-US-006-AC-2-01",
+              "title": "정상: 작품 카드 정보 표시",
+              "type": "positive",
+              "precondition": "로그인 상태, 작품 존재",
+              "steps": ["1. /home 접속", "2. 작품 리스트 확인"],
+              "expected": "각 작품에 썸네일, 제목, 작가명, 총 모금액 표시",
+              "status": "todo",
+              "tags": []
+            },
+            {
+              "id": "TC-US-006-AC-2-02",
+              "title": "Regression: Story 상태 배지 비노출",
+              "type": "negative",
+              "precondition": "로그인 상태, 작품 존재",
+              "steps": ["1. /home 접속", "2. 작품 카드 UI 확인"],
+              "expected": "'연재중', '휴재', '완결' 등의 상태 배지 비노출. Story에 상태값 없음",
+              "status": "todo",
+              "tags": ["CI-001", "CI-006"]
+            }
+          ]
+        },
+        {
+          "id": "AC-3",
+          "text": "페이지 로드 시 3초 이내 작품 리스트 표시",
+          "testCases": [
+            {
+              "id": "TC-US-006-AC-3-01",
+              "title": "UX: 작품 리스트 로딩 3초 이내",
+              "type": "positive",
+              "precondition": "로그인 상태",
+              "steps": ["1. /home 접속", "2. 로딩 시간 측정"],
+              "expected": "3초 이내 작품 리스트 표시 완료",
+              "status": "todo",
+              "tags": []
+            }
+          ]
+        }
+      ],
+      "tags": {
+        "routes": ["/home"],
+        "changes": [],
+        "domainRules": []
+      }
+    },
+    {
+      "id": "US-008",
+      "priority": "P1",
+      "domain": "에피소드 뷰어",
+      "title": "에피소드 콘티 열람",
+      "statement": "As a 독자, I want to 에피소드 콘티를 열람하다, So that 스토리 내용을 확인하고 참여 여부를 결정할 수 있다",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-1",
+          "text": "콘텐츠 뷰어에서 이미지/텍스트 스크롤 방식으로 표시",
+          "testCases": [
+            {
+              "id": "TC-US-008-AC-1-01",
+              "title": "정상: 스크롤 뷰어 동작",
+              "type": "positive",
+              "precondition": "로그인 상태, 에피소드 존재",
+              "steps": ["1. /stories/:storyId/episodes/:episodeId 접속", "2. 콘텐츠 스크롤"],
+              "expected": "이미지/텍스트가 스크롤 방식으로 표시",
+              "status": "todo",
+              "tags": []
+            }
+          ]
+        },
+        {
+          "id": "AC-2",
+          "text": "OPEN 상태 에피소드에서 하단 액션 바(제안하기, 후원하기 버튼) 표시",
+          "testCases": [
+            {
+              "id": "TC-US-008-AC-2-01",
+              "title": "정상: OPEN 상태에서 액션 바 표시",
+              "type": "positive",
+              "precondition": "로그인 상태, OPEN 상태 에피소드",
+              "steps": ["1. OPEN 상태 에피소드 접속"],
+              "expected": "하단에 제안하기, 지지하기, 후원하기 버튼 표시",
+              "status": "todo",
+              "tags": ["CI-002", "DR-012"]
+            },
+            {
+              "id": "TC-US-008-AC-2-02",
+              "title": "Regression: 참여 리스트 통합 (탭 없음)",
+              "type": "positive",
+              "precondition": "로그인 상태, OPEN 상태 에피소드, 참여 내역 존재",
+              "steps": ["1. OPEN 상태 에피소드 접속", "2. 참여 리스트 영역 확인"],
+              "expected": "Proposal/Backing/Sponsor 통합 리스트로 표시. 탭 분리 없이 금액 내림차순 정렬",
+              "status": "todo",
+              "tags": ["CI-003"]
+            }
+          ]
+        },
+        {
+          "id": "AC-3",
+          "text": "PUBLISHED 상태 에피소드에서 액션 바 비노출, 읽기 전용 모드",
+          "testCases": [
+            {
+              "id": "TC-US-008-AC-3-01",
+              "title": "정상: PUBLISHED 상태에서 액션 바 숨김",
+              "type": "positive",
+              "precondition": "로그인 상태, PUBLISHED 상태 에피소드",
+              "steps": ["1. PUBLISHED 상태 에피소드 접속"],
+              "expected": "하단 액션 바 비노출, 읽기 전용",
+              "status": "todo",
+              "tags": ["CI-002", "DR-012"]
+            }
+          ]
+        }
+      ],
+      "tags": {
+        "routes": ["/stories/:storyId/episodes/:episodeId"],
+        "changes": ["change-2026-01-15-1000"],
+        "domainRules": ["DR-012"]
+      }
+    },
+    {
+      "id": "US-009",
+      "priority": "P1",
+      "domain": "스토리 인터벤션",
+      "title": "제안 생성",
+      "statement": "As a 독자, I want to 제안(Proposal)을 생성하다, So that 스토리 전개에 개입하고 채택 시 크레딧에 이름을 남길 수 있다",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-1",
+          "text": "제안 작성 모달에서 내용 입력 및 초기 베팅액(최소 100 Ink) 설정",
+          "testCases": [
+            {
+              "id": "TC-US-009-AC-1-01",
+              "title": "정상: 제안 모달에서 내용 및 베팅액 설정",
+              "type": "positive",
+              "precondition": "로그인 상태, OPEN 에피소드, 100+ Ink 보유",
+              "steps": ["1. 제안하기 버튼 클릭", "2. 제안 내용 입력", "3. 베팅액 100 Ink 입력"],
+              "expected": "제안 모달 표시, 내용 및 베팅액 입력 가능",
+              "status": "todo",
+              "tags": ["DR-002"]
+            },
+            {
+              "id": "TC-US-009-AC-1-02",
+              "title": "실패: 100 Ink 미만 베팅 시도",
+              "type": "negative",
+              "precondition": "로그인 상태, OPEN 에피소드",
+              "steps": ["1. 제안하기 버튼 클릭", "2. 베팅액 50 Ink 입력"],
+              "expected": "최소 100 Ink 이상 입력 필요 에러 표시",
+              "status": "todo",
+              "tags": ["DR-002"]
+            }
+          ]
+        },
+        {
+          "id": "AC-2",
+          "text": "베팅액이 보유 Ink보다 많을 경우 '잔액이 부족합니다' 에러 표시",
+          "testCases": [
+            {
+              "id": "TC-US-009-AC-2-01",
+              "title": "실패: 잔액 부족 시 에러 및 충전 유도",
+              "type": "negative",
+              "precondition": "로그인 상태, 50 Ink 보유",
+              "steps": ["1. 제안하기 버튼 클릭", "2. 베팅액 100 Ink 입력"],
+              "expected": "'잔액이 부족합니다' 에러 표시, '충전하기' 버튼 노출",
+              "status": "todo",
+              "tags": ["DR-003", "DR-015"]
+            }
+          ]
+        },
+        {
+          "id": "AC-3",
+          "text": "제안 생성 시 즉시 Ink 차감 및 에스크로 처리",
+          "testCases": [
+            {
+              "id": "TC-US-009-AC-3-01",
+              "title": "정상: 제안 생성 시 Ink 에스크로 처리",
+              "type": "positive",
+              "precondition": "로그인 상태, 200 Ink 보유",
+              "steps": ["1. 제안 생성 (100 Ink)", "2. 지갑 확인"],
+              "expected": "Available Ink 100 감소, Pending Ink 100 증가",
+              "status": "todo",
+              "tags": ["DR-004"]
+            }
+          ]
+        },
+        {
+          "id": "AC-4",
+          "text": "제안 생성 완료 시 '제안이 등록되었습니다' 확인 메시지 표시",
+          "testCases": [
+            {
+              "id": "TC-US-009-AC-4-01",
+              "title": "정상: 제안 등록 완료 메시지",
+              "type": "positive",
+              "precondition": "유효한 제안 내용 입력 완료",
+              "steps": ["1. 제안 등록 버튼 클릭"],
+              "expected": "'제안이 등록되었습니다' 확인 메시지 표시",
+              "status": "todo",
+              "tags": []
+            }
+          ]
+        }
+      ],
+      "tags": {
+        "routes": ["/stories/:storyId/episodes/:episodeId"],
+        "changes": ["change-2026-01-15-1000"],
+        "domainRules": ["DR-002", "DR-003", "DR-004", "DR-012", "DR-014", "DR-015"]
+      }
+    },
+    {
+      "id": "US-010",
+      "priority": "P1",
+      "domain": "스토리 인터벤션",
+      "title": "제안 지지",
+      "statement": "As a 독자, I want to 다른 사람의 제안에 지지(Backing)하다, So that 해당 제안의 채택 확률을 높이고 크레딧에 참여할 수 있다",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-1",
+          "text": "제안 상세 카드에서 지지하기 버튼 및 금액 입력 가능",
+          "testCases": [
+            {
+              "id": "TC-US-010-AC-1-01",
+              "title": "정상: 지지하기 버튼 및 금액 입력",
+              "type": "positive",
+              "precondition": "로그인 상태, OPEN 에피소드, 제안 존재",
+              "steps": ["1. 제안 카드에서 지지하기 버튼 클릭", "2. 금액 입력"],
+              "expected": "지지 금액 입력 모달 표시",
+              "status": "todo",
+              "tags": []
+            }
+          ]
+        },
+        {
+          "id": "AC-2",
+          "text": "지지 시 즉시 Ink 차감 및 에스크로 처리",
+          "testCases": [
+            {
+              "id": "TC-US-010-AC-2-01",
+              "title": "정상: 지지 시 Ink 에스크로 처리",
+              "type": "positive",
+              "precondition": "로그인 상태, 100 Ink 보유",
+              "steps": ["1. 제안에 50 Ink 지지"],
+              "expected": "Available Ink 50 감소, Pending Ink 50 증가",
+              "status": "todo",
+              "tags": ["DR-004"]
+            }
+          ]
+        },
+        {
+          "id": "AC-3",
+          "text": "지지 완료 후 해당 제안의 total_bounty, backer_count 실시간 업데이트 표시",
+          "testCases": [
+            {
+              "id": "TC-US-010-AC-3-01",
+              "title": "정상: 지지 후 실시간 업데이트",
+              "type": "positive",
+              "precondition": "지지 완료",
+              "steps": ["1. 제안에 50 Ink 지지", "2. 제안 카드 확인"],
+              "expected": "total_bounty +50 증가, backer_count +1 증가 표시",
+              "status": "todo",
+              "tags": []
+            }
+          ]
+        }
+      ],
+      "tags": {
+        "routes": ["/stories/:storyId/episodes/:episodeId"],
+        "changes": ["change-2026-01-15-1000"],
+        "domainRules": ["DR-003", "DR-004", "DR-014", "DR-015"]
+      }
+    },
+    {
+      "id": "US-011",
+      "priority": "P1",
+      "domain": "스토리 인터벤션",
+      "title": "직접 후원",
+      "statement": "As a 독자, I want to 직접 후원(Direct Backing)하다, So that 제안 없이 순수하게 창작을 지원하고 크레딧에 이름을 남길 수 있다",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-1",
+          "text": "후원 팝업에서 금액 선택 가능",
+          "testCases": [
+            {
+              "id": "TC-US-011-AC-1-01",
+              "title": "정상: 후원 금액 선택",
+              "type": "positive",
+              "precondition": "로그인 상태, OPEN 에피소드",
+              "steps": ["1. 후원하기 버튼 클릭", "2. 금액 입력"],
+              "expected": "후원 금액 입력 팝업 표시",
+              "status": "todo",
+              "tags": []
+            }
+          ]
+        },
+        {
+          "id": "AC-2",
+          "text": "후원 시 에스크로 없이 즉시 작가 정산 예정금으로 이동",
+          "testCases": [
+            {
+              "id": "TC-US-011-AC-2-01",
+              "title": "정상: 직접 후원 즉시 정산",
+              "type": "positive",
+              "precondition": "로그인 상태, 100 Ink 보유",
+              "steps": ["1. 50 Ink 직접 후원"],
+              "expected": "Pending Ink 변동 없음, 작가 payable_balance로 즉시 이동",
+              "status": "todo",
+              "tags": ["DR-007"]
+            }
+          ]
+        },
+        {
+          "id": "AC-3",
+          "text": "후원 완료 시 '후원이 완료되었습니다' 확인 메시지 표시",
+          "testCases": [
+            {
+              "id": "TC-US-011-AC-3-01",
+              "title": "정상: 후원 완료 메시지",
+              "type": "positive",
+              "precondition": "유효한 후원 금액 입력",
+              "steps": ["1. 후원 완료 버튼 클릭"],
+              "expected": "'후원이 완료되었습니다' 확인 메시지 표시",
+              "status": "todo",
+              "tags": []
+            }
+          ]
+        }
+      ],
+      "tags": {
+        "routes": ["/stories/:storyId/episodes/:episodeId"],
+        "changes": ["change-2026-01-15-1000"],
+        "domainRules": ["DR-003", "DR-007", "DR-014", "DR-015"]
+      }
+    },
+    {
+      "id": "US-012",
+      "priority": "P1",
+      "domain": "에피소드 뷰어",
+      "title": "크레딧 확인",
+      "statement": "As a 독자, I want to 완성된 에피소드에서 크레딧을 확인하다, So that 내 기여가 기록되었는지 확인하고 성취감을 느낄 수 있다",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-1",
+          "text": "에피소드 최하단에 [Sponsored by] 크레딧 섹션 표시",
+          "testCases": [
+            {
+              "id": "TC-US-012-AC-1-01",
+              "title": "정상: PUBLISHED 에피소드에 크레딧 섹션 표시",
+              "type": "positive",
+              "precondition": "PUBLISHED 상태 에피소드",
+              "steps": ["1. PUBLISHED 에피소드 접속", "2. 최하단 스크롤"],
+              "expected": "크레딧 섹션 (Main Producers) 표시",
+              "status": "todo",
+              "tags": ["CI-005"]
+            }
+          ]
+        },
+        {
+          "id": "AC-2",
+          "text": "기여 금액 상위 3인 Main Producer로 별도 UI 강조",
+          "testCases": [
+            {
+              "id": "TC-US-012-AC-2-01",
+              "title": "정상: Top 3 Main Producer 강조 표시",
+              "type": "positive",
+              "precondition": "PUBLISHED 에피소드, 3명 이상 기여자",
+              "steps": ["1. 크레딧 섹션 확인"],
+              "expected": "상위 3인 가로 카드로 강조 표시 (#1, #2, #3 배지)",
+              "status": "todo",
+              "tags": ["DR-010", "CI-005"]
+            }
+          ]
+        },
+        {
+          "id": "AC-3",
+          "text": "채택된 제안자 우선 표시 후 금액순 정렬",
+          "testCases": [
+            {
+              "id": "TC-US-012-AC-3-01",
+              "title": "정상: 기여 금액 내림차순 정렬",
+              "type": "positive",
+              "precondition": "PUBLISHED 에피소드, 다수 기여자",
+              "steps": ["1. 크레딧 리스트 확인"],
+              "expected": "총 기여 금액 내림차순 정렬, Proposer/Backer/Sponsor 전원 노출",
+              "status": "todo",
+              "tags": ["DR-010", "CI-005"]
+            }
+          ]
+        },
+        {
+          "id": "AC-4",
+          "text": "크레딧 데이터는 영구 저장되어 변경 불가",
+          "testCases": [
+            {
+              "id": "TC-US-012-AC-4-01",
+              "title": "정상: 크레딧 영구 박제",
+              "type": "positive",
+              "precondition": "PUBLISHED 에피소드",
+              "steps": ["1. 크레딧 생성 후 시간 경과", "2. 크레딧 확인"],
+              "expected": "크레딧 데이터 변경 없이 동일하게 유지",
+              "status": "todo",
+              "tags": ["DR-009"]
+            }
+          ]
+        }
+      ],
+      "tags": {
+        "routes": ["/stories/:storyId/episodes/:episodeId"],
+        "changes": ["change-2026-01-15-1000"],
+        "domainRules": ["DR-009", "DR-010"]
+      }
+    },
+    {
+      "id": "US-014",
+      "priority": "P1",
+      "domain": "크리에이터 스튜디오",
+      "title": "에피소드 콘티 업로드",
+      "statement": "As a 작가, I want to 에피소드 콘티를 업로드하다, So that 팬들의 후원과 제안을 받을 수 있다",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-1",
+          "text": "저작 에디터에서 이미지 다중 업로드 및 순서 변경 가능",
+          "testCases": [
+            {
+              "id": "TC-US-014-AC-1-01",
+              "title": "정상: 이미지 다중 업로드",
+              "type": "positive",
+              "precondition": "크리에이터 계정, /studio/episodes/:id/edit",
+              "steps": ["1. 이미지 3개 드래그앤드롭 업로드"],
+              "expected": "3개 이미지 업로드 완료, 순서 변경 가능",
+              "status": "todo",
+              "tags": []
+            },
+            {
+              "id": "TC-US-014-AC-1-02",
+              "title": "Regression: 임시저장(Draft) 버튼 비노출",
+              "type": "negative",
+              "precondition": "크리에이터 계정, /studio/episodes/:id/edit",
+              "steps": ["1. 에피소드 에디터 UI 확인", "2. 모든 저장 관련 버튼 확인"],
+              "expected": "'임시저장', 'Draft', '초안 저장' 등의 버튼 비노출. 저장 버튼만 존재",
+              "status": "todo",
+              "tags": ["CI-008"]
+            }
+          ]
+        },
+        {
+          "id": "AC-2",
+          "text": "텍스트 입력 영역 제공",
+          "testCases": [
+            {
+              "id": "TC-US-014-AC-2-01",
+              "title": "정상: 텍스트 입력",
+              "type": "positive",
+              "precondition": "에피소드 에디터",
+              "steps": ["1. 텍스트 영역에 내용 입력"],
+              "expected": "텍스트 입력 및 저장 가능",
+              "status": "todo",
+              "tags": []
+            }
+          ]
+        },
+        {
+          "id": "AC-3",
+          "text": "업로드 완료 후 에피소드 상태 OPEN으로 자동 변경",
+          "testCases": [
+            {
+              "id": "TC-US-014-AC-3-01",
+              "title": "정상: 업로드 후 OPEN 상태 전환",
+              "type": "positive",
+              "precondition": "에피소드 에디터, 콘텐츠 입력 완료",
+              "steps": ["1. 저장 버튼 클릭"],
+              "expected": "에피소드 상태 OPEN, 독자 화면에 즉시 반영",
+              "status": "todo",
+              "tags": ["CI-009", "DR-017"]
+            }
+          ]
+        },
+        {
+          "id": "AC-4",
+          "text": "업로드 완료 시 '에피소드가 등록되었습니다' 확인 메시지 표시",
+          "testCases": [
+            {
+              "id": "TC-US-014-AC-4-01",
+              "title": "정상: 등록 완료 메시지",
+              "type": "positive",
+              "precondition": "저장 완료",
+              "steps": ["1. 저장 버튼 클릭"],
+              "expected": "'에피소드가 등록되었습니다' 메시지 표시",
+              "status": "todo",
+              "tags": []
+            }
+          ]
+        }
+      ],
+      "tags": {
+        "routes": ["/studio/episodes/:episodeId/edit"],
+        "changes": ["change-2026-01-15-1000"],
+        "domainRules": ["DR-017"]
+      }
+    },
+    {
+      "id": "US-015",
+      "priority": "P1",
+      "domain": "크리에이터 스튜디오",
+      "title": "에피소드 목록 관리",
+      "statement": "As a 작가, I want to 에피소드 목록을 관리하다, So that 내 콘텐츠 현황을 파악하고 관리할 수 있다",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-1",
+          "text": "에피소드 관리 리스트에서 각 에피소드의 상태(OPEN/PUBLISHED) 표시",
+          "testCases": [
+            {
+              "id": "TC-US-015-AC-1-01",
+              "title": "정상: 에피소드 상태 표시",
+              "type": "positive",
+              "precondition": "크리에이터 계정, /studio/episodes",
+              "steps": ["1. 에피소드 리스트 확인"],
+              "expected": "각 에피소드에 OPEN/PUBLISHED 상태 배지 표시",
+              "status": "todo",
+              "tags": ["CI-002"]
+            }
+          ]
+        },
+        {
+          "id": "AC-2",
+          "text": "에피소드별 총 모금액 표시",
+          "testCases": [
+            {
+              "id": "TC-US-015-AC-2-01",
+              "title": "정상: 모금액 표시",
+              "type": "positive",
+              "precondition": "에피소드 존재",
+              "steps": ["1. 에피소드 리스트 확인"],
+              "expected": "각 에피소드에 총 모금액 표시",
+              "status": "todo",
+              "tags": []
+            }
+          ]
+        },
+        {
+          "id": "AC-3",
+          "text": "에피소드 편집 페이지로 이동 가능",
+          "testCases": [
+            {
+              "id": "TC-US-015-AC-3-01",
+              "title": "정상: 편집 페이지 이동",
+              "type": "positive",
+              "precondition": "에피소드 존재",
+              "steps": ["1. 에피소드 편집 버튼 클릭"],
+              "expected": "/studio/episodes/:id/edit 페이지로 이동",
+              "status": "todo",
+              "tags": []
+            }
+          ]
+        }
+      ],
+      "tags": {
+        "routes": ["/studio/episodes"],
+        "changes": [],
+        "domainRules": []
+      }
+    },
+    {
+      "id": "US-016",
+      "priority": "P1",
+      "domain": "제안 관리",
+      "title": "받은 제안 목록 조회",
+      "statement": "As a 작가, I want to 받은 제안 목록을 조회하다, So that 어떤 제안이 있는지 확인하고 채택 여부를 결정할 수 있다",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-1",
+          "text": "제안 관리 대시보드에서 모금액 순 정렬된 제안 목록 표시",
+          "testCases": [
+            {
+              "id": "TC-US-016-AC-1-01",
+              "title": "정상: 모금액 순 정렬",
+              "type": "positive",
+              "precondition": "크리에이터 계정, 제안 존재",
+              "steps": ["1. /studio/proposals 접속"],
+              "expected": "제안 목록이 모금액(total_bounty) 내림차순 정렬",
+              "status": "todo",
+              "tags": []
+            }
+          ]
+        },
+        {
+          "id": "AC-2",
+          "text": "각 제안에 내용, total_bounty, backer_count 표시",
+          "testCases": [
+            {
+              "id": "TC-US-016-AC-2-01",
+              "title": "정상: 제안 정보 표시",
+              "type": "positive",
+              "precondition": "제안 존재",
+              "steps": ["1. 제안 카드 확인"],
+              "expected": "제안 내용, total_bounty, backer_count 표시",
+              "status": "todo",
+              "tags": []
+            }
+          ]
+        },
+        {
+          "id": "AC-3",
+          "text": "제안별 Deal/Drop 액션 버튼 제공",
+          "testCases": [
+            {
+              "id": "TC-US-016-AC-3-01",
+              "title": "정상: Deal/Drop 버튼 표시",
+              "type": "positive",
+              "precondition": "PENDING 상태 제안",
+              "steps": ["1. 제안 카드 확인"],
+              "expected": "Deal, Drop 버튼 표시",
+              "status": "todo",
+              "tags": []
+            }
+          ]
+        }
+      ],
+      "tags": {
+        "routes": ["/studio/proposals"],
+        "changes": [],
+        "domainRules": []
+      }
+    },
+    {
+      "id": "US-017",
+      "priority": "P1",
+      "domain": "제안 관리",
+      "title": "제안 채택",
+      "statement": "As a 작가, I want to 제안을 채택(Deal)하다, So that 해당 제안의 Bounty를 정산 예정금으로 받을 수 있다",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-1",
+          "text": "Deal 버튼 클릭 시 확인 모달 표시",
+          "testCases": [
+            {
+              "id": "TC-US-017-AC-1-01",
+              "title": "정상: Deal 확인 모달",
+              "type": "positive",
+              "precondition": "크리에이터 계정, PENDING 제안",
+              "steps": ["1. Deal 버튼 클릭"],
+              "expected": "채택 확인 모달 표시",
+              "status": "todo",
+              "tags": []
+            }
+          ]
+        },
+        {
+          "id": "AC-2",
+          "text": "확인 후 Proposal 상태 DEAL로 변경",
+          "testCases": [
+            {
+              "id": "TC-US-017-AC-2-01",
+              "title": "정상: 상태 DEAL 변경",
+              "type": "positive",
+              "precondition": "Deal 확인 모달",
+              "steps": ["1. 확인 버튼 클릭"],
+              "expected": "Proposal 상태 DEAL로 변경",
+              "status": "todo",
+              "tags": []
+            }
+          ]
+        },
+        {
+          "id": "AC-3",
+          "text": "에스크로 된 Ink가 작가 payable_balance로 이동",
+          "testCases": [
+            {
+              "id": "TC-US-017-AC-3-01",
+              "title": "정상: 에스크로 → payable_balance 이동",
+              "type": "positive",
+              "precondition": "Deal 완료",
+              "steps": ["1. 정산 페이지 확인"],
+              "expected": "작가 payable_balance 증가",
+              "status": "todo",
+              "tags": ["DR-006"]
+            }
+          ]
+        },
+        {
+          "id": "AC-4",
+          "text": "Deal 완료 시 '제안이 채택되었습니다' 확인 메시지 표시",
+          "testCases": [
+            {
+              "id": "TC-US-017-AC-4-01",
+              "title": "정상: 채택 완료 메시지",
+              "type": "positive",
+              "precondition": "Deal 완료",
+              "steps": ["1. Deal 확인"],
+              "expected": "'제안이 채택되었습니다' 메시지 표시",
+              "status": "todo",
+              "tags": []
+            }
+          ]
+        }
+      ],
+      "tags": {
+        "routes": ["/studio/proposals"],
+        "changes": [],
+        "domainRules": ["DR-006"]
+      }
+    },
+    {
+      "id": "US-018",
+      "priority": "P1",
+      "domain": "제안 관리",
+      "title": "제안 거절",
+      "statement": "As a 작가, I want to 제안을 거절(Drop)하다, So that 원하지 않는 제안을 거절하고 참여자에게 환불할 수 있다",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-1",
+          "text": "Drop 버튼 클릭 시 확인 모달 표시",
+          "testCases": [
+            {
+              "id": "TC-US-018-AC-1-01",
+              "title": "정상: Drop 확인 모달",
+              "type": "positive",
+              "precondition": "크리에이터 계정, PENDING 제안",
+              "steps": ["1. Drop 버튼 클릭"],
+              "expected": "거절 확인 모달 표시",
+              "status": "todo",
+              "tags": []
+            }
+          ]
+        },
+        {
+          "id": "AC-2",
+          "text": "확인 후 Proposal 상태 DROP으로 변경",
+          "testCases": [
+            {
+              "id": "TC-US-018-AC-2-01",
+              "title": "정상: 상태 DROP 변경",
+              "type": "positive",
+              "precondition": "Drop 확인 모달",
+              "steps": ["1. 확인 버튼 클릭"],
+              "expected": "Proposal 상태 DROP으로 변경",
+              "status": "todo",
+              "tags": []
+            }
+          ]
+        },
+        {
+          "id": "AC-3",
+          "text": "해당 Proposal의 모든 Backer에게 Ink 100% 자동 반환",
+          "testCases": [
+            {
+              "id": "TC-US-018-AC-3-01",
+              "title": "정상: Drop 시 전액 환불",
+              "type": "positive",
+              "precondition": "Drop 완료, Backer 존재",
+              "steps": ["1. Backer 지갑 확인"],
+              "expected": "모든 Backer에게 100% 환불 완료",
+              "status": "todo",
+              "tags": ["DR-005"]
+            }
+          ]
+        },
+        {
+          "id": "AC-4",
+          "text": "Drop 완료 시 '제안이 거절되었습니다' 확인 메시지 표시",
+          "testCases": [
+            {
+              "id": "TC-US-018-AC-4-01",
+              "title": "정상: 거절 완료 메시지",
+              "type": "positive",
+              "precondition": "Drop 완료",
+              "steps": ["1. Drop 확인"],
+              "expected": "'제안이 거절되었습니다' 메시지 표시",
+              "status": "todo",
+              "tags": []
+            }
+          ]
+        }
+      ],
+      "tags": {
+        "routes": ["/studio/proposals"],
+        "changes": [],
+        "domainRules": ["DR-005"]
+      }
+    },
+    {
+      "id": "US-019",
+      "priority": "P1",
+      "domain": "크리에이터 스튜디오",
+      "title": "완성 원고 업로드",
+      "statement": "As a 작가, I want to 완성 원고를 업로드하다, So that 에피소드를 공개하고 정산을 받을 수 있다",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-1",
+          "text": "최종 원고 업로드 시 에피소드 상태 PUBLISHED로 변경",
+          "testCases": [
+            {
+              "id": "TC-US-019-AC-1-01",
+              "title": "정상: PUBLISHED 상태 변경",
+              "type": "positive",
+              "precondition": "OPEN 에피소드, 최종 원고 준비",
+              "steps": ["1. 완성본 토글 활성화", "2. 저장 버튼 클릭"],
+              "expected": "에피소드 상태 PUBLISHED로 변경",
+              "status": "todo",
+              "tags": ["CI-002"]
+            }
+          ]
+        },
+        {
+          "id": "AC-2",
+          "text": "업로드 시 다이내믹 크레딧 자동 생성",
+          "testCases": [
+            {
+              "id": "TC-US-019-AC-2-01",
+              "title": "정상: 크레딧 자동 생성",
+              "type": "positive",
+              "precondition": "PUBLISHED 전환",
+              "steps": ["1. 에피소드 뷰어 확인"],
+              "expected": "크레딧 섹션 자동 생성 (모든 기여자 포함)",
+              "status": "todo",
+              "tags": ["DR-009", "CI-005"]
+            }
+          ]
+        },
+        {
+          "id": "AC-3",
+          "text": "예정 정산금이 출금 가능 금액으로 전환(수수료 차감)",
+          "testCases": [
+            {
+              "id": "TC-US-019-AC-3-01",
+              "title": "정상: payable → withdrawable 전환",
+              "type": "positive",
+              "precondition": "PUBLISHED 전환, payable_balance 존재",
+              "steps": ["1. 정산 페이지 확인"],
+              "expected": "withdrawable_balance 증가 (수수료 차감 후)",
+              "status": "todo",
+              "tags": ["DR-008"]
+            }
+          ]
+        },
+        {
+          "id": "AC-4",
+          "text": "업로드 완료 시 '원고가 공개되었습니다' 확인 메시지 표시",
+          "testCases": [
+            {
+              "id": "TC-US-019-AC-4-01",
+              "title": "정상: 공개 완료 메시지",
+              "type": "positive",
+              "precondition": "PUBLISHED 전환 완료",
+              "steps": ["1. 저장 완료"],
+              "expected": "'원고가 공개되었습니다' 메시지 표시",
+              "status": "todo",
+              "tags": []
+            }
+          ]
+        }
+      ],
+      "tags": {
+        "routes": ["/studio/episodes/:episodeId/edit"],
+        "changes": ["change-2026-01-15-1000"],
+        "domainRules": ["DR-008", "DR-009"]
+      }
+    },
+    {
+      "id": "US-020",
+      "priority": "P1",
+      "domain": "정산",
+      "title": "정산 현황 조회",
+      "statement": "As a 작가, I want to 정산 현황을 조회하다, So that 예정 정산금과 출금 가능 금액을 확인할 수 있다",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-1",
+          "text": "정산 페이지에서 예정 정산금 금액 표시",
+          "testCases": [
+            {
+              "id": "TC-US-020-AC-1-01",
+              "title": "정상: 예정 정산금 표시",
+              "type": "positive",
+              "precondition": "크리에이터 계정",
+              "steps": ["1. /studio/settlements 접속"],
+              "expected": "예정 정산금 (payable_balance) 표시",
+              "status": "todo",
+              "tags": []
+            }
+          ]
+        },
+        {
+          "id": "AC-2",
+          "text": "출금 가능 금액 별도 표시",
+          "testCases": [
+            {
+              "id": "TC-US-020-AC-2-01",
+              "title": "정상: 출금 가능 금액 표시",
+              "type": "positive",
+              "precondition": "크리에이터 계정",
+              "steps": ["1. 정산 페이지 확인"],
+              "expected": "출금 가능 금액 (withdrawable_balance) 별도 표시",
+              "status": "todo",
+              "tags": []
+            },
+            {
+              "id": "TC-US-020-AC-2-02",
+              "title": "정상: 출금 가능 금액 이하 출금 요청 성공",
+              "type": "positive",
+              "precondition": "크리에이터 계정, withdrawable_balance > 0",
+              "steps": ["1. 정산 페이지에서 출금 요청 버튼 클릭", "2. withdrawable_balance 이하 금액 입력", "3. 출금 요청 제출"],
+              "expected": "출금 요청 성공, 요청 상태 PENDING으로 표시",
+              "status": "todo",
+              "tags": ["DR-011"]
+            },
+            {
+              "id": "TC-US-020-AC-2-03",
+              "title": "실패: 출금 가능 금액 초과 출금 요청 차단",
+              "type": "negative",
+              "precondition": "크리에이터 계정, withdrawable_balance 존재",
+              "steps": ["1. 정산 페이지에서 출금 요청 버튼 클릭", "2. withdrawable_balance 초과 금액 입력", "3. 출금 요청 제출 시도"],
+              "expected": "출금 요청 실패, '출금 가능 금액을 초과했습니다' 에러 메시지 표시",
+              "status": "todo",
+              "tags": ["DR-011"]
+            }
+          ]
+        },
+        {
+          "id": "AC-3",
+          "text": "에피소드별 정산 내역 리스트 제공",
+          "testCases": [
+            {
+              "id": "TC-US-020-AC-3-01",
+              "title": "정상: 에피소드별 정산 내역",
+              "type": "positive",
+              "precondition": "정산 내역 존재",
+              "steps": ["1. 정산 내역 리스트 확인"],
+              "expected": "에피소드별 정산 내역 리스트 표시",
+              "status": "todo",
+              "tags": []
+            }
+          ]
+        }
+      ],
+      "tags": {
+        "routes": ["/studio/settlements"],
+        "changes": [],
+        "domainRules": []
+      }
+    },
+    {
+      "id": "US-022",
+      "priority": "P1",
+      "domain": "관리자 - 회원",
+      "title": "회원 목록 조회",
+      "statement": "As a 관리자, I want to 회원 목록을 조회하다, So that 전체 회원 현황을 파악할 수 있다",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-1",
+          "text": "회원 목록에 닉네임, 이메일, 가입일, 역할(독자/작가) 표시",
+          "testCases": [
+            {
+              "id": "TC-US-022-AC-1-01",
+              "title": "정상: 회원 정보 표시",
+              "type": "positive",
+              "precondition": "관리자 계정",
+              "steps": ["1. /admin/users 접속"],
+              "expected": "회원 목록에 닉네임, 이메일, 가입일, 역할 표시",
+              "status": "todo",
+              "tags": []
+            }
+          ]
+        },
+        {
+          "id": "AC-2",
+          "text": "검색 및 필터 기능 제공",
+          "testCases": [
+            {
+              "id": "TC-US-022-AC-2-01",
+              "title": "정상: 검색 기능",
+              "type": "positive",
+              "precondition": "관리자 계정, 회원 존재",
+              "steps": ["1. 검색창에 닉네임 입력"],
+              "expected": "검색 결과 표시",
+              "status": "todo",
+              "tags": []
+            }
+          ]
+        },
+        {
+          "id": "AC-3",
+          "text": "페이지당 50개 항목 표시, 페이지네이션 제공",
+          "testCases": [
+            {
+              "id": "TC-US-022-AC-3-01",
+              "title": "정상: 페이지네이션",
+              "type": "positive",
+              "precondition": "50개 이상 회원 존재",
+              "steps": ["1. 페이지 확인"],
+              "expected": "페이지당 50개 표시, 페이지네이션 UI 제공",
+              "status": "todo",
+              "tags": []
+            }
+          ]
+        }
+      ],
+      "tags": {
+        "routes": ["/admin/users"],
+        "changes": [],
+        "domainRules": []
+      }
+    },
+    {
+      "id": "US-025",
+      "priority": "P1",
+      "domain": "관리자 - 정산",
+      "title": "정산 요청 목록 조회",
+      "statement": "As a 관리자, I want to 정산 요청 목록을 조회하다, So that 출금 요청 현황을 파악할 수 있다",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-1",
+          "text": "정산 요청 목록에 작가명, 요청 금액, 요청일, 상태 표시",
+          "testCases": [
+            {
+              "id": "TC-US-025-AC-1-01",
+              "title": "정상: 정산 요청 목록 표시",
+              "type": "positive",
+              "precondition": "관리자 계정",
+              "steps": ["1. /admin/settlements 접속"],
+              "expected": "작가명, 요청 금액, 요청일, 상태 표시",
+              "status": "todo",
+              "tags": []
+            }
+          ]
+        },
+        {
+          "id": "AC-2",
+          "text": "대기중/승인/거절 상태별 필터 제공",
+          "testCases": [
+            {
+              "id": "TC-US-025-AC-2-01",
+              "title": "정상: 상태별 필터",
+              "type": "positive",
+              "precondition": "다양한 상태의 요청 존재",
+              "steps": ["1. 상태 필터 선택"],
+              "expected": "해당 상태의 요청만 표시",
+              "status": "todo",
+              "tags": []
+            }
+          ]
+        },
+        {
+          "id": "AC-3",
+          "text": "요청 상세 페이지로 이동 가능",
+          "testCases": [
+            {
+              "id": "TC-US-025-AC-3-01",
+              "title": "정상: 상세 페이지 이동",
+              "type": "positive",
+              "precondition": "요청 존재",
+              "steps": ["1. 요청 항목 클릭"],
+              "expected": "정산 요청 상세 모달/페이지 표시",
+              "status": "todo",
+              "tags": []
+            }
+          ]
+        }
+      ],
+      "tags": {
+        "routes": ["/admin/settlements"],
+        "changes": [],
+        "domainRules": []
+      }
+    },
+    {
+      "id": "US-026",
+      "priority": "P1",
+      "domain": "관리자 - 정산",
+      "title": "정산 요청 승인",
+      "statement": "As a 관리자, I want to 정산 요청을 승인하다, So that 작가에게 실제 이체를 진행할 수 있다",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-1",
+          "text": "정산 상세에서 승인 버튼 제공",
+          "testCases": [
+            {
+              "id": "TC-US-026-AC-1-01",
+              "title": "정상: 승인 버튼 표시",
+              "type": "positive",
+              "precondition": "관리자 계정, PENDING 요청",
+              "steps": ["1. 정산 상세 페이지 접속"],
+              "expected": "승인 버튼 표시",
+              "status": "todo",
+              "tags": []
+            }
+          ]
+        },
+        {
+          "id": "AC-2",
+          "text": "승인 시 확인 모달 표시",
+          "testCases": [
+            {
+              "id": "TC-US-026-AC-2-01",
+              "title": "정상: 승인 확인 모달",
+              "type": "positive",
+              "precondition": "관리자 계정",
+              "steps": ["1. 승인 버튼 클릭"],
+              "expected": "승인 확인 모달 표시",
+              "status": "todo",
+              "tags": []
+            }
+          ]
+        },
+        {
+          "id": "AC-3",
+          "text": "승인 완료 후 상태 '이체완료'로 변경",
+          "testCases": [
+            {
+              "id": "TC-US-026-AC-3-01",
+              "title": "정상: 이체완료 상태 변경",
+              "type": "positive",
+              "precondition": "승인 확인",
+              "steps": ["1. 확인 버튼 클릭"],
+              "expected": "상태 '이체완료' (COMPLETED)로 변경",
+              "status": "todo",
+              "tags": []
+            }
+          ]
+        }
+      ],
+      "tags": {
+        "routes": ["/admin/settlements"],
+        "changes": [],
+        "domainRules": []
+      }
+    },
+    {
+      "id": "US-REG-001",
+      "priority": "P1",
+      "domain": "회귀 테스트",
+      "title": "change-2026-01-15-1000 회귀 테스트",
+      "statement": "As a QC, I want to change-2026-01-15-1000 변경사항의 회귀 테스트를 수행하다, So that 변경된 기능이 올바르게 동작하는지 확인할 수 있다",
+      "acceptanceCriteria": [
+        {
+          "id": "AC-1",
+          "text": "크리에이터 되기 플로우: 마이페이지에서 크리에이터 전환 가능",
+          "testCases": [
+            {
+              "id": "TC-US-REG-001-AC-1-01",
+              "title": "정상: 크리에이터 되기 버튼 노출 및 동작",
+              "type": "positive",
+              "precondition": "로그인 상태, 독자 계정 (role=READER)",
+              "steps": ["1. /mypage 접속", "2. '크리에이터 되기' 버튼 클릭"],
+              "expected": "/mypage/creator/setup 페이지로 이동",
+              "status": "todo",
+              "tags": ["CI-010"]
+            },
+            {
+              "id": "TC-US-REG-001-AC-1-02",
+              "title": "정상: 크리에이터 프로필 설정 후 즉시 전환",
+              "type": "positive",
+              "precondition": "/mypage/creator/setup 페이지",
+              "steps": ["1. 프로필 사진 업로드", "2. 닉네임 입력", "3. 작가 소개글 입력", "4. 저장 버튼 클릭"],
+              "expected": "크리에이터 전환 완료, role=CREATOR로 변경, 심사 없이 즉시 반영",
+              "status": "todo",
+              "tags": ["CI-010", "DR-016"]
+            }
+          ]
+        },
+        {
+          "id": "AC-2",
+          "text": "크리에이터 프로필 수정 기능",
+          "testCases": [
+            {
+              "id": "TC-US-REG-001-AC-2-01",
+              "title": "정상: 크리에이터 프로필 수정 페이지 접근",
+              "type": "positive",
+              "precondition": "크리에이터 계정",
+              "steps": ["1. /mypage 접속", "2. '크리에이터 프로필 수정' 버튼 클릭"],
+              "expected": "/mypage/creator/edit 페이지로 이동",
+              "status": "todo",
+              "tags": ["CI-011"]
+            },
+            {
+              "id": "TC-US-REG-001-AC-2-02",
+              "title": "정상: 크리에이터 프로필 수정 저장",
+              "type": "positive",
+              "precondition": "/mypage/creator/edit 페이지",
+              "steps": ["1. 작가 소개글 수정", "2. 저장 버튼 클릭"],
+              "expected": "수정 완료 메시지 표시, 변경 내용 반영",
+              "status": "todo",
+              "tags": ["CI-011"]
+            }
+          ]
+        },
+        {
+          "id": "AC-3",
+          "text": "글로벌 네비게이션 변경: 독자용 사이드바 삭제",
+          "testCases": [
+            {
+              "id": "TC-US-REG-001-AC-3-01",
+              "title": "Regression: 독자용 사이드바 비노출",
+              "type": "negative",
+              "precondition": "로그인 상태, 독자 계정",
+              "steps": ["1. /home 접속", "2. 좌측 사이드바 영역 확인", "3. /mypage 접속", "4. 좌측 사이드바 영역 확인"],
+              "expected": "독자 화면에서 좌측 사이드바 비노출. 콘텐츠 몰입형 레이아웃",
+              "status": "todo",
+              "tags": ["CI-012"]
+            }
+          ]
+        },
+        {
+          "id": "AC-4",
+          "text": "글로벌 네비게이션 변경: 하단 네비게이션 바 삭제",
+          "testCases": [
+            {
+              "id": "TC-US-REG-001-AC-4-01",
+              "title": "Regression: 하단 네비게이션 바 비노출",
+              "type": "negative",
+              "precondition": "로그인 상태",
+              "steps": ["1. /home 접속", "2. 하단 영역 확인", "3. /mypage 접속", "4. 하단 영역 확인"],
+              "expected": "하단 네비게이션 바 (홈/탐색/알림/마이페이지 탭) 비노출",
+              "status": "todo",
+              "tags": ["CI-013"]
+            }
+          ]
+        }
+      ],
+      "tags": {
+        "routes": ["/mypage", "/mypage/creator/setup", "/mypage/creator/edit", "/home"],
+        "changes": ["change-2026-01-15-1000"],
+        "domainRules": ["DR-016"]
+      }
+    }
+  ],
+  "coverage": {
+    "byUserStory": {
+      "US-001": ["TC-US-001-AC-1-01", "TC-US-001-AC-1-02", "TC-US-001-AC-1-03", "TC-US-001-AC-2-01", "TC-US-001-AC-2-02", "TC-US-001-AC-3-01", "TC-US-001-AC-3-02", "TC-US-001-AC-3-03", "TC-US-001-AC-4-01", "TC-US-001-AC-4-02", "TC-US-001-AC-5-01", "TC-US-001-AC-5-02", "TC-US-001-AC-6-01", "TC-US-001-AC-7-01"],
+      "US-002": ["TC-US-002-AC-1-01", "TC-US-002-AC-1-02", "TC-US-002-AC-1-03", "TC-US-002-AC-2-01", "TC-US-002-AC-3-01", "TC-US-002-AC-4-01"],
+      "US-002-1": ["TC-US-002-1-AC-1-01", "TC-US-002-1-AC-2-01", "TC-US-002-1-AC-3-01", "TC-US-002-1-AC-4-01"],
+      "US-003": ["TC-US-003-AC-1-01", "TC-US-003-AC-2-01", "TC-US-003-AC-3-01", "TC-US-003-AC-4-01"],
+      "US-003-1": ["TC-US-003-1-AC-1-01", "TC-US-003-1-AC-2-01", "TC-US-003-1-AC-3-01", "TC-US-003-1-AC-4-01", "TC-US-003-1-AC-5-01", "TC-US-003-1-AC-5-02", "TC-US-003-1-AC-5-03", "TC-US-003-1-AC-5-04", "TC-US-003-1-AC-5-05"],
+      "US-005": ["TC-US-005-AC-1-01", "TC-US-005-AC-1-02", "TC-US-005-AC-2-01", "TC-US-005-AC-3-01"],
+      "US-006": ["TC-US-006-AC-1-01", "TC-US-006-AC-2-01", "TC-US-006-AC-2-02", "TC-US-006-AC-3-01"],
+      "US-008": ["TC-US-008-AC-1-01", "TC-US-008-AC-2-01", "TC-US-008-AC-2-02", "TC-US-008-AC-3-01"],
+      "US-009": ["TC-US-009-AC-1-01", "TC-US-009-AC-1-02", "TC-US-009-AC-2-01", "TC-US-009-AC-3-01", "TC-US-009-AC-4-01"],
+      "US-010": ["TC-US-010-AC-1-01", "TC-US-010-AC-2-01", "TC-US-010-AC-3-01"],
+      "US-011": ["TC-US-011-AC-1-01", "TC-US-011-AC-2-01", "TC-US-011-AC-3-01"],
+      "US-012": ["TC-US-012-AC-1-01", "TC-US-012-AC-2-01", "TC-US-012-AC-3-01", "TC-US-012-AC-4-01"],
+      "US-014": ["TC-US-014-AC-1-01", "TC-US-014-AC-1-02", "TC-US-014-AC-2-01", "TC-US-014-AC-3-01", "TC-US-014-AC-4-01"],
+      "US-015": ["TC-US-015-AC-1-01", "TC-US-015-AC-2-01", "TC-US-015-AC-3-01"],
+      "US-016": ["TC-US-016-AC-1-01", "TC-US-016-AC-2-01", "TC-US-016-AC-3-01"],
+      "US-017": ["TC-US-017-AC-1-01", "TC-US-017-AC-2-01", "TC-US-017-AC-3-01", "TC-US-017-AC-4-01"],
+      "US-018": ["TC-US-018-AC-1-01", "TC-US-018-AC-2-01", "TC-US-018-AC-3-01", "TC-US-018-AC-4-01"],
+      "US-019": ["TC-US-019-AC-1-01", "TC-US-019-AC-2-01", "TC-US-019-AC-3-01", "TC-US-019-AC-4-01"],
+      "US-020": ["TC-US-020-AC-1-01", "TC-US-020-AC-2-01", "TC-US-020-AC-2-02", "TC-US-020-AC-2-03", "TC-US-020-AC-3-01"],
+      "US-022": ["TC-US-022-AC-1-01", "TC-US-022-AC-2-01", "TC-US-022-AC-3-01"],
+      "US-025": ["TC-US-025-AC-1-01", "TC-US-025-AC-2-01", "TC-US-025-AC-3-01"],
+      "US-026": ["TC-US-026-AC-1-01", "TC-US-026-AC-2-01", "TC-US-026-AC-3-01"],
+      "US-REG-001": ["TC-US-REG-001-AC-1-01", "TC-US-REG-001-AC-1-02", "TC-US-REG-001-AC-2-01", "TC-US-REG-001-AC-2-02", "TC-US-REG-001-AC-3-01", "TC-US-REG-001-AC-4-01"]
+    },
+    "byAcceptanceCriteria": {
+      "US-001:AC-1": ["TC-US-001-AC-1-01", "TC-US-001-AC-1-02", "TC-US-001-AC-1-03"],
+      "US-001:AC-2": ["TC-US-001-AC-2-01", "TC-US-001-AC-2-02"],
+      "US-001:AC-3": ["TC-US-001-AC-3-01", "TC-US-001-AC-3-02", "TC-US-001-AC-3-03"],
+      "US-001:AC-4": ["TC-US-001-AC-4-01", "TC-US-001-AC-4-02"],
+      "US-001:AC-5": ["TC-US-001-AC-5-01", "TC-US-001-AC-5-02"],
+      "US-001:AC-6": ["TC-US-001-AC-6-01"],
+      "US-001:AC-7": ["TC-US-001-AC-7-01"],
+      "US-002:AC-1": ["TC-US-002-AC-1-01", "TC-US-002-AC-1-02", "TC-US-002-AC-1-03"],
+      "US-002:AC-2": ["TC-US-002-AC-2-01"],
+      "US-002:AC-3": ["TC-US-002-AC-3-01"],
+      "US-002:AC-4": ["TC-US-002-AC-4-01"],
+      "US-002-1:AC-1": ["TC-US-002-1-AC-1-01"],
+      "US-002-1:AC-2": ["TC-US-002-1-AC-2-01"],
+      "US-002-1:AC-3": ["TC-US-002-1-AC-3-01"],
+      "US-002-1:AC-4": ["TC-US-002-1-AC-4-01"],
+      "US-003:AC-1": ["TC-US-003-AC-1-01"],
+      "US-003:AC-2": ["TC-US-003-AC-2-01"],
+      "US-003:AC-3": ["TC-US-003-AC-3-01"],
+      "US-003:AC-4": ["TC-US-003-AC-4-01"],
+      "US-003-1:AC-1": ["TC-US-003-1-AC-1-01"],
+      "US-003-1:AC-2": ["TC-US-003-1-AC-2-01"],
+      "US-003-1:AC-3": ["TC-US-003-1-AC-3-01"],
+      "US-003-1:AC-4": ["TC-US-003-1-AC-4-01"],
+      "US-003-1:AC-5": ["TC-US-003-1-AC-5-01", "TC-US-003-1-AC-5-02", "TC-US-003-1-AC-5-03", "TC-US-003-1-AC-5-04", "TC-US-003-1-AC-5-05"],
+      "US-005:AC-1": ["TC-US-005-AC-1-01", "TC-US-005-AC-1-02"],
+      "US-005:AC-2": ["TC-US-005-AC-2-01"],
+      "US-005:AC-3": ["TC-US-005-AC-3-01"],
+      "US-006:AC-1": ["TC-US-006-AC-1-01"],
+      "US-006:AC-2": ["TC-US-006-AC-2-01", "TC-US-006-AC-2-02"],
+      "US-006:AC-3": ["TC-US-006-AC-3-01"],
+      "US-008:AC-1": ["TC-US-008-AC-1-01"],
+      "US-008:AC-2": ["TC-US-008-AC-2-01", "TC-US-008-AC-2-02"],
+      "US-008:AC-3": ["TC-US-008-AC-3-01"],
+      "US-009:AC-1": ["TC-US-009-AC-1-01", "TC-US-009-AC-1-02"],
+      "US-009:AC-2": ["TC-US-009-AC-2-01"],
+      "US-009:AC-3": ["TC-US-009-AC-3-01"],
+      "US-009:AC-4": ["TC-US-009-AC-4-01"],
+      "US-010:AC-1": ["TC-US-010-AC-1-01"],
+      "US-010:AC-2": ["TC-US-010-AC-2-01"],
+      "US-010:AC-3": ["TC-US-010-AC-3-01"],
+      "US-011:AC-1": ["TC-US-011-AC-1-01"],
+      "US-011:AC-2": ["TC-US-011-AC-2-01"],
+      "US-011:AC-3": ["TC-US-011-AC-3-01"],
+      "US-012:AC-1": ["TC-US-012-AC-1-01"],
+      "US-012:AC-2": ["TC-US-012-AC-2-01"],
+      "US-012:AC-3": ["TC-US-012-AC-3-01"],
+      "US-012:AC-4": ["TC-US-012-AC-4-01"],
+      "US-014:AC-1": ["TC-US-014-AC-1-01", "TC-US-014-AC-1-02"],
+      "US-014:AC-2": ["TC-US-014-AC-2-01"],
+      "US-014:AC-3": ["TC-US-014-AC-3-01"],
+      "US-014:AC-4": ["TC-US-014-AC-4-01"],
+      "US-015:AC-1": ["TC-US-015-AC-1-01"],
+      "US-015:AC-2": ["TC-US-015-AC-2-01"],
+      "US-015:AC-3": ["TC-US-015-AC-3-01"],
+      "US-016:AC-1": ["TC-US-016-AC-1-01"],
+      "US-016:AC-2": ["TC-US-016-AC-2-01"],
+      "US-016:AC-3": ["TC-US-016-AC-3-01"],
+      "US-017:AC-1": ["TC-US-017-AC-1-01"],
+      "US-017:AC-2": ["TC-US-017-AC-2-01"],
+      "US-017:AC-3": ["TC-US-017-AC-3-01"],
+      "US-017:AC-4": ["TC-US-017-AC-4-01"],
+      "US-018:AC-1": ["TC-US-018-AC-1-01"],
+      "US-018:AC-2": ["TC-US-018-AC-2-01"],
+      "US-018:AC-3": ["TC-US-018-AC-3-01"],
+      "US-018:AC-4": ["TC-US-018-AC-4-01"],
+      "US-019:AC-1": ["TC-US-019-AC-1-01"],
+      "US-019:AC-2": ["TC-US-019-AC-2-01"],
+      "US-019:AC-3": ["TC-US-019-AC-3-01"],
+      "US-019:AC-4": ["TC-US-019-AC-4-01"],
+      "US-020:AC-1": ["TC-US-020-AC-1-01"],
+      "US-020:AC-2": ["TC-US-020-AC-2-01", "TC-US-020-AC-2-02", "TC-US-020-AC-2-03"],
+      "US-020:AC-3": ["TC-US-020-AC-3-01"],
+      "US-022:AC-1": ["TC-US-022-AC-1-01"],
+      "US-022:AC-2": ["TC-US-022-AC-2-01"],
+      "US-022:AC-3": ["TC-US-022-AC-3-01"],
+      "US-025:AC-1": ["TC-US-025-AC-1-01"],
+      "US-025:AC-2": ["TC-US-025-AC-2-01"],
+      "US-025:AC-3": ["TC-US-025-AC-3-01"],
+      "US-026:AC-1": ["TC-US-026-AC-1-01"],
+      "US-026:AC-2": ["TC-US-026-AC-2-01"],
+      "US-026:AC-3": ["TC-US-026-AC-3-01"],
+      "US-REG-001:AC-1": ["TC-US-REG-001-AC-1-01", "TC-US-REG-001-AC-1-02"],
+      "US-REG-001:AC-2": ["TC-US-REG-001-AC-2-01", "TC-US-REG-001-AC-2-02"],
+      "US-REG-001:AC-3": ["TC-US-REG-001-AC-3-01"],
+      "US-REG-001:AC-4": ["TC-US-REG-001-AC-4-01"]
+    },
+    "byDomainRule": {
+      "DR-001": ["TC-US-001-AC-1-01"],
+      "DR-002": ["TC-US-009-AC-1-01", "TC-US-009-AC-1-02"],
+      "DR-003": ["TC-US-009-AC-2-01"],
+      "DR-004": ["TC-US-009-AC-3-01", "TC-US-010-AC-2-01"],
+      "DR-005": ["TC-US-018-AC-3-01"],
+      "DR-006": ["TC-US-017-AC-3-01"],
+      "DR-007": ["TC-US-011-AC-2-01"],
+      "DR-008": ["TC-US-019-AC-3-01"],
+      "DR-009": ["TC-US-012-AC-4-01", "TC-US-019-AC-2-01"],
+      "DR-010": ["TC-US-012-AC-2-01", "TC-US-012-AC-3-01"],
+      "DR-011": ["TC-US-020-AC-2-02", "TC-US-020-AC-2-03"],
+      "DR-012": ["TC-US-008-AC-2-01", "TC-US-008-AC-3-01"],
+      "DR-013": ["TC-US-002-AC-1-02", "TC-US-002-AC-1-03"],
+      "DR-014": ["TC-US-003-1-AC-5-02", "TC-US-003-1-AC-5-03", "TC-US-003-1-AC-5-04", "TC-US-003-1-AC-5-05"],
+      "DR-015": ["TC-US-009-AC-2-01"],
+      "DR-016": ["TC-US-REG-001-AC-1-02"],
+      "DR-017": ["TC-US-014-AC-3-01"]
+    },
+    "byChangeItem": {
+      "CI-001": ["TC-US-006-AC-2-02"],
+      "CI-002": ["TC-US-008-AC-2-01", "TC-US-008-AC-3-01", "TC-US-015-AC-1-01", "TC-US-019-AC-1-01"],
+      "CI-003": ["TC-US-008-AC-2-02"],
+      "CI-004": ["TC-US-003-1-AC-5-02", "TC-US-003-1-AC-5-03", "TC-US-003-1-AC-5-04"],
+      "CI-005": ["TC-US-012-AC-1-01", "TC-US-012-AC-2-01", "TC-US-012-AC-3-01", "TC-US-019-AC-2-01"],
+      "CI-006": ["TC-US-006-AC-2-02"],
+      "CI-007": ["TC-US-003-1-AC-2-01"],
+      "CI-008": ["TC-US-014-AC-1-02"],
+      "CI-009": ["TC-US-014-AC-3-01"],
+      "CI-010": ["TC-US-REG-001-AC-1-01", "TC-US-REG-001-AC-1-02"],
+      "CI-011": ["TC-US-REG-001-AC-2-01", "TC-US-REG-001-AC-2-02"],
+      "CI-012": ["TC-US-REG-001-AC-3-01"],
+      "CI-013": ["TC-US-REG-001-AC-4-01"],
+      "CI-014": ["TC-US-005-AC-1-01"],
+      "CI-015": ["TC-US-005-AC-1-01", "TC-US-005-AC-1-02"],
+      "CI-016": ["TC-US-005-AC-1-01"]
+    },
+    "byRoute": {
+      "/": [],
+      "/login": ["TC-US-002-AC-1-01", "TC-US-002-AC-2-01", "TC-US-002-AC-4-01"],
+      "/signup": ["TC-US-001-AC-1-01", "TC-US-001-AC-1-02", "TC-US-001-AC-1-03", "TC-US-001-AC-2-01", "TC-US-001-AC-2-02", "TC-US-001-AC-3-01", "TC-US-001-AC-3-02", "TC-US-001-AC-4-01", "TC-US-001-AC-4-02", "TC-US-001-AC-5-01", "TC-US-001-AC-5-02", "TC-US-001-AC-7-01"],
+      "/signup/complete": ["TC-US-001-AC-6-01"],
+      "/password-reset": ["TC-US-002-1-AC-1-01"],
+      "/password-reset/verify": [],
+      "/password-reset/new": ["TC-US-002-1-AC-3-01"],
+      "/terms": [],
+      "/profile/setup": [],
+      "/mypage": ["TC-US-REG-001-AC-1-01", "TC-US-REG-001-AC-3-01", "TC-US-REG-001-AC-4-01"],
+      "/mypage/wallet": ["TC-US-003-AC-1-01", "TC-US-003-AC-2-01", "TC-US-003-AC-3-01", "TC-US-003-AC-4-01"],
+      "/mypage/wallet/pending": ["TC-US-003-1-AC-1-01", "TC-US-003-1-AC-2-01", "TC-US-003-1-AC-3-01", "TC-US-003-1-AC-4-01", "TC-US-003-1-AC-5-01"],
+      "/mypage/reports": [],
+      "/mypage/withdraw": [],
+      "/mypage/creator/setup": ["TC-US-REG-001-AC-1-02"],
+      "/mypage/creator/edit": ["TC-US-REG-001-AC-2-01", "TC-US-REG-001-AC-2-02"],
+      "/settings": [],
+      "/shop": ["TC-US-005-AC-1-01", "TC-US-005-AC-1-02"],
+      "/shop/payment": ["TC-US-005-AC-2-01"],
+      "/shop/payment/complete": ["TC-US-005-AC-3-01"],
+      "/home": ["TC-US-002-AC-1-01", "TC-US-006-AC-1-01", "TC-US-006-AC-2-01", "TC-US-006-AC-3-01"],
+      "/explore": [],
+      "/search": [],
+      "/stories/:storyId": [],
+      "/creators/:creatorId": [],
+      "/stories/:storyId/episodes/:episodeId": ["TC-US-008-AC-1-01", "TC-US-008-AC-2-01", "TC-US-008-AC-3-01", "TC-US-009-AC-1-01", "TC-US-009-AC-1-02", "TC-US-009-AC-2-01", "TC-US-009-AC-3-01", "TC-US-009-AC-4-01", "TC-US-010-AC-1-01", "TC-US-010-AC-2-01", "TC-US-010-AC-3-01", "TC-US-011-AC-1-01", "TC-US-011-AC-2-01", "TC-US-011-AC-3-01", "TC-US-012-AC-1-01", "TC-US-012-AC-2-01", "TC-US-012-AC-3-01", "TC-US-012-AC-4-01"],
+      "/studio": [],
+      "/studio/episodes": ["TC-US-015-AC-1-01", "TC-US-015-AC-2-01", "TC-US-015-AC-3-01"],
+      "/studio/episodes/:episodeId/edit": ["TC-US-014-AC-1-01", "TC-US-014-AC-2-01", "TC-US-014-AC-3-01", "TC-US-014-AC-4-01", "TC-US-019-AC-1-01", "TC-US-019-AC-2-01", "TC-US-019-AC-3-01", "TC-US-019-AC-4-01"],
+      "/studio/proposals": ["TC-US-016-AC-1-01", "TC-US-016-AC-2-01", "TC-US-016-AC-3-01", "TC-US-017-AC-1-01", "TC-US-017-AC-2-01", "TC-US-017-AC-3-01", "TC-US-017-AC-4-01", "TC-US-018-AC-1-01", "TC-US-018-AC-2-01", "TC-US-018-AC-3-01", "TC-US-018-AC-4-01"],
+      "/studio/settlements": ["TC-US-020-AC-1-01", "TC-US-020-AC-2-01", "TC-US-020-AC-3-01"],
+      "/admin": [],
+      "/admin/users": ["TC-US-022-AC-1-01", "TC-US-022-AC-2-01", "TC-US-022-AC-3-01"],
+      "/admin/contents": [],
+      "/admin/payments": [],
+      "/admin/settlements": ["TC-US-025-AC-1-01", "TC-US-025-AC-2-01", "TC-US-025-AC-3-01", "TC-US-026-AC-1-01", "TC-US-026-AC-2-01", "TC-US-026-AC-3-01"],
+      "/admin/reports": []
+    }
+  }
+}
