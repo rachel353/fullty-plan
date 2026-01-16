@@ -39,6 +39,7 @@ description: |
 - 6) 화면 구조도(IA)
 - 7) 서비스 유저 (유저 종류 테이블만, 유저별 권한은 quotes.md에서 관리)
 - 8) 견적서
+- 9) 일정 안내 (예상 일정 테이블 + Next Steps)
 
 ### Step 4: Validation
 - [ ] 모든 필수 input 파일 확인됨
