@@ -1,0 +1,391 @@
+{
+  "meta": {
+    "project": "아테나올리바",
+    "version": "1.0.0",
+    "lastUpdated": "2026-01-07",
+    "description": "올리브오일 라벨 스캔 OCR + 커머스 플랫폼 Conceptual Model"
+  },
+  "entities": [
+    {
+      "id": "User",
+      "name": "회원",
+      "description": "서비스를 이용하는 사용자 (일반 회원, 전문가)",
+      "attributes": [
+        { "name": "id", "type": "UUID", "required": true, "description": "고유 식별자" },
+        { "name": "email", "type": "String", "required": true, "description": "이메일 (로그인 ID)" },
+        { "name": "password", "type": "String", "required": true, "description": "비밀번호 (8자 이상)" },
+        { "name": "name", "type": "String", "required": true, "description": "이름" },
+        { "name": "phone", "type": "String", "required": false, "description": "연락처" },
+        { "name": "role", "type": "Enum", "required": true, "description": "역할", "enumValues": ["CONSUMER", "EXPERT", "ADMIN"] },
+        { "name": "status", "type": "Enum", "required": true, "description": "계정 상태", "enumValues": ["ACTIVE", "INACTIVE"] },
+        { "name": "createdAt", "type": "DateTime", "required": true, "description": "가입일" },
+        { "name": "updatedAt", "type": "DateTime", "required": true, "description": "수정일" }
+      ],
+      "userStories": ["US-106", "US-107", "US-208", "US-209"]
+    },
+    {
+      "id": "Product",
+      "name": "상품",
+      "description": "판매되는 올리브오일 제품",
+      "attributes": [
+        { "name": "id", "type": "UUID", "required": true, "description": "고유 식별자" },
+        { "name": "name", "type": "String", "required": true, "description": "상품명" },
+        { "name": "description", "type": "String", "required": false, "description": "상품 설명" },
+        { "name": "price", "type": "Integer", "required": true, "description": "가격 (원)" },
+        { "name": "origin", "type": "String", "required": true, "description": "원산지" },
+        { "name": "grade", "type": "Enum", "required": false, "description": "품질 등급", "enumValues": ["EXTRA_VIRGIN", "VIRGIN", "PURE", "LIGHT"] },
+        { "name": "brand", "type": "String", "required": false, "description": "브랜드" },
+        { "name": "vintage", "type": "String", "required": false, "description": "빈티지 (수확 연도)" },
+        { "name": "volume", "type": "Integer", "required": false, "description": "용량 (ml)" },
+        { "name": "stock", "type": "Integer", "required": true, "description": "재고 수량" },
+        { "name": "images", "type": "Array[String]", "required": false, "description": "상품 이미지 URL (최대 5장)" },
+        { "name": "averageRating", "type": "Float", "required": false, "description": "평균 평점 (1-5)" },
+        { "name": "reviewCount", "type": "Integer", "required": false, "description": "리뷰 수" },
+        { "name": "status", "type": "Enum", "required": true, "description": "상품 상태", "enumValues": ["ACTIVE", "INACTIVE", "DELETED"] },
+        { "name": "createdAt", "type": "DateTime", "required": true, "description": "등록일" },
+        { "name": "updatedAt", "type": "DateTime", "required": true, "description": "수정일" }
+      ],
+      "userStories": ["US-103", "US-201", "US-202", "US-203", "US-204", "US-210"]
+    },
+    {
+      "id": "Label",
+      "name": "라벨",
+      "description": "OCR 스캔 대상이 되는 올리브오일 라벨 데이터",
+      "attributes": [
+        { "name": "id", "type": "UUID", "required": true, "description": "고유 식별자" },
+        { "name": "productId", "type": "UUID", "required": true, "description": "연결된 상품 ID" },
+        { "name": "imageUrl", "type": "String", "required": true, "description": "라벨 이미지 URL" },
+        { "name": "brandText", "type": "String", "required": false, "description": "라벨에서 추출된 브랜드명" },
+        { "name": "productText", "type": "String", "required": false, "description": "라벨에서 추출된 제품명" },
+        { "name": "vintageText", "type": "String", "required": false, "description": "라벨에서 추출된 빈티지" },
+        { "name": "ocrData", "type": "JSON", "required": false, "description": "OCR 추출 원본 데이터" },
+        { "name": "embedding", "type": "Array[Float]", "required": false, "description": "RAG 검색용 벡터 임베딩" },
+        { "name": "createdAt", "type": "DateTime", "required": true, "description": "등록일" },
+        { "name": "updatedAt", "type": "DateTime", "required": true, "description": "수정일" }
+      ],
+      "userStories": ["US-205", "US-206", "US-207"]
+    },
+    {
+      "id": "ScanResult",
+      "name": "스캔 결과",
+      "description": "사용자가 라벨을 스캔한 결과",
+      "attributes": [
+        { "name": "id", "type": "UUID", "required": true, "description": "고유 식별자" },
+        { "name": "userId", "type": "UUID", "required": false, "description": "스캔한 회원 ID (비회원 가능)" },
+        { "name": "imageUrl", "type": "String", "required": true, "description": "촬영된 이미지 URL" },
+        { "name": "ocrText", "type": "String", "required": false, "description": "OCR 추출 텍스트" },
+        { "name": "matchedLabelId", "type": "UUID", "required": false, "description": "매칭된 라벨 ID" },
+        { "name": "matchedProductId", "type": "UUID", "required": false, "description": "매칭된 상품 ID" },
+        { "name": "matchScore", "type": "Float", "required": false, "description": "매칭 점수 (0-1)" },
+        { "name": "status", "type": "Enum", "required": true, "description": "매칭 상태", "enumValues": ["MATCHED", "PARTIAL", "NOT_FOUND"] },
+        { "name": "responseTimeMs", "type": "Integer", "required": false, "description": "응답 시간 (밀리초)" },
+        { "name": "usedAI", "type": "Boolean", "required": true, "description": "AI 분석 사용 여부" },
+        { "name": "createdAt", "type": "DateTime", "required": true, "description": "스캔 시점" }
+      ],
+      "userStories": ["US-101", "US-102"]
+    },
+    {
+      "id": "Cart",
+      "name": "장바구니",
+      "description": "회원의 장바구니",
+      "attributes": [
+        { "name": "id", "type": "UUID", "required": true, "description": "고유 식별자" },
+        { "name": "userId", "type": "UUID", "required": true, "description": "회원 ID" },
+        { "name": "totalAmount", "type": "Integer", "required": true, "description": "총 금액" },
+        { "name": "itemCount", "type": "Integer", "required": true, "description": "상품 종류 수" },
+        { "name": "updatedAt", "type": "DateTime", "required": true, "description": "수정일" }
+      ],
+      "userStories": ["US-104"]
+    },
+    {
+      "id": "CartItem",
+      "name": "장바구니 항목",
+      "description": "장바구니에 담긴 개별 상품",
+      "attributes": [
+        { "name": "id", "type": "UUID", "required": true, "description": "고유 식별자" },
+        { "name": "cartId", "type": "UUID", "required": true, "description": "장바구니 ID" },
+        { "name": "productId", "type": "UUID", "required": true, "description": "상품 ID" },
+        { "name": "quantity", "type": "Integer", "required": true, "description": "수량 (1-99)" },
+        { "name": "unitPrice", "type": "Integer", "required": true, "description": "담은 시점 단가" },
+        { "name": "createdAt", "type": "DateTime", "required": true, "description": "담은 시점" }
+      ],
+      "userStories": ["US-104"]
+    },
+    {
+      "id": "Order",
+      "name": "주문",
+      "description": "결제 완료된 주문",
+      "attributes": [
+        { "name": "id", "type": "UUID", "required": true, "description": "고유 식별자" },
+        { "name": "orderNumber", "type": "String", "required": true, "description": "주문번호 (표시용)" },
+        { "name": "userId", "type": "UUID", "required": true, "description": "주문한 회원 ID" },
+        { "name": "totalAmount", "type": "Integer", "required": true, "description": "총 결제 금액" },
+        { "name": "status", "type": "Enum", "required": true, "description": "주문 상태", "enumValues": ["PENDING", "PAID", "PREPARING", "SHIPPED", "DELIVERED", "CANCELLED", "REFUNDED"] },
+        { "name": "paymentMethod", "type": "Enum", "required": false, "description": "결제 수단", "enumValues": ["CARD", "BANK_TRANSFER", "VIRTUAL_ACCOUNT"] },
+        { "name": "paymentId", "type": "String", "required": false, "description": "PG 결제 ID" },
+        { "name": "shippingAddress", "type": "JSON", "required": false, "description": "배송 주소" },
+        { "name": "createdAt", "type": "DateTime", "required": true, "description": "주문일" },
+        { "name": "paidAt", "type": "DateTime", "required": false, "description": "결제 완료 시점" }
+      ],
+      "userStories": ["US-105"]
+    },
+    {
+      "id": "OrderItem",
+      "name": "주문 항목",
+      "description": "주문에 포함된 개별 상품",
+      "attributes": [
+        { "name": "id", "type": "UUID", "required": true, "description": "고유 식별자" },
+        { "name": "orderId", "type": "UUID", "required": true, "description": "주문 ID" },
+        { "name": "productId", "type": "UUID", "required": true, "description": "상품 ID" },
+        { "name": "quantity", "type": "Integer", "required": true, "description": "수량" },
+        { "name": "unitPrice", "type": "Integer", "required": true, "description": "주문 시점 단가" },
+        { "name": "subtotal", "type": "Integer", "required": true, "description": "소계" }
+      ],
+      "userStories": ["US-105"]
+    },
+    {
+      "id": "Review",
+      "name": "리뷰",
+      "description": "상품에 대한 사용자/전문가 리뷰",
+      "attributes": [
+        { "name": "id", "type": "UUID", "required": true, "description": "고유 식별자" },
+        { "name": "productId", "type": "UUID", "required": true, "description": "상품 ID" },
+        { "name": "userId", "type": "UUID", "required": true, "description": "작성자 ID" },
+        { "name": "orderId", "type": "UUID", "required": false, "description": "구매 주문 ID (일반 리뷰)" },
+        { "name": "type", "type": "Enum", "required": true, "description": "리뷰 유형", "enumValues": ["CONSUMER", "EXPERT"] },
+        { "name": "rating", "type": "Integer", "required": true, "description": "별점 (1-5)" },
+        { "name": "content", "type": "String", "required": true, "description": "리뷰 내용 (10자 이상)" },
+        { "name": "expertRatings", "type": "JSON", "required": false, "description": "전문가 상세 평가 (향, 맛, 품질, 가성비 각 1-5)" },
+        { "name": "status", "type": "Enum", "required": true, "description": "게시 상태", "enumValues": ["PENDING", "APPROVED", "REJECTED"] },
+        { "name": "createdAt", "type": "DateTime", "required": true, "description": "작성일" }
+      ],
+      "userStories": ["US-108", "US-109", "US-110"]
+    }
+  ],
+  "relationships": [
+    {
+      "from": "User",
+      "to": "Cart",
+      "cardinality": "1:1",
+      "description": "회원은 하나의 장바구니를 가짐"
+    },
+    {
+      "from": "User",
+      "to": "Order",
+      "cardinality": "1:N",
+      "description": "회원은 여러 주문을 할 수 있음"
+    },
+    {
+      "from": "User",
+      "to": "Review",
+      "cardinality": "1:N",
+      "description": "회원은 여러 리뷰를 작성할 수 있음"
+    },
+    {
+      "from": "User",
+      "to": "ScanResult",
+      "cardinality": "1:N",
+      "description": "회원은 여러 번 스캔할 수 있음"
+    },
+    {
+      "from": "Cart",
+      "to": "CartItem",
+      "cardinality": "1:N",
+      "description": "장바구니는 여러 항목을 포함"
+    },
+    {
+      "from": "Product",
+      "to": "CartItem",
+      "cardinality": "1:N",
+      "description": "상품은 여러 장바구니에 담길 수 있음"
+    },
+    {
+      "from": "Product",
+      "to": "Label",
+      "cardinality": "1:N",
+      "description": "상품은 여러 라벨(빈티지별)을 가질 수 있음"
+    },
+    {
+      "from": "Product",
+      "to": "Review",
+      "cardinality": "1:N",
+      "description": "상품은 여러 리뷰를 가짐"
+    },
+    {
+      "from": "Product",
+      "to": "OrderItem",
+      "cardinality": "1:N",
+      "description": "상품은 여러 주문에 포함될 수 있음"
+    },
+    {
+      "from": "Order",
+      "to": "OrderItem",
+      "cardinality": "1:N",
+      "description": "주문은 여러 항목을 포함"
+    },
+    {
+      "from": "Label",
+      "to": "ScanResult",
+      "cardinality": "1:N",
+      "description": "라벨은 여러 스캔 결과와 매칭될 수 있음"
+    },
+    {
+      "from": "Order",
+      "to": "Review",
+      "cardinality": "1:N",
+      "description": "주문 기반으로 리뷰 작성 가능"
+    }
+  ],
+  "domainRules": [
+    {
+      "id": "DR-001",
+      "name": "OCR 응답 시간 제한",
+      "description": "라벨 스캔 결과는 3초 이내에 반환되어야 함",
+      "entities": ["ScanResult"],
+      "constraint": "ScanResult.responseTimeMs <= 3000"
+    },
+    {
+      "id": "DR-002",
+      "name": "비밀번호 최소 길이",
+      "description": "비밀번호는 8자 이상이어야 함",
+      "entities": ["User"],
+      "constraint": "User.password.length >= 8"
+    },
+    {
+      "id": "DR-003",
+      "name": "장바구니 수량 제한",
+      "description": "장바구니 항목 수량은 1-99개로 제한",
+      "entities": ["CartItem"],
+      "constraint": "1 <= CartItem.quantity <= 99"
+    },
+    {
+      "id": "DR-004",
+      "name": "리뷰 작성 조건",
+      "description": "일반 사용자 리뷰는 해당 상품을 구매(결제 완료)한 경우에만 작성 가능",
+      "entities": ["Review", "Order"],
+      "constraint": "Review.type == 'CONSUMER' → Order.status == 'PAID' AND OrderItem.productId == Review.productId"
+    },
+    {
+      "id": "DR-005",
+      "name": "전문가 리뷰 승인",
+      "description": "전문가 리뷰는 관리자 승인 후 게시",
+      "entities": ["Review"],
+      "constraint": "Review.type == 'EXPERT' → Review.status must be APPROVED to display"
+    },
+    {
+      "id": "DR-006",
+      "name": "리뷰 최소 길이",
+      "description": "리뷰 내용은 10자 이상이어야 함",
+      "entities": ["Review"],
+      "constraint": "Review.content.length >= 10"
+    },
+    {
+      "id": "DR-007",
+      "name": "재고 부족 경고",
+      "description": "재고가 10개 이하인 상품은 '재고 부족' 경고 표시",
+      "entities": ["Product"],
+      "constraint": "Product.stock <= 10 → show warning"
+    },
+    {
+      "id": "DR-008",
+      "name": "품절 상품 표시",
+      "description": "재고가 0인 상품은 사용자에게 '품절' 표시",
+      "entities": ["Product"],
+      "constraint": "Product.stock == 0 → display as 'SOLD OUT'"
+    },
+    {
+      "id": "DR-009",
+      "name": "RAG 우선 검색",
+      "description": "OCR 스캔 시 RAG 기반 검색을 우선 사용하고, 매칭 실패 시에만 AI 분석 사용",
+      "entities": ["ScanResult", "Label"],
+      "constraint": "Try RAG search first, use AI only when RAG fails"
+    },
+    {
+      "id": "DR-010",
+      "name": "상품 이미지 제한",
+      "description": "상품당 최대 5장의 이미지 업로드 가능",
+      "entities": ["Product"],
+      "constraint": "Product.images.length <= 5"
+    }
+  ],
+  "dataFlows": [
+    {
+      "id": "DF-001",
+      "name": "스캔 → 구매 플로우",
+      "description": "사용자가 라벨을 스캔하여 상품을 구매하는 핵심 플로우",
+      "steps": [
+        "User scans label → ScanResult created",
+        "ScanResult matches Label via RAG/AI",
+        "Label links to Product → Product detail shown",
+        "User adds to Cart → CartItem created",
+        "User checks out → Order + OrderItems created",
+        "Payment processed → Order.status = PAID"
+      ],
+      "entities": ["User", "ScanResult", "Label", "Product", "Cart", "CartItem", "Order", "OrderItem"]
+    },
+    {
+      "id": "DF-002",
+      "name": "상품 관리 플로우",
+      "description": "관리자가 상품과 라벨을 관리하는 플로우",
+      "steps": [
+        "Admin creates Product with details",
+        "Admin uploads Label images for Product",
+        "Label OCR data extracted and stored",
+        "Label embedding generated for RAG search",
+        "Product becomes searchable via label scan"
+      ],
+      "entities": ["User", "Product", "Label"]
+    },
+    {
+      "id": "DF-003",
+      "name": "리뷰 플로우",
+      "description": "구매 후 리뷰 작성 플로우",
+      "steps": [
+        "User completes purchase (Order.status = PAID)",
+        "User writes Review with rating",
+        "Review.status = APPROVED (auto for consumer)",
+        "Product.averageRating and reviewCount updated",
+        "Review displayed on Product detail"
+      ],
+      "entities": ["User", "Order", "Review", "Product"]
+    }
+  ],
+  "glossary": [
+    {
+      "term": "라벨 스캔",
+      "definition": "카메라로 올리브오일 라벨을 촬영하여 제품 정보를 인식하는 기능"
+    },
+    {
+      "term": "RAG (Retrieval-Augmented Generation)",
+      "definition": "벡터 임베딩 기반 검색으로 라벨 데이터를 매칭하는 기술. AI 호출 비용 절감을 위해 우선 사용"
+    },
+    {
+      "term": "빈티지",
+      "definition": "올리브오일 원료의 수확 연도. 같은 제품이라도 빈티지에 따라 라벨이 다를 수 있음"
+    },
+    {
+      "term": "전문가 리뷰",
+      "definition": "올리브오일 전문가가 작성하는 상세 평가 (향, 맛, 품질, 가성비). 관리자 승인 후 게시"
+    },
+    {
+      "term": "PG (Payment Gateway)",
+      "definition": "온라인 결제를 처리하는 결제 대행 서비스"
+    },
+    {
+      "term": "카페24",
+      "definition": "기존에 사용 중인 커머스 플랫폼. POC에서 연동 가능 여부 테스트 예정"
+    },
+    {
+      "term": "품질 등급",
+      "definition": "올리브오일 등급: Extra Virgin (최상급), Virgin, Pure, Light 순"
+    }
+  ],
+  "summary": {
+    "entityCount": 9,
+    "relationshipCount": 12,
+    "domainRuleCount": 10,
+    "dataFlowCount": 3,
+    "coreEntities": ["Product", "Label", "ScanResult", "Order"],
+    "supportEntities": ["User", "Cart", "CartItem", "OrderItem", "Review"]
+  }
+}

@@ -1,0 +1,119 @@
+{
+  "workflow_id": "generate-quote-proposal",
+  "description": "Generate project understanding, IA, design principles, quotes, and final proposal",
+  "execution_mode": "sequential_with_dependencies",
+  "skills": [
+    {
+      "id": "about-project",
+      "skill": "/about-project",
+      "description": "Analyze all project materials and generate internal guide and proposal background",
+      "inputs": [
+        "YY_MM_CLIENT_NAME/**",
+        "quotes/[MM.DD]/note.md?",
+        "meeting_scripts/**/summary.md",
+        "project-requirements.md",
+        "appendix/**",
+        "notes.md"
+      ],
+      "outputs": [
+        "guide.md",
+        "background.md"
+      ],
+      "depends_on": []
+    },
+    {
+      "id": "user-story",
+      "skill": "/user-story",
+      "description": "Generate structured user stories and acceptance criteria",
+      "inputs": [
+        "guide.md",
+        "project-requirements.md",
+        "meeting_scripts/**/summary.md"
+      ],
+      "outputs": [
+        "user_story.md"
+      ],
+      "depends_on": ["about-project"]
+    },
+    {
+      "id": "conceptual-model",
+      "skill": "/conceptual-model",
+      "description": "Define domain concepts and their relationships",
+      "inputs": [
+        "guide.md",
+        "user_story.md",
+        "project-requirements.md"
+      ],
+      "outputs": [
+        "conceptual_model.md"
+      ],
+      "depends_on": ["about-project", "user-story"]
+    },
+    {
+      "id": "ia-structure",
+      "skill": "/ia-structure",
+      "description": "Define information architecture and screen structure",
+      "inputs": [
+        "guide.md",
+        "user_story.md",
+        "conceptual_model.md",
+        "project-requirements.md"
+      ],
+      "outputs": [
+        "information-architecture.md"
+      ],
+      "depends_on": ["user-story", "conceptual-model"]
+    },
+    {
+      "id": "design",
+      "skill": "/design",
+      "description": "Generate UI/UX design principles and typography rules",
+      "inputs": [
+        "guide.md",
+        "project-requirements.md",
+        "information-architecture.md"
+      ],
+      "outputs": [
+        "DESIGN.md"
+      ],
+      "depends_on": ["ia-structure"]
+    },
+    {
+      "id": "quotes",
+      "skill": "/quotes",
+      "description": "Generate feature-based quote document from IA and user actions",
+      "inputs": [
+        "guide.md",
+        "information-architecture.md",
+        "user_story.md",
+        "quotes/[MM.DD]/note.md?"
+      ],
+      "outputs": [
+        "YY.MM.DD/quotes.md"
+      ],
+      "depends_on": ["ia-structure", "user-story"]
+    },
+    {
+      "id": "proposal",
+      "skill": "/proposal",
+      "description": "Assemble final proposal document from generated artifacts",
+      "inputs": [
+        "background.md",
+        "information-architecture.md",
+        "user_stories_data.json",
+        "YY.MM.DD/quotes.md"
+      ],
+      "outputs": [
+        "YY.MM.DD/proposal.md"
+      ],
+      "depends_on": ["about-project", "ia-structure", "quotes"]
+    }
+  ],
+  "global_rules": {
+    "output_format": "markdown",
+    "source_of_truth": "previous_outputs",
+    "naming_policy": "strict",
+    "uncertainty_policy": "explicit_labeling",
+    "additional_feature_policy": "mark_as_added_and_request_confirmation"
+  }
+}

@@ -1,0 +1,485 @@
+{
+  "meta": {
+    "project": "아테나올리바",
+    "currentVersion": "1.0.0",
+    "lastMeeting": "2026-01-07",
+    "description": "올리브오일 라벨 스캔 OCR + 커머스 플랫폼"
+  },
+  "statusDefinitions": {
+    "ACTIVE": "현재 유효한 요구사항",
+    "ACTIVE_MODIFIED": "수정되어 유효한 요구사항",
+    "DEFERRED": "향후 검토 예정",
+    "REMOVED": "삭제됨",
+    "UNCONFIRMED": "미확정 (협의 필요)"
+  },
+  "requirements": {
+    "CORE_FUNCTIONAL": {
+      "label": "핵심 기능 요구사항",
+      "items": [
+        {
+          "id": "REQ-101",
+          "title": "올리브오일 라벨 스캔 기능",
+          "category": "OCR 라벨 스캔",
+          "status": "ACTIVE",
+          "description": [
+            "카메라로 올리브오일 라벨 촬영 시 제품 정보 자동 인식",
+            "비비노(Vivino) 와인 스캔과 유사한 사용자 경험 제공",
+            "라벨 DB와 매칭하여 제품 정보 표시"
+          ],
+          "versioning": {
+            "createdAtMeeting": "2026-01-07",
+            "lastUpdatedAtMeeting": "2026-01-07",
+            "changeLog": [
+              { "meeting": "2026-01-07", "type": "CREATED" }
+            ]
+          }
+        },
+        {
+          "id": "REQ-102",
+          "title": "라벨 DB 구축 및 관리",
+          "category": "OCR 라벨 스캔",
+          "status": "ACTIVE",
+          "description": [
+            "현재 약 100~1,000개 라벨 데이터 지원",
+            "향후 글로벌 확장 시 최대 만 개 이내 지원",
+            "신규 제품 라벨 추가 기능 (관리자)"
+          ],
+          "versioning": {
+            "createdAtMeeting": "2026-01-07",
+            "lastUpdatedAtMeeting": "2026-01-07",
+            "changeLog": [
+              { "meeting": "2026-01-07", "type": "CREATED" }
+            ]
+          }
+        },
+        {
+          "id": "REQ-103",
+          "title": "OCR 결과 기반 제품 매칭",
+          "category": "OCR 라벨 스캔",
+          "status": "ACTIVE",
+          "description": [
+            "스캔 결과와 DB 매칭",
+            "매칭 실패 시 AI 보조 분석으로 정확도 향상",
+            "RAG(레그) 기반 검색 우선 → AI 보조 분석 보완"
+          ],
+          "versioning": {
+            "createdAtMeeting": "2026-01-07",
+            "lastUpdatedAtMeeting": "2026-01-07",
+            "changeLog": [
+              { "meeting": "2026-01-07", "type": "CREATED" }
+            ]
+          }
+        },
+        {
+          "id": "REQ-104",
+          "title": "상품 조회 및 상세 정보",
+          "category": "커머스 플랫폼",
+          "status": "ACTIVE",
+          "description": [
+            "스캔된 제품 상세 정보 표시",
+            "가격, 원산지, 품질 정보 등 제공"
+          ],
+          "versioning": {
+            "createdAtMeeting": "2026-01-07",
+            "lastUpdatedAtMeeting": "2026-01-07",
+            "changeLog": [
+              { "meeting": "2026-01-07", "type": "CREATED" }
+            ]
+          }
+        },
+        {
+          "id": "REQ-105",
+          "title": "장바구니 및 결제 시스템",
+          "category": "커머스 플랫폼",
+          "status": "ACTIVE",
+          "description": [
+            "상품 장바구니 담기",
+            "결제 연동 (PG사 연동)",
+            "구매 플로우 완성"
+          ],
+          "versioning": {
+            "createdAtMeeting": "2026-01-07",
+            "lastUpdatedAtMeeting": "2026-01-07",
+            "changeLog": [
+              { "meeting": "2026-01-07", "type": "CREATED" }
+            ]
+          }
+        },
+        {
+          "id": "REQ-106",
+          "title": "리뷰 시스템",
+          "category": "커머스 플랫폼",
+          "status": "ACTIVE",
+          "description": [
+            "사용자 리뷰 작성 및 조회",
+            "전문가 리뷰 지원",
+            "제품별 리뷰 집계 및 표시"
+          ],
+          "versioning": {
+            "createdAtMeeting": "2026-01-07",
+            "lastUpdatedAtMeeting": "2026-01-07",
+            "changeLog": [
+              { "meeting": "2026-01-07", "type": "CREATED" }
+            ]
+          }
+        },
+        {
+          "id": "REQ-107",
+          "title": "상품 DB 관리",
+          "category": "관리자 기능",
+          "status": "ACTIVE",
+          "description": [
+            "상품 추가/수정/삭제",
+            "가격 및 재고 관리"
+          ],
+          "versioning": {
+            "createdAtMeeting": "2026-01-07",
+            "lastUpdatedAtMeeting": "2026-01-07",
+            "changeLog": [
+              { "meeting": "2026-01-07", "type": "CREATED" }
+            ]
+          }
+        },
+        {
+          "id": "REQ-108",
+          "title": "OCR 라벨 데이터 관리",
+          "category": "관리자 기능",
+          "status": "ACTIVE",
+          "description": [
+            "신규 라벨 등록",
+            "라벨 데이터 업데이트 (빈티지별 등)"
+          ],
+          "versioning": {
+            "createdAtMeeting": "2026-01-07",
+            "lastUpdatedAtMeeting": "2026-01-07",
+            "changeLog": [
+              { "meeting": "2026-01-07", "type": "CREATED" }
+            ]
+          }
+        },
+        {
+          "id": "REQ-109",
+          "title": "회원 관리",
+          "category": "관리자 기능",
+          "status": "ACTIVE",
+          "description": [
+            "회원 가입/로그인 시스템",
+            "회원 정보 관리"
+          ],
+          "versioning": {
+            "createdAtMeeting": "2026-01-07",
+            "lastUpdatedAtMeeting": "2026-01-07",
+            "changeLog": [
+              { "meeting": "2026-01-07", "type": "CREATED" }
+            ]
+          }
+        },
+        {
+          "id": "REQ-110",
+          "title": "글로벌 확장 시 다국어 지원",
+          "category": "확장 기능",
+          "status": "UNCONFIRMED",
+          "description": [
+            "글로벌 확장 시 다국어 지원 범위 협의 필요"
+          ],
+          "versioning": {
+            "createdAtMeeting": "2026-01-07",
+            "lastUpdatedAtMeeting": "2026-01-07",
+            "changeLog": [
+              { "meeting": "2026-01-07", "type": "CREATED", "note": "미확정 항목으로 추가" }
+            ]
+          }
+        }
+      ]
+    },
+    "NON_FUNCTIONAL": {
+      "label": "비기능 요구사항",
+      "items": [
+        {
+          "id": "REQ-111",
+          "title": "OCR 응답 속도",
+          "category": "성능",
+          "status": "ACTIVE",
+          "description": [
+            "라벨 스캔 결과 3초 이내 응답 (계약서에 보장 조건 명시)",
+            "기존 9-10초 → 3초 이내로 개선"
+          ],
+          "versioning": {
+            "createdAtMeeting": "2026-01-07",
+            "lastUpdatedAtMeeting": "2026-01-07",
+            "changeLog": [
+              { "meeting": "2026-01-07", "type": "CREATED" }
+            ]
+          }
+        },
+        {
+          "id": "REQ-112",
+          "title": "OCR 정확도",
+          "category": "성능",
+          "status": "ACTIVE",
+          "description": [
+            "높은 정확도 보장 (구체적 수치는 POC에서 확정)",
+            "RAG + AI 보조 분석 조합으로 정확도 향상"
+          ],
+          "versioning": {
+            "createdAtMeeting": "2026-01-07",
+            "lastUpdatedAtMeeting": "2026-01-07",
+            "changeLog": [
+              { "meeting": "2026-01-07", "type": "CREATED" }
+            ]
+          }
+        },
+        {
+          "id": "REQ-113",
+          "title": "AI 토큰 비용 최적화",
+          "category": "비용",
+          "status": "ACTIVE",
+          "description": [
+            "RAG 우선 검색으로 AI 호출 최소화",
+            "운영 비용 절감 구조 설계",
+            "스캔 횟수별 예상 비용 사전 안내"
+          ],
+          "versioning": {
+            "createdAtMeeting": "2026-01-07",
+            "lastUpdatedAtMeeting": "2026-01-07",
+            "changeLog": [
+              { "meeting": "2026-01-07", "type": "CREATED" }
+            ]
+          }
+        },
+        {
+          "id": "REQ-114",
+          "title": "서버 안정성",
+          "category": "안정성",
+          "status": "ACTIVE",
+          "description": [
+            "24시간 서비스 가용성",
+            "서버 다운 시 긴급 대응 체계 (주말/야간 포함 협의)"
+          ],
+          "versioning": {
+            "createdAtMeeting": "2026-01-07",
+            "lastUpdatedAtMeeting": "2026-01-07",
+            "changeLog": [
+              { "meeting": "2026-01-07", "type": "CREATED" }
+            ]
+          }
+        },
+        {
+          "id": "REQ-115",
+          "title": "3초 응답 보장 조건 계약 명시",
+          "category": "성능",
+          "status": "UNCONFIRMED",
+          "description": [
+            "3초 응답 보장 조건의 구체적 계약 명시 방식 협의 필요"
+          ],
+          "versioning": {
+            "createdAtMeeting": "2026-01-07",
+            "lastUpdatedAtMeeting": "2026-01-07",
+            "changeLog": [
+              { "meeting": "2026-01-07", "type": "CREATED", "note": "미확정 항목으로 추가" }
+            ]
+          }
+        },
+        {
+          "id": "REQ-116",
+          "title": "정확도 목표 수치",
+          "category": "성능",
+          "status": "UNCONFIRMED",
+          "description": [
+            "정확도 목표 수치 (POC 진행 후 확정)"
+          ],
+          "versioning": {
+            "createdAtMeeting": "2026-01-07",
+            "lastUpdatedAtMeeting": "2026-01-07",
+            "changeLog": [
+              { "meeting": "2026-01-07", "type": "CREATED", "note": "미확정 항목으로 추가" }
+            ]
+          }
+        },
+        {
+          "id": "REQ-117",
+          "title": "AI 토큰 비용 구체적 산정",
+          "category": "비용",
+          "status": "UNCONFIRMED",
+          "description": [
+            "AI 토큰 비용 구체적 산정 (스캔 횟수별)"
+          ],
+          "versioning": {
+            "createdAtMeeting": "2026-01-07",
+            "lastUpdatedAtMeeting": "2026-01-07",
+            "changeLog": [
+              { "meeting": "2026-01-07", "type": "CREATED", "note": "미확정 항목으로 추가" }
+            ]
+          }
+        }
+      ]
+    },
+    "INTEGRATION": {
+      "label": "통합 요구사항",
+      "items": [
+        {
+          "id": "REQ-121",
+          "title": "기존 카페24 연동 테스트",
+          "category": "외부 시스템 연동",
+          "status": "ACTIVE",
+          "description": [
+            "현재 카페24 기반 시스템과 OCR 연동 테스트",
+            "연동 성공 시 기존 시스템 활용",
+            "연동 실패 시 신규 코드 개발 진행"
+          ],
+          "versioning": {
+            "createdAtMeeting": "2026-01-07",
+            "lastUpdatedAtMeeting": "2026-01-07",
+            "changeLog": [
+              { "meeting": "2026-01-07", "type": "CREATED" }
+            ]
+          }
+        },
+        {
+          "id": "REQ-122",
+          "title": "PG사 결제 연동",
+          "category": "외부 시스템 연동",
+          "status": "ACTIVE",
+          "description": [
+            "결제 시스템 연동",
+            "결제 오류 시 긴급 대응 필요"
+          ],
+          "versioning": {
+            "createdAtMeeting": "2026-01-07",
+            "lastUpdatedAtMeeting": "2026-01-07",
+            "changeLog": [
+              { "meeting": "2026-01-07", "type": "CREATED" }
+            ]
+          }
+        }
+      ]
+    },
+    "UI_UX": {
+      "label": "UI/UX 요구사항",
+      "items": [
+        {
+          "id": "REQ-131",
+          "title": "심리스한 스캔 경험",
+          "category": "사용자 경험",
+          "status": "ACTIVE",
+          "description": [
+            "비비노 수준의 자연스러운 스캔 UX",
+            "사진 촬영 → 결과 표시 → 구매 연결 플로우"
+          ],
+          "versioning": {
+            "createdAtMeeting": "2026-01-07",
+            "lastUpdatedAtMeeting": "2026-01-07",
+            "changeLog": [
+              { "meeting": "2026-01-07", "type": "CREATED" }
+            ]
+          }
+        },
+        {
+          "id": "REQ-132",
+          "title": "웹앱 형태 유지",
+          "category": "플랫폼",
+          "status": "ACTIVE",
+          "description": [
+            "기존 앱스토어 계정 활용 (업데이트 배포)",
+            "네이티브 앱 별도 개발 불필요 (현 단계)"
+          ],
+          "versioning": {
+            "createdAtMeeting": "2026-01-07",
+            "lastUpdatedAtMeeting": "2026-01-07",
+            "changeLog": [
+              { "meeting": "2026-01-07", "type": "CREATED" }
+            ]
+          }
+        }
+      ]
+    },
+    "BUSINESS_LOGIC": {
+      "label": "비즈니스 로직 요구사항",
+      "items": [
+        {
+          "id": "REQ-141",
+          "title": "단계별 개발 구조",
+          "category": "개발 프로세스",
+          "status": "ACTIVE",
+          "description": [
+            "POC → 카페24 연동 테스트 → 본 개발 순차 진행",
+            "페이즈별 결과 확인 후 다음 단계 진행"
+          ],
+          "versioning": {
+            "createdAtMeeting": "2026-01-07",
+            "lastUpdatedAtMeeting": "2026-01-07",
+            "changeLog": [
+              { "meeting": "2026-01-07", "type": "CREATED" }
+            ]
+          }
+        },
+        {
+          "id": "REQ-142",
+          "title": "유지보수 체계",
+          "category": "운영",
+          "status": "ACTIVE",
+          "description": [
+            "1개월 무상 유지보수",
+            "이후 유상 (연간 20% 또는 시간제 선택)",
+            "주말/야간 긴급 대응 별도 협의"
+          ],
+          "versioning": {
+            "createdAtMeeting": "2026-01-07",
+            "lastUpdatedAtMeeting": "2026-01-07",
+            "changeLog": [
+              { "meeting": "2026-01-07", "type": "CREATED" }
+            ]
+          }
+        },
+        {
+          "id": "REQ-143",
+          "title": "POC 비용 및 상세 범위",
+          "category": "계약",
+          "status": "UNCONFIRMED",
+          "description": [
+            "POC 정확한 비용 및 상세 범위 협의 필요"
+          ],
+          "versioning": {
+            "createdAtMeeting": "2026-01-07",
+            "lastUpdatedAtMeeting": "2026-01-07",
+            "changeLog": [
+              { "meeting": "2026-01-07", "type": "CREATED", "note": "미확정 항목으로 추가" }
+            ]
+          }
+        },
+        {
+          "id": "REQ-144",
+          "title": "본 개발 상세 기능 명세 및 최종 견적",
+          "category": "계약",
+          "status": "UNCONFIRMED",
+          "description": [
+            "본 개발 상세 기능 명세 및 최종 견적 협의 필요"
+          ],
+          "versioning": {
+            "createdAtMeeting": "2026-01-07",
+            "lastUpdatedAtMeeting": "2026-01-07",
+            "changeLog": [
+              { "meeting": "2026-01-07", "type": "CREATED", "note": "미확정 항목으로 추가" }
+            ]
+          }
+        },
+        {
+          "id": "REQ-145",
+          "title": "장기적 기술 진입장벽 개발 방안",
+          "category": "전략",
+          "status": "UNCONFIRMED",
+          "description": [
+            "장기적 기술 진입장벽 개발 방안 협의 필요"
+          ],
+          "versioning": {
+            "createdAtMeeting": "2026-01-07",
+            "lastUpdatedAtMeeting": "2026-01-07",
+            "changeLog": [
+              { "meeting": "2026-01-07", "type": "CREATED", "note": "미확정 항목으로 추가" }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

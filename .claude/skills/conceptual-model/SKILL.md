@@ -5,6 +5,20 @@ description: Define the fundamental conceptual structure of a system and output 
 
 # Conceptual Model Architect
 
+## Context Detection
+
+Check current working directory to determine output path:
+
+| Context | Detection | Output Path |
+|---------|-----------|-------------|
+| **Sales/Quote** | Path contains `sales/` | `quotes/[MM.DD]/conceptual_model.json` |
+| **FE Development** | Default | `docs/conceptual-model.json` |
+
+**Sales Context Input Sources:**
+- `quotes/[MM.DD]/user_stories_data.json`
+- `quotes/[MM.DD]/guide.md`
+- `meeting_scripts/[MM.DD]/requirements.md`
+
 Define **what exists in the system** and output to `docs/conceptual-model.json`.
 
 ## Output File
