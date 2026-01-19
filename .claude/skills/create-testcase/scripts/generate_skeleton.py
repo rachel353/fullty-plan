@@ -12,27 +12,27 @@ Usage:
 import argparse
 import json
 import re
-import os
 from pathlib import Path
 from typing import Optional
 
 
-def find_project_root() -> Path:
-    """Find jyageunfriends project root by looking for docs folder."""
+def find_project_root(docs_dir: str = "docs") -> Path:
+    """Find project root by looking for a docs directory."""
     current = Path.cwd()
 
-    # Check if we're in the jyageunfriends directory
-    if (current / "docs").exists():
+    # Check current directory
+    if (current / docs_dir).exists():
         return current
 
     # Check parent directories
     for parent in current.parents:
-        if (parent / "jyageunfriends" / "docs").exists():
-            return parent / "jyageunfriends"
-        if (parent / "docs").exists():
+        if (parent / docs_dir).exists():
             return parent
 
-    raise FileNotFoundError("Could not find project root with docs folder")
+    raise FileNotFoundError(
+        f"Could not find project root containing '{docs_dir}/'. "
+        "Run with --root to specify project root explicitly."
+    )
 
 
 def read_file(path: Path) -> str:
@@ -154,21 +154,28 @@ def extract_routes(content: str) -> list[str]:
 def build_skeleton(
     change_id: str,
     priorities: list[str],
-    project_root: Path
+    project_root: Path,
+    suite_name: str,
+    docs_dir: str,
+    user_stories_file: str,
+    conceptual_model_file: str,
+    ia_file: str,
+    changes_dir: str,
+    credentials_file: str,
 ) -> dict:
     """Build the complete skeleton JSON."""
 
-    docs_path = project_root / "docs"
+    docs_path = project_root / docs_dir
 
     # Read source documents
-    user_stories_content = read_file(docs_path / "user_stories.md")
-    conceptual_model_content = read_file(docs_path / "conceptual_model.md")
-    ia_content = read_file(docs_path / "ia_structure.md")
+    user_stories_content = read_file(docs_path / user_stories_file)
+    conceptual_model_content = read_file(docs_path / conceptual_model_file)
+    ia_content = read_file(docs_path / ia_file)
 
     # Try to find change document
     change_content = ""
     change_file = change_id.replace("change-", "") + ".md"
-    change_path = docs_path / "changes" / change_file
+    change_path = docs_path / changes_dir / change_file
     if change_path.exists():
         change_content = read_file(change_path)
 
@@ -196,15 +203,15 @@ def build_skeleton(
     # Build skeleton
     skeleton = {
         "meta": {
-            "name": "Jyageunfriends QC Test Cases (Skeleton)",
+            "name": suite_name,
             "baseChange": change_id,
             "scope": {"priority": priorities},
             "sources": {
-                "userStories": "docs/user_stories.md",
-                "conceptualModel": "docs/conceptual_model.md",
-                "changes": f"docs/changes/{change_file}",
-                "ia": "docs/ia_structure.md",
-                "credentials": "docs/test-credentials.md"
+                "userStories": f"{docs_dir}/{user_stories_file}",
+                "conceptualModel": f"{docs_dir}/{conceptual_model_file}",
+                "changes": f"{docs_dir}/{changes_dir}/{change_file}",
+                "ia": f"{docs_dir}/{ia_file}",
+                "credentials": f"{docs_dir}/{credentials_file}",
             },
             "idConvention": {
                 "testCaseId": "TC-<US>-<AC>-<NN>",
@@ -221,6 +228,11 @@ def build_skeleton(
 def main():
     parser = argparse.ArgumentParser(
         description="Generate QC test case skeleton JSON"
+    )
+    parser.add_argument(
+        "--name",
+        default="QC Test Cases (Skeleton)",
+        help="Test suite name stored in meta.name (default: QC Test Cases (Skeleton))",
     )
     parser.add_argument(
         "--change", "-c",
@@ -241,6 +253,36 @@ def main():
         "--root", "-r",
         help="Project root path (auto-detected if not specified)"
     )
+    parser.add_argument(
+        "--docs-dir",
+        default="docs",
+        help="Docs directory name under project root (default: docs)",
+    )
+    parser.add_argument(
+        "--user-stories-file",
+        default="user_stories.md",
+        help="User stories file name under docs dir (default: user_stories.md)",
+    )
+    parser.add_argument(
+        "--conceptual-model-file",
+        default="conceptual_model.md",
+        help="Conceptual model file name under docs dir (default: conceptual_model.md)",
+    )
+    parser.add_argument(
+        "--ia-file",
+        default="ia_structure.md",
+        help="IA/routes file name under docs dir (default: ia_structure.md)",
+    )
+    parser.add_argument(
+        "--changes-dir",
+        default="changes",
+        help="Changes directory name under docs dir (default: changes)",
+    )
+    parser.add_argument(
+        "--credentials-file",
+        default="test-credentials.md",
+        help="Credentials/preconditions file name under docs dir (default: test-credentials.md)",
+    )
 
     args = parser.parse_args()
 
@@ -251,14 +293,25 @@ def main():
     if args.root:
         project_root = Path(args.root)
     else:
-        project_root = find_project_root()
+        project_root = find_project_root(args.docs_dir)
 
     print(f"Project root: {project_root}")
     print(f"Change ID: {args.change}")
     print(f"Priorities: {priorities}")
 
     # Build skeleton
-    skeleton = build_skeleton(args.change, priorities, project_root)
+    skeleton = build_skeleton(
+        change_id=args.change,
+        priorities=priorities,
+        project_root=project_root,
+        suite_name=args.name,
+        docs_dir=args.docs_dir,
+        user_stories_file=args.user_stories_file,
+        conceptual_model_file=args.conceptual_model_file,
+        ia_file=args.ia_file,
+        changes_dir=args.changes_dir,
+        credentials_file=args.credentials_file,
+    )
 
     # Ensure output directory exists
     output_path = project_root / args.output
