@@ -12,23 +12,19 @@ Usage:
 import argparse
 import json
 import re
-import os
 from pathlib import Path
-from typing import Optional
 
 
 def find_project_root() -> Path:
-    """Find jyageunfriends project root by looking for docs folder."""
+    """Find project root by looking for docs folder."""
     current = Path.cwd()
 
-    # Check if we're in the jyageunfriends directory
+    # Check if we're in a project root
     if (current / "docs").exists():
         return current
 
     # Check parent directories
     for parent in current.parents:
-        if (parent / "jyageunfriends" / "docs").exists():
-            return parent / "jyageunfriends"
         if (parent / "docs").exists():
             return parent
 
@@ -60,7 +56,6 @@ def extract_user_stories(content: str, priorities: list[str]) -> list[dict]:
 
     # Track current domain from section headers like "#### 인증/회원"
     current_domain = ""
-    domain_pattern = r"####\s*([^\n]+)"
 
     # Split content by domain sections
     sections = re.split(r"(####\s*[^\n]+)", content)
