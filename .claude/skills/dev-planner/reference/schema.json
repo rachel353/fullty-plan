@@ -52,7 +52,7 @@
           },
           "tasks": {
             "type": "array",
-            "description": "해당 기능의 Task 목록",
+            "description": "해당 기능의 Task 목록 (마지막은 항상 디자인 리뷰)",
             "items": {
               "type": "object",
               "required": ["id", "title", "status", "priority", "dependencies", "files", "created_at", "updated_at"],
@@ -76,6 +76,11 @@
                   "type": "string",
                   "description": "우선순위",
                   "enum": ["high", "medium", "low"]
+                },
+                "stage": {
+                  "type": "string",
+                  "description": "개발 단계",
+                  "enum": ["implementation", "design-review"]
                 },
                 "dependencies": {
                   "type": "array",
