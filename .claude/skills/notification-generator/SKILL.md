@@ -1,82 +1,80 @@
 ---
 name: notification-generator
-description: Generate comprehensive notification scenarios (email/SMS) from user story specifications. Use when: (1) designing notification strategy for new projects with user_stories_data.json, (2) translating user stories into backend event definitions and alert policies, (3) ensuring cross-actor notification coverage (end_user/provider/operator). Produces structured JSON with role-based notification templates, event types, and channel assignments. Works with any project structure that follows the standard user_stories_data.json format.
+description: Generate notification_scenarios.json from user_stories_data.json. Use when designing notification strategy for projects. Triggers: "알림 시나리오", "notification scenarios", "알림 설계", "notification strategy"
 ---
 
 # Notification Generator
 
-## Overview
+Read `docs/user_stories_data.json` and generate `docs/notification_scenarios.json`.
 
-Transform user story specifications into a comprehensive notification strategy. This skill analyzes user stories, acceptance criteria, and actor roles to automatically generate notification scenarios—identifying which events matter, who should be notified, and through which channels (email/SMS).
+## Step 1: Ask Channel Configuration
 
-**Output:** `docs/notification_scenarios.json` with structured event definitions, title/description templates, and channel assignments for each actor role.
+Before generating, ask user to select channels for each role:
 
-## How It Works
+```
+각 역할별 기본 알림 채널을 선택해주세요:
 
-### 1. Input Requirements
+**Available Channels:**
+- email (이메일)
+- sms (문자)
+- push (푸시 알림)
+- in_app (인앱 알림)
+- kakaotalk (카카오톡)
 
-Provide a **user_stories_data.json** file with structure:
-
-```json
-{
-  "actors": [
-    {
-      "id": "actor-id",
-      "name": "Actor Name",
-      "permissions": ["permission1", "permission2"]
-    }
-  ],
-  "user_stories": [
-    {
-      "id": "US-001",
-      "actor_id": "actor-id",
-      "story": "As a..., I want to..., So that...",
-      "acceptance_criteria": ["AC-1: ...", "AC-2: ..."],
-      "domain": "domain-name"
-    }
-  ]
-}
+**Roles:**
+1. end_user (독자/고객/사용자): ___
+2. provider (작가/판매자/제공자): ___
+3. operator (관리자/운영자): ___
 ```
 
-### 2. Processing Pipeline (Automated)
+## Step 2: Read Input
 
-**Step 1: Actor Role Normalization**
-- Analyzes permissions to classify actors into abstract roles
-- `end_user` - Uses service features
-- `provider` - Creates/provides content
-- `operator` - Manages/approves operations
+Read `docs/user_stories_data.json` containing `actors[]` and `user_stories[]`.
 
-**Step 2: Event Extraction**
-- Scans acceptance criteria for event patterns
-- Identifies state changes, financial transactions, approvals, completions
+## Step 3: Classify Actors
 
-**Step 3: Notification Decision**
-- Evaluates each event against notification criteria:
-  - Affects user assets (money, status, permissions)
-  - Irreversible state changes
-  - Asynchronous results (user waiting)
-  - Requires user awareness
+Map each actor to abstract role by permissions:
 
-**Step 4: Scenario Assembly**
-- Generates notification object for each relevant event
-- Assigns channels (email for financial/decisions, optional for completions)
-- Creates role-specific groupings
+| Keywords in Permissions | Role |
+|------------------------|------|
+| 관리, 승인, 제재, admin, approve | `operator` |
+| 업로드, 제공, 정산, upload, provide | `provider` |
+| (default) | `end_user` |
 
-### 3. Output Structure
+## Step 4: Extract Notification Events
+
+For each user story, check if notification-worthy:
+
+**✅ Include if AC contains:**
+- Financial: 차감, 환불, 정산, 출금, 충전, amount, payment
+- State change: 상태 변경, 승인, 거절, approved, rejected
+- Async result: 완료, 결과, 처리, completed
+
+**❌ Skip if:**
+- Pure read/view: 조회, 열람, 확인하다
+- Immediate UI result
+
+## Step 5: Generate Output
+
+Write `docs/notification_scenarios.json`:
 
 ```json
 {
   "version": "1.0",
-  "description": "...",
-  "channels": ["email", "sms"],
+  "channel_config": {
+    "end_user": "<user-selected>",
+    "provider": "<user-selected>",
+    "operator": "<user-selected>"
+  },
   "scenarios": {
     "end_user": [
       {
-        "event": "action_completed",
-        "title": "Action Completed",
-        "description": "Your {entityName} was completed",
-        "channel": "email",
-        "template": "..."
+        "us_id": "US-001",
+        "event": "entity_action",
+        "trigger": "When <action happens>",
+        "title": "알림 제목",
+        "message": "알림 내용 with {variables}",
+        "channel": "<role-channel>"
       }
     ],
     "provider": [...],
@@ -85,95 +83,28 @@ Provide a **user_stories_data.json** file with structure:
 }
 ```
 
-## Usage
+## Event Naming
 
-### Interactive Mode (Default)
+Format: `<entity>_<action>`
+- entity: domain에서 추출 (지갑 → wallet, 제안 → proposal)
+- action: created, completed, approved, rejected, changed
 
-```bash
-python3 scripts/notification_generator.py \
-  --input docs/user_stories_data.json \
-  --output docs/notification_scenarios.json
-```
+## Channel Override Rules
 
-On startup, prompts for channel configuration per role:
+Even if user selected different channel:
+- `financial_event` → keep user's choice (important audit)
+- `action_completed` → `optional` (already visible in UI)
 
-```
-============================================================
-🔔 Notification Channel Configuration
-============================================================
+## Template Variables
 
-Available channels:
-  1. email      - Email notifications (audit trail, formal)
-  2. sms        - SMS notifications (urgent, time-sensitive)
-  3. push       - Push notifications (mobile apps)
-  4. in_app     - In-app notifications (web/app UI)
-  5. kakaotalk  - KakaoTalk notifications (카카오톡 알림)
-  6. optional   - Optional (user preference based)
+Include based on story content:
+- `{entityName}` - always
+- `{amount}` - if 금액/Ink/payment mentioned
+- `{result}` - if 상태/승인/거절 mentioned
+- `{reason}` - if 사유/이유 mentioned
+- `{date}` - always
 
-------------------------------------------------------------
-Configure default channel for each role:
-------------------------------------------------------------
+## References
 
-📌 End User (독자, 고객, 사용자)
-   Enter channel number [1-6] or name (default: email): 5
-   → Selected: kakaotalk
-
-📌 Provider (작가, 판매자, 제공자)
-   Enter channel number [1-6] or name (default: email):
-   → Using default: email
-
-📌 Operator (관리자, 운영자)
-   Enter channel number [1-6] or name (default: email): push
-   → Selected: push
-```
-
-### Non-Interactive Mode
-
-```bash
-python3 scripts/notification_generator.py \
-  --input docs/user_stories_data.json \
-  --output docs/notification_scenarios.json \
-  --no-interactive \
-  --end-user-channel kakaotalk \
-  --provider-channel email \
-  --operator-channel push
-```
-
-### CLI Options
-
-| Option | Description |
-|--------|-------------|
-| `--input` | Input user stories JSON file |
-| `--output` | Output notification scenarios JSON file |
-| `--no-interactive` | Skip interactive prompt (use defaults or CLI args) |
-| `--end-user-channel` | Set end_user channel directly |
-| `--provider-channel` | Set provider channel directly |
-| `--operator-channel` | Set operator channel directly |
-
-### Output
-
-- ✅ `notification_scenarios.json` with complete notification strategy
-- Events organized by actor role
-- `channel_config` field showing applied configuration
-- Ready for backend event system integration
-
-## Advanced Features
-
-### Custom Rules
-
-Edit `scripts/notification_generator.py` to adjust:
-- Event worthiness criteria
-- Channel assignment policies
-- Template variable names
-
-See [references/schema.md](references/schema.md) for detailed field documentation and [references/examples.md](references/examples.md) for pattern reference.
-
-## Resources
-
-### scripts/
-- **notification_generator.py** - Main Python script implementing the complete extraction and generation pipeline
-
-### references/
-- **schema.md** - Output JSON schema and field descriptions
-- **examples.md** - Real-world examples showing input → output transformations
-- **api_reference.md** - Detailed actor role classification rules and event type taxonomy
+- **[schema.json](references/schema.json)** - JSON Schema for output validation
+- **[template.json](references/template.json)** - Example output with sample scenarios
