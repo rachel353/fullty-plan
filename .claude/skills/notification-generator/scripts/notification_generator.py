@@ -11,6 +11,85 @@ import re
 import argparse
 from typing import List, Dict, Any, Optional, Set
 
+# Available channels
+AVAILABLE_CHANNELS = ["email", "sms", "push", "in_app", "kakaotalk", "optional"]
+
+# Default channel policy per role
+DEFAULT_CHANNEL_POLICY = {
+    "end_user": "email",
+    "provider": "email",
+    "operator": "email",
+}
+
+
+def prompt_channel_config() -> Dict[str, str]:
+    """
+    Interactive prompt to configure notification channels per role.
+    Returns a dictionary mapping role -> default channel.
+    """
+    print("\n" + "=" * 60)
+    print("🔔 Notification Channel Configuration")
+    print("=" * 60)
+    print("\nAvailable channels:")
+    for i, ch in enumerate(AVAILABLE_CHANNELS, 1):
+        desc = {
+            "email": "Email notifications (audit trail, formal)",
+            "sms": "SMS notifications (urgent, time-sensitive)",
+            "push": "Push notifications (mobile apps)",
+            "in_app": "In-app notifications (web/app UI)",
+            "kakaotalk": "KakaoTalk notifications (카카오톡 알림)",
+            "optional": "Optional (user preference based)",
+        }.get(ch, ch)
+        print(f"  {i}. {ch:10} - {desc}")
+
+    print("\n" + "-" * 60)
+    print("Configure default channel for each role:")
+    print("-" * 60)
+
+    channel_config = {}
+
+    for role in ["end_user", "provider", "operator"]:
+        role_display = {
+            "end_user": "End User (독자, 고객, 사용자)",
+            "provider": "Provider (작가, 판매자, 제공자)",
+            "operator": "Operator (관리자, 운영자)",
+        }.get(role, role)
+
+        while True:
+            print(f"\n📌 {role_display}")
+            choice = input(f"   Enter channel number [1-{len(AVAILABLE_CHANNELS)}] or name (default: email): ").strip()
+
+            if not choice:
+                channel_config[role] = "email"
+                print(f"   → Using default: email")
+                break
+
+            # Check if number input
+            if choice.isdigit():
+                idx = int(choice) - 1
+                if 0 <= idx < len(AVAILABLE_CHANNELS):
+                    channel_config[role] = AVAILABLE_CHANNELS[idx]
+                    print(f"   → Selected: {AVAILABLE_CHANNELS[idx]}")
+                    break
+                else:
+                    print(f"   ❌ Invalid number. Please enter 1-{len(AVAILABLE_CHANNELS)}")
+            # Check if name input
+            elif choice.lower() in AVAILABLE_CHANNELS:
+                channel_config[role] = choice.lower()
+                print(f"   → Selected: {choice.lower()}")
+                break
+            else:
+                print(f"   ❌ Invalid channel. Options: {', '.join(AVAILABLE_CHANNELS)}")
+
+    print("\n" + "=" * 60)
+    print("📋 Channel Configuration Summary:")
+    print("=" * 60)
+    for role, channel in channel_config.items():
+        print(f"   {role:12} → {channel}")
+    print("=" * 60 + "\n")
+
+    return channel_config
+
 
 class NotificationGenerator:
     """Generate notification scenarios from user stories."""
@@ -93,9 +172,10 @@ class NotificationGenerator:
         ],
     }
 
-    def __init__(self):
+    def __init__(self, channel_config: Optional[Dict[str, str]] = None):
         self.actor_roles: Dict[str, str] = {}
         self.events: Dict[str, Dict[str, Any]] = {}
+        self.channel_config = channel_config or DEFAULT_CHANNEL_POLICY.copy()
 
     def normalize_actor_roles(self, actors: List[Dict[str, Any]]) -> None:
         """
@@ -285,14 +365,21 @@ class NotificationGenerator:
         title = self.extract_title_from_ac(ac_list)
         variables = self.generate_template_variables(story)
 
-        # Determine channel based on event type
+        # Determine channel: use role-based config as default
+        base_channel = self.channel_config.get(target_role, "email")
+
+        # Override for specific event types (financial/decision always email)
         event_type = self.extract_event_type(" ".join(ac_list))
         if event_type in ["financial_event", "decision_event"]:
-            channel = "email"
+            # Keep base_channel but ensure it's a reliable channel for important events
+            if base_channel == "optional":
+                channel = "email"
+            else:
+                channel = base_channel
         elif event_type == "action_completed":
-            channel = "optional"
+            channel = "optional"  # User already sees in UI
         else:
-            channel = "email"
+            channel = base_channel
 
         # Create template with variables
         template_vars = ", ".join(sorted(variables))
@@ -350,11 +437,19 @@ class NotificationGenerator:
                 scenario = self.create_notification_scenario(event_name, story, target_role)
                 scenarios_by_role[target_role].append(scenario)
 
-        # Step 3: Assemble final JSON
+        # Step 3: Collect all used channels
+        used_channels = set(self.channel_config.values())
+        for role_scenarios in scenarios_by_role.values():
+            for scenario in role_scenarios:
+                used_channels.add(scenario["channel"])
+        # Remove 'optional' from channels list as it's not a real channel
+        used_channels.discard("optional")
+
+        # Step 4: Assemble final JSON
         output = {
             "version": "1.0",
             "description": "Generic notification scenarios generated from user stories",
-            "channels": ["email", "sms"],
+            "channels": sorted(list(used_channels)),
             "scenarios": scenarios_by_role,
         }
 
@@ -375,6 +470,26 @@ def main():
         default="docs/notification_scenarios.json",
         help="Output notification scenarios JSON file",
     )
+    parser.add_argument(
+        "--no-interactive",
+        action="store_true",
+        help="Skip interactive channel configuration (use defaults)",
+    )
+    parser.add_argument(
+        "--end-user-channel",
+        choices=AVAILABLE_CHANNELS,
+        help="Set end_user channel directly (skips prompt for this role)",
+    )
+    parser.add_argument(
+        "--provider-channel",
+        choices=AVAILABLE_CHANNELS,
+        help="Set provider channel directly (skips prompt for this role)",
+    )
+    parser.add_argument(
+        "--operator-channel",
+        choices=AVAILABLE_CHANNELS,
+        help="Set operator channel directly (skips prompt for this role)",
+    )
 
     args = parser.parse_args()
 
@@ -389,9 +504,29 @@ def main():
         print(f"❌ Invalid JSON in {args.input}")
         return
 
+    # Configure channels
+    if args.no_interactive:
+        # Use defaults or CLI args
+        channel_config = DEFAULT_CHANNEL_POLICY.copy()
+        if args.end_user_channel:
+            channel_config["end_user"] = args.end_user_channel
+        if args.provider_channel:
+            channel_config["provider"] = args.provider_channel
+        if args.operator_channel:
+            channel_config["operator"] = args.operator_channel
+        print("📋 Using channel configuration:")
+        for role, channel in channel_config.items():
+            print(f"   {role:12} → {channel}")
+    else:
+        # Interactive configuration
+        channel_config = prompt_channel_config()
+
     # Generate scenarios
-    generator = NotificationGenerator()
+    generator = NotificationGenerator(channel_config=channel_config)
     output_data = generator.generate_scenarios(user_stories_data)
+
+    # Add channel config to output metadata
+    output_data["channel_config"] = channel_config
 
     # Write output
     with open(args.output, "w", encoding="utf-8") as f:
@@ -399,7 +534,7 @@ def main():
 
     # Summary
     total_scenarios = sum(len(scenarios) for scenarios in output_data["scenarios"].values())
-    print(f"✅ Generated {total_scenarios} notification scenarios")
+    print(f"\n✅ Generated {total_scenarios} notification scenarios")
     print(f"   end_user: {len(output_data['scenarios']['end_user'])}")
     print(f"   provider: {len(output_data['scenarios']['provider'])}")
     print(f"   operator: {len(output_data['scenarios']['operator'])}")

@@ -87,7 +87,7 @@ Provide a **user_stories_data.json** file with structure:
 
 ## Usage
 
-### Basic Usage
+### Interactive Mode (Default)
 
 ```bash
 python3 scripts/notification_generator.py \
@@ -95,10 +95,66 @@ python3 scripts/notification_generator.py \
   --output docs/notification_scenarios.json
 ```
 
+On startup, prompts for channel configuration per role:
+
+```
+============================================================
+🔔 Notification Channel Configuration
+============================================================
+
+Available channels:
+  1. email      - Email notifications (audit trail, formal)
+  2. sms        - SMS notifications (urgent, time-sensitive)
+  3. push       - Push notifications (mobile apps)
+  4. in_app     - In-app notifications (web/app UI)
+  5. kakaotalk  - KakaoTalk notifications (카카오톡 알림)
+  6. optional   - Optional (user preference based)
+
+------------------------------------------------------------
+Configure default channel for each role:
+------------------------------------------------------------
+
+📌 End User (독자, 고객, 사용자)
+   Enter channel number [1-6] or name (default: email): 5
+   → Selected: kakaotalk
+
+📌 Provider (작가, 판매자, 제공자)
+   Enter channel number [1-6] or name (default: email):
+   → Using default: email
+
+📌 Operator (관리자, 운영자)
+   Enter channel number [1-6] or name (default: email): push
+   → Selected: push
+```
+
+### Non-Interactive Mode
+
+```bash
+python3 scripts/notification_generator.py \
+  --input docs/user_stories_data.json \
+  --output docs/notification_scenarios.json \
+  --no-interactive \
+  --end-user-channel kakaotalk \
+  --provider-channel email \
+  --operator-channel push
+```
+
+### CLI Options
+
+| Option | Description |
+|--------|-------------|
+| `--input` | Input user stories JSON file |
+| `--output` | Output notification scenarios JSON file |
+| `--no-interactive` | Skip interactive prompt (use defaults or CLI args) |
+| `--end-user-channel` | Set end_user channel directly |
+| `--provider-channel` | Set provider channel directly |
+| `--operator-channel` | Set operator channel directly |
+
 ### Output
 
 - ✅ `notification_scenarios.json` with complete notification strategy
 - Events organized by actor role
+- `channel_config` field showing applied configuration
 - Ready for backend event system integration
 
 ## Advanced Features
