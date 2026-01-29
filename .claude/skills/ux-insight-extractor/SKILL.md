@@ -48,7 +48,7 @@ For each distinct UI/UX insight, create a feature entity with:
 
 ## Output
 
-Save to `design-lib/ux_insights_{document_id}.json` in current directory.
+Save to `.claude/design-lib/youtube/insights/ux_insights_{document_id}.json`.
 
 ## Example Usage
 
