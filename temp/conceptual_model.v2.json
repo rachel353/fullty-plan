@@ -11,7 +11,7 @@
   },
   "summary": {
     "totalEntities": 30,
-    "totalRelationships": 32,
+    "totalRelationships": 24,
     "totalDomainRules": 7,
     "totalDataFlows": 3,
     "totalGlossaryTerms": 16,
@@ -212,15 +212,7 @@
           "name": "salespersonId",
           "type": "UUID",
           "required": false,
-          "description": "담당 영업사원 ID (FK: SalesPerson)",
-          "references": {
-            "entity": "SalesPerson",
-            "attribute": "id",
-            "relationshipId": "rel-23",
-            "onDelete": "SET NULL",
-            "onUpdate": "CASCADE",
-            "description": "외래키 - SalesPerson의 id를 참조"
-          }
+          "description": "담당 영업사원 ID (FK: SalesPerson)"
         },
         {
           "name": "items",
@@ -543,20 +535,6 @@
           "description": "파렛트 적재 정보 {palletType, boxesPerLayer, layersPerPallet, totalPerPallet}"
         },
         {
-          "name": "palletTypeCode",
-          "type": "String",
-          "required": false,
-          "description": "파렛트 유형 코드 (FK: PalletType)",
-          "references": {
-            "entity": "PalletType",
-            "attribute": "code",
-            "relationshipId": "rel-25",
-            "onDelete": "SET NULL",
-            "onUpdate": "CASCADE",
-            "description": "외래키 - PalletType의 code를 참조"
-          }
-        },
-        {
           "name": "workInstructions",
           "type": "String",
           "required": false,
@@ -590,7 +568,6 @@
         "Partner",
         "PaperCode",
         "Manila",
-        "PalletType",
         "SalesOrder",
         "SalesOrderItem"
       ]
@@ -710,15 +687,7 @@
           "name": "processCode",
           "type": "String",
           "required": true,
-          "description": "공정 코드 (FK: ProcessCode)",
-          "references": {
-            "entity": "ProcessCode",
-            "attribute": "code",
-            "relationshipId": "rel-24",
-            "onDelete": "RESTRICT",
-            "onUpdate": "CASCADE",
-            "description": "외래키 - ProcessCode의 code를 참조"
-          }
+          "description": "공정 코드 (FK: ProcessCode)"
         },
         {
           "name": "processName",
@@ -844,43 +813,19 @@
           "name": "equipmentId",
           "type": "UUID",
           "required": false,
-          "description": "설비 ID (FK: Equipment)",
-          "references": {
-            "entity": "Equipment",
-            "attribute": "id",
-            "relationshipId": "rel-28",
-            "onDelete": "SET NULL",
-            "onUpdate": "CASCADE",
-            "description": "외래키 - Equipment의 id를 참조"
-          }
+          "description": "설비 ID (FK: Equipment)"
         },
         {
           "name": "workerId",
           "type": "UUID",
           "required": false,
-          "description": "작업자 ID (FK: User)",
-          "references": {
-            "entity": "User",
-            "attribute": "id",
-            "relationshipId": "rel-29",
-            "onDelete": "SET NULL",
-            "onUpdate": "CASCADE",
-            "description": "외래키 - User의 id를 참조"
-          }
+          "description": "작업자 ID (FK: Worker)"
         },
         {
           "name": "processCode",
           "type": "String",
           "required": false,
-          "description": "공정 코드 (FK: ProcessCode)",
-          "references": {
-            "entity": "ProcessCode",
-            "attribute": "code",
-            "relationshipId": "rel-30",
-            "onDelete": "SET NULL",
-            "onUpdate": "CASCADE",
-            "description": "외래키 - ProcessCode의 code를 참조"
-          }
+          "description": "공정 코드"
         },
         {
           "name": "startTime",
