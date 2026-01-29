@@ -15,7 +15,7 @@
 ```json
 {
   "meta": {
-    "name": "QC Test Cases (Skeleton)",
+    "name": "Jyageunfriends QC Test Cases (Skeleton)",
     "baseChange": "change-2026-01-15-1000",
     "scope": { "priority": ["P1"] },
     "sources": {
@@ -49,13 +49,13 @@
     {
       "id": "US-001",
       "priority": "P1",
-      "domain": "Auth",
-      "title": "Sign up",
-      "statement": "As a user, I want to sign up with email or a social account, So that I can access the service.",
+      "domain": "인증/회원",
+      "title": "회원가입",
+      "statement": "As a 독자, I want to 이메일 또는 소셜 계정으로 회원가입하다, So that ...",
       "acceptanceCriteria": [
         {
           "id": "AC-1",
-          "text": "When entering email/password, validate password rules in real time.",
+          "text": "이메일/비밀번호 입력 시 비밀번호 규칙 실시간 체크",
           "testCases": []
         }
       ],
@@ -96,11 +96,11 @@
 ```json
 {
   "id": "TC-US-001-AC-1-01",
-  "title": "Happy path: valid email/password",
+  "title": "정상: 유효한 이메일/비밀번호 입력",
   "type": "positive",
-  "precondition": "Logged out",
-  "steps": ["1. Go to /signup", "2. Enter email", "3. Enter password"],
-  "expected": "Password rule checks show as satisfied",
+  "precondition": "비로그인 상태",
+  "steps": ["1. /signup 접속", "2. 이메일 입력", "3. 비밀번호 입력"],
+  "expected": "비밀번호 규칙 체크 통과 표시",
   "status": "todo",
   "tags": ["DR-001"]
 }

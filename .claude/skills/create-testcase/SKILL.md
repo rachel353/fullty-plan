@@ -1,7 +1,7 @@
 ---
 name: create-testcase
 description: |
-  Generate a QC test case skeleton JSON from project documents. Creates US/AC structure with empty test case arrays and coverage indices (DR/CI/Route) for gap analysis. Use when: (1) starting QC test planning, (2) need to ensure no AC is missed in test coverage, (3) preparing a skeleton before manual/automated TC writing, (4) user asks for "테스트케이스", "QC", "test case skeleton", or "coverage check".
+  Generate QC test case skeleton JSON from @docs documents. Creates US/AC structure with empty test case arrays and coverage indices (DR/CI/Route) for gap analysis. Use when: (1) starting QC test planning, (2) need to ensure no AC is missed in test coverage, (3) preparing test case skeleton before manual/automated TC writing, (4) user asks for "테스트케이스", "QC", "test case skeleton", or "coverage check".
 ---
 
 # QC Test Case Skeleton Generator
@@ -13,18 +13,17 @@ Generate a skeleton JSON that captures all User Stories and Acceptance Criteria 
 ```bash
 # Generate skeleton JSON for P1 priority
 python3 .claude/skills/create-testcase/scripts/generate_skeleton.py \
-  --name "QC Test Cases (Skeleton)" \
   --change change-2026-01-15-1000 \
   --priority P1 \
   --output tasks/qc/testcases-skeleton.json
 ```
 
-## Workflow (4 Steps)
+## Workflow (6 Steps)
 
 ### Step 0: Fix Scope
 - Identify base change ID (e.g., `change-2026-01-15-1000`)
 - Set target priority: `P1` (default) or include `P2`
-- (Optional) Reference `docs/test-credentials.md` (or equivalent) for default preconditions
+- Reference `docs/test-credentials.md` for default preconditions
 
 ### Step 1: Extract US/AC Skeleton
 Read `docs/user_stories.md` and extract:
@@ -46,8 +45,22 @@ Run `scripts/generate_skeleton.py` to produce the skeleton with:
 - `userStories[]`: US/AC structure with empty testCases
 - `coverage`: empty arrays for each DR/CI/Route key
 
-### After Step 3 (Optional)
-After the skeleton JSON is created, you can continue by generating actual test cases (manual or assisted). If you have a companion skill (e.g. `/fill-testcases`), you may invoke it to start a TC authoring workflow.
+### Step 4: (Manual) Fill Test Cases
+For each AC, create at least 1 TC following:
+- **TC ID format**: `TC-<US>-<AC>-<NN>` (e.g., `TC-US-009-AC-2-01`)
+- **Minimum set per AC**: Normal(1) + Failure/Validation(1) + Time/UX condition(1 if applicable)
+
+### Step 5: Enrich from Conceptual Model
+Review `docs/conceptual_model.md` for:
+- **Domain Rules (DR-xxx)**: Ensure at least 1 TC per rule
+- **Data Flows**: Add E2E TC for flows that span multiple ACs
+
+### Step 6: Final Coverage Check
+Verify all coverage indices have at least 1 TC:
+- [ ] All US have all AC covered (`testCases.length >= 1`)
+- [ ] All DR-xxx have at least 1 TC
+- [ ] All CI-xxx have at least 1 TC (especially Removed items)
+- [ ] Critical routes have smoke + access TC
 
 ## Input Documents
 
@@ -62,3 +75,13 @@ After the skeleton JSON is created, you can continue by generating actual test c
 ## Output Schema
 
 See [references/schema.md](references/schema.md) for complete JSON schema and field descriptions.
+
+## TC Status Values
+
+| Status | Description |
+|--------|-------------|
+| `todo` | Not started |
+| `in_progress` | Being executed |
+| `pass` | Passed |
+| `fail` | Failed |
+| `blocked` | Cannot execute (dependency/env issue) |

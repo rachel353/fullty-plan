@@ -134,25 +134,6 @@ Task가 다음 신호를 보이면 **분리 필요**:
     └─ 관련 변경사항이 커밋됨
 ```
 
-### 2.2.1 [Design Review] Task Done 조건
-
-**title이 `[Design Review]`로 시작하는 Task의 특별 조건**:
-
-```
-✅ [Design Review] done 조건:
-├─ [1] /rams 스킬 실행됨
-│   └─ files 배열의 모든 파일에 대해 리뷰 수행
-├─ [2] Critical 이슈 0개
-│   └─ 자동 수정 후 재검증하여 0개가 될 때까지 반복
-└─ [3] 리뷰 결과 기록됨
-    └─ 최종 Score 및 이슈 요약 확인
-```
-
-**[Design Review] Task는 일반 Task와 다르게**:
-- 파일 생성/수정이 아닌 **리뷰 수행**이 핵심
-- Critical 이슈가 남아있으면 **절대 done 불가**
-- Serious/Moderate 이슈는 경고만 (done 가능)
-
 **검증 방법**:
 
 ```bash
