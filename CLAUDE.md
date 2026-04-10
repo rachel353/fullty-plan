@@ -1,7 +1,7 @@
 # CLAUDE.md
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-
+(Next.js 14 + React 19 + TypeScript)
 
 ## References
 

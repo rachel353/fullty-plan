@@ -1,6 +1,6 @@
 ---
 name: ux-insight-matcher
-description: Match and extract relevant UX insights from design-lib/insights for UI Tasks. Called as a sub-skill during frontend-feature-develop Step 2 (UI/UX Plan). Analyzes task description and acceptanceCriteria to find applicable design insights, then provides a merged summary for development guidance.
+description: Match and extract relevant UX insights from .claude/design-lib/youtube/insights for UI Tasks. Called as a sub-skill during frontend-feature-develop Step 2 (UI/UX Plan). Analyzes task description and acceptanceCriteria to find applicable design insights, then provides a merged summary for development guidance.
 ---
 
 # UX Insight Matcher
@@ -48,10 +48,10 @@ Keywords: `챗봇`, `채팅`, `Chat`, `대화`, `플로우`, `컨테이너`
 
 ### 3. Match Insights
 
-Read all JSON files from `design-lib/insights/`:
+Read all JSON files from `.claude/design-lib/youtube/insights/`:
 
 ```
-design-lib/insights/ux_insights_*.json
+.claude/design-lib/youtube/insights/ux_insights_*.json
 ```
 
 For each insight, check `usage_context.applicable_when`:
@@ -197,7 +197,7 @@ In `2_ui_ux_plan.md`, add this step before defining User Flow:
 ## Files Reference
 
 ```
-design-lib/insights/           # UX insight JSON files
+.claude/design-lib/youtube/insights/           # UX insight JSON files
 aging-lab/app/globals.css      # Design tokens (PRIORITY 1)
 .claude/rules/design_system_rules.mdc  # Design rules (if exists)
 ```

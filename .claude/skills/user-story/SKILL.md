@@ -5,6 +5,22 @@ description: Transform raw requirements into structured User Stories with measur
 
 # User Story Generation
 
+## Context Detection
+
+Check current working directory to determine output path:
+
+| Context | Detection | Output Path |
+|---------|-----------|-------------|
+| **Sales/Quote** | Path contains `sales/` | `quotes/[MM.DD]/user_stories_data.json`, `quotes/[MM.DD]/user_stories.md` |
+| **FE Development** | Default | `docs/user_stories_data.json`, `docs/user_stories.md` |
+
+**Sales Context Input Sources:**
+- `meeting_scripts/[MM.DD]/summary.md`
+- `meeting_scripts/[MM.DD]/requirements.md`
+- `appendix/**`
+- `quotes/[MM.DD]/note.md` (최우선)
+- `quotes/[MM.DD]/guide.md`
+
 ## Overview
 
 This skill transforms raw requirements into structured User Stories following the format:

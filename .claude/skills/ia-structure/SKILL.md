@@ -5,6 +5,25 @@ description: Generate Information Architecture (screen hierarchy, routes, role-b
 
 # IA Structure & File Structure Generation
 
+## Context Detection
+
+Check current working directory to determine output path:
+
+| Context | Detection | Output Path |
+|---------|-----------|-------------|
+| **Sales/Quote** | Path contains `sales/` | `quotes/[MM.DD]/ia_structure.md` |
+| **FE Development** | Default | `docs/ia_structure.md`, `docs/file_structure.md` |
+
+**Sales Context:**
+- Platform Definition 섹션 포함 (Web App / Mobile Web / Hybrid 등)
+- 화면 구조도 (Visual Site Map) 중심
+- file_structure.md는 생성하지 않음
+
+**Sales Context Input Sources:**
+- `quotes/[MM.DD]/user_stories_data.json`
+- `quotes/[MM.DD]/conceptual_model.json`
+- `quotes/[MM.DD]/guide.md`
+
 ## Overview
 
 This skill generates two critical documents:

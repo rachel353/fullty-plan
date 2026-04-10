@@ -1,371 +1,233 @@
-# AI-Driven Sales & Frontend Development Workflow (HITL)
+# 📋 PM Workflow README (Frontend)
 
-이 프로젝트는 **클라이언트 미팅 → 견적/제안서 → 계약 → 개발** 전 과정을 AI가 주도하고, **Human은 문서·의사결정에만 개입(HITL)** 하는 구조를 따른다.
+**프롬프트/스킬 사용 가이드** — PM 입장에서 각 단계를 명확히 이해하고 실행하세요.
 
----
-
-## 🎯 Core Principles
-
-- **Single Source of Truth**: 
-  - Sales: `sales/YY_MM_CLIENT_NAME/project-requirements.json`
-  - Development: `tasks/tasks.json`
-- **Human-in-the-loop(HITL)**: 문서 변경 · 요구사항 수정 · 승인 단계에만 개입
-- **Implementation Autonomy**: 개발 단계에서는 AI가 확인 요청 없이 자율 실행
-- **Design-first Validation**: 디자인 검수 대상 feature를 우선 개발
+> 🎯 이 리포의 **단일 SSOT(Single Source of Truth)** 는 `tasks/tasks.json` 입니다.
 
 ---
 
-## 📊 전체 워크플로우
+## 🚀 전체 플로우 요약 (PM 관점)
 
-```mermaid
-flowchart TD
-    L["클라이언트 미팅"]
-    L --> A["/process-meeting-script"]
-    
-    A --> B["/about-project"]
-
-    B --> C["/user-story (fe-workflow)"]
-    C --> D["/conceptual-model (fe-workflow)"]
-    D --> E["/ia-structure (fe-workflow)"]
-
-    E --> F["/design"]
-    E --> G["/quotes"]
-
-    F --> H["/proposal"]
-    G --> H
-    
-    H --> I["계약 체결"]
-    I --> J["/logical-architecture (fe-workflow)"]
-    J --> K["/dev-planner (fe-workflow)"]
-    
-    %% I 노드만 색 변경
-    classDef client fill:#FFE0B2,stroke:#EF6C00,stroke-width:2px,color:#BF360C
-    class L,I client;
-    
-    %% fe-workflow 노드들만 옅은 하늘색
-    classDef fe fill:#E3F2FD,stroke:#64B5F6,color:#0D47A1;
-    class C,D,E,J,K fe;
+```
+1️⃣  PRD/SRS 시딩 + tweakcn 설치
+       ↓
+2️⃣  planning(workflow) 실행 → 문서/Task 자동 생성
+       ↓
+3️⃣  planning 피드백(HITL) → /change-doc로 정합성 업데이트
+       ↓
+4️⃣  design_validation_required=true 기능 먼저 개발
+       ↓
+5️⃣  피드백 루프 (반복 가능)
+    ├─ /change-analyzer로 분석
+    ├─ (자동) /change-doc로 복구
+    └─ /feature-executor로 남은 기능 개발
 ```
 
 ---
 
-## 📁 Key Artifacts
+## ✅ 공통 원칙 (PM이 지켜야 하는 것)
+
+| 원칙 | 설명 |
+|------|------|
+| 🎯 **SSOT** | 진행/우선순위/완료는 항상 `tasks/tasks.json` 기준 |
+| 🎨 **디자인 우선** | `design_validation_required: true` 기능부터 개발 |
+| 📊 **상태값** | `pending` / `in_progress` / `completed` (3가지) |
+| ✔️ **Design Review** | `[Design Review]` Task가 `done`이 될 때까지 Feature 미완료 |
+
+---
+
+## 1️⃣ PRD/SRS 생성 및 Seeding + tweakcn 설치
+
+### 1-A. 📄 Seed 문서 준비 (PM 입력물)
+
+**목표**: Sales 자료를 md 파일로 변환하여 `seed-docs` 폴더에 배치
 
 ```
-sales/
-  YY_MM_CLIENT_NAME/          # 클라이언트별 프로젝트 폴더
-    meeting_scripts/           # 미팅 스크립트 및 산출물
-    quotes/                    # 견적서
-    project-requirements.json  # 프로젝트 요구사항 (Sales SSoT)
-    
-docs/                         # 개발 설계 문서
-  user_stories.md
-  conceptual_model.md
-  ia_structure.md
-  logical_architecture.md
-  dev_plan.md
-  DESIGN.md
-  
-tasks/
-  tasks.json                  # 개발 Task 목록 (Dev SSoT)
-  
-.claude/
-  skills/                     # Skill 정의
-  scripts/                    # Workflow 스크립트
+seed-docs/
+├── PRD.md                    # 제품 정의서 (목표/범위/성공지표)
+├── SRS.md                    # 요구사항 명세서 (기능/비기능)
+├── requirements.md           # 추가 요구사항
+└── IA-rough.md              # 초기 IA 스케치
+```
+
+**팁**: 불명확한 사항은 TBD로 명시하면 workflow에서 자동으로 처리됩니다.
+
+---
+
+### 1-B. 🎨 tweakcn 설치 (디자인 시스템 구축)
+
+**목적**: UI 스타일 기준을 미리 고정하여 개발 중 일관성 유지
+
+**단계**:
+1. 🌐 [tweakcn.com](https://tweakcn.com) 접속
+2. 📐 프로젝트에 어울리는 디자인 선택 & 커스텀
+3. 📋 "Code" 버튼 클릭 → 설치 명령어 복사
+4. 💻 터미널에서 실행:
+
+```bash
+pnpm dlx shadcn@latest add <tweakcn url>
 ```
 
 ---
 
-## 1️⃣ Sales Workflow (견적/제안서 생성)
+## 2️⃣ planning(workflow) 실행
 
-### 1-1. 클라이언트 미팅 처리
+### 📝 PM이 실행하는 프롬프트
 
-**Skill**: `/process-meeting-script`
+> 다음을 복사해서 Claude에게 **그대로** 붙여넣으세요.
 
-미팅 스크립트를 처리하여 요약, 요구사항, 피드백, 프로젝트 요구사항 JSON을 생성한다.
-
-#### Inputs
-- 클라이언트 폴더: `sales/YY_MM_CLIENT_NAME/`
-- 미팅 날짜: `MM.DD`
-- 스크립트 위치: `meeting_scripts/[MM.DD]/script.md`
-
-#### Outputs
-- `meeting_scripts/[MM.DD]/summary.md` - 미팅 요약 (6개 섹션)
-- `meeting_scripts/[MM.DD]/requirements.md` - 요구사항 (REQ ID 포함)
-- `meeting_scripts/[MM.DD]/sales-feedback.md` - 개선 피드백
-- `project-requirements.json` - 프로젝트 요구사항 JSON (version 관리)
-
-#### 실행
 ```markdown
-/process-meeting-script
-클라이언트: YY_MM_CLIENT_NAME
-미팅 날짜: MM.DD
+execute workflow. @.claude/scripts/FE-workflow/workflow.json with @seed-docs folder.
+don't bother me until you finish.
 ```
+
+**예상 소요 시간**: 10~30분 (Project 규모에 따라)
 
 ---
 
-### 1-2. 프로젝트 이해 및 배경 생성
+### 🔄 자동으로 실행되는 Phase 5단계
 
-**Skill**: `/about-project`
+| Phase | 스킬 | 입력 | 출력 |
+|-------|------|------|------|
+| 1️⃣ User Story | `user-story` | `seed-docs/*.md` | `docs/user_stories.md` |
+| 2️⃣ Conceptual Model | `conceptual-model` | User Stories | `docs/conceptual_model.md` |
+| 3️⃣ IA Structure | `ia-structure` | User Stories + Model | `docs/ia_structure.md` |
+| 4️⃣ Logical Architecture | `logical-architecture` | 위 3개 + Design Guide | `docs/logical_architecture.md` |
+| 5️⃣ **Dev Plan** ✨ | `dev-planner` | IA + Architecture | **`tasks/tasks.json`** |
 
-모든 프로젝트 자료를 분석하여 내부 가이드와 제안서 배경을 생성한다.
+---
 
-#### Inputs
-- `YY_MM_CLIENT_NAME/**` (전체 클라이언트 폴더)
-- `quotes/[MM.DD]/note.md?` (선택)
-- `meeting_scripts/**/summary.md`
-- `project-requirements.md`
-- `appendix/**`
-- `notes.md`
+### ✔️ 이 단계 완료 확인 체크리스트
 
-#### Outputs
-- `guide.md` - 내부 가이드
-- `background.md` - 제안서 배경
+- [ ] `docs/` 폴더에 5개 문서가 모두 생성되었나?
+- [ ] `tasks/tasks.json`이 생성되었나?
+- [ ] `design_validation_required: true` Feature가 표시되어 있나?
+- [ ] 각 Feature의 마지막에 `[Design Review]` Task가 있나?
 
-#### 실행
+---
+
+## 3️⃣ planning 피드백 HITL (문서 정합성 업데이트)
+
+### 🔧 PM 피드백 적용
+
+> 핵심: 문서/Task를 "자동으로" 정합성 있게 갱신하는 단계
+
+**프롬프트** (그대로 사용):
+
 ```markdown
-/about-project
+/change-doc
+<여기에 피드백 내용 입력>
+```
+
+**예시 피드백**:
+```
+기능 요구사항이 추가되었습니다: "서명 기능 추가"
+이를 IA와 Tasks에 반영해주세요.
 ```
 
 ---
 
-### 1-3. User Story 생성 (FE Workflow)
+### 📊 기대 결과
 
-**Skill**: `/user-story`
-
-구조화된 사용자 스토리와 수용 기준을 생성한다.
-
-#### Inputs
-- `guide.md`
-- `project-requirements.md`
-- `meeting_scripts/**/summary.md`
-
-#### Outputs
-- `user_story.md` / `user_stories_data.json`
-
-#### 실행
-```markdown
-/user-story
-```
-
----
-
-### 1-4. Conceptual Model 설계 (FE Workflow)
-
-**Skill**: `/conceptual-model`
-
-도메인 개념과 관계를 정의한다.
-
-#### Inputs
-- `guide.md`
-- `user_story.md`
-- `project-requirements.md`
-
-#### Outputs
-- `conceptual_model.md` / `conceptual_model.json`
-
-#### 실행
-```markdown
-/conceptual-model
-```
-
----
-
-### 1-5. IA Structure 설계 (FE Workflow)
-
-**Skill**: `/ia-structure`
-
-정보 아키텍처와 화면 구조를 정의한다.
-
-#### Inputs
-- `guide.md`
-- `user_story.md`
-- `conceptual_model.md`
-- `project-requirements.md`
-
-#### Outputs
-- `information-architecture.md` (Sales 컨텍스트: Platform Definition 포함)
-
-#### 실행
-```markdown
-/ia-structure
-```
-
----
-
-### 1-6. Design 원칙 생성
-
-**Skill**: `/design`
-
-UI/UX 디자인 원칙과 타이포그래피 규칙을 생성한다.
-
-#### Inputs
-- `guide.md`
-- `project-requirements.md`
-- `information-architecture.md`
-
-#### Outputs
-- `DESIGN.md`
-
-#### 실행
-```markdown
-/design
-```
-
----
-
-### 1-7. 견적서 생성
-
-**Skill**: `/quotes`
-
-IA와 사용자 액션 기반 기능별 견적서를 생성한다.
-
-#### Inputs
-- `guide.md`
-- `information-architecture.md`
-- `user_story.md`
-- `quotes/[MM.DD]/note.md?` (선택)
-
-#### Outputs
-- `YY.MM.DD/quotes.md`
-
-#### 실행
-```markdown
-/quotes
-```
-
----
-
-### 1-8. 최종 제안서 생성
-
-**Skill**: `/proposal`
-
-생성된 모든 산출물을 조합하여 최종 제안서를 생성한다.
-
-#### Inputs
-- `background.md`
-- `information-architecture.md`
-- `user_stories_data.json`
-- `YY.MM.DD/quotes.md`
-
-#### Outputs
-- `YY.MM.DD/proposal.md`
-
-#### 실행
-```markdown
-/proposal
-```
-
----
-
-### 1-9. 계약 체결
-
-**Human Action**: 클라이언트와 계약 체결
-
-계약 체결 후 개발 워크플로우로 진행한다.
-
----
-
-## 2️⃣ Frontend Development Workflow (계약 후)
-
-### 2-1. Logical Architecture 설계
-
-**Skill**: `/logical-architecture`
-
-컴포넌트 구조와 로직 아키텍처를 설계한다.
-
-#### Inputs
+✅ 자동 업데이트 대상:
 - `docs/user_stories.md`
 - `docs/conceptual_model.md`
 - `docs/ia_structure.md`
-
-#### Outputs
 - `docs/logical_architecture.md`
+- **`tasks/tasks.json`** (SSOT)
 
-#### 실행
-```markdown
-/logical-architecture
-```
+✅ 불명확한 부분은 **TBD로 표시** → 개발 차단 없음
 
 ---
 
-### 2-2. Dev Plan 수립
+## 4️⃣ 디자인 검수 Feature부터 개발
 
-**Skill**: `/dev-planner`
+### 🎬 시작하기
 
-프론트엔드 개발 계획 수립 및 Task 생성.
+> 목표: 대표 화면(Home, Dashboard 등)부터 만들어 **디자인 톤앤매너** 조기 확인
 
-#### Inputs
-- `docs/ia_structure.md`
-- `docs/logical_architecture.md`
+**프롬프트** (그대로 사용):
 
-#### Outputs
-- `tasks/tasks.json` (개발 Task 목록)
-
-#### 실행
-```markdown
-/dev-planner
-```
-
-> **Note**: 프론트엔드(UI/컴포넌트)만 계획한다. 백엔드/API는 제외.
-
----
-
-## 3️⃣ Development (HITL)
-
-### 3-1. Planning 피드백 (HITL)
-
-**목적**: Human이 문서와 tasks.json을 구조적으로 수정
-
-**사용 커맨드**:
-```markdown
-/change-doc
-<피드백 내용>
-```
-
-**결과**:
-- `docs/` 문서 업데이트
-- `tasks/tasks.json` 자동 반영
-
----
-
-### 3-2. 디자인 검수 대상 Feature 우선 개발
-
-**조건**:
-- `design_validation_required = true`
-- 해당 feature **전부 완료 시 종료**
-
-**실행**:
 ```markdown
 /feature-executor
-@tasks/tasks.json에서 design_validation_required = true로 설정된 feature들까지 개발해줘
+@tasks/tasks.json에서 design_validation_required = true로설정된 feature들까지 개발해줘
 ```
 
 ---
 
-### 3-3. Feedback Loop (반복 가능)
+### 🔄 `/feature-executor` 스킬 내부 자동 실행
 
-#### 3-3-1. Replan HITL (Confirm 단계)
+> `/feature-executor`가 실행되면 다음 단계들을 순서대로 자동 처리합니다.
 
-**목적**: 요구사항 변경, 디자인 수정, TBD 정리
+일반적인 흐름:
+- 🗓️ `/feature-spec` → Feature 계획 문서 생성
+- 🔧 각 Task 개발 실행 (Task별로 적절한 스킬 자동 선택)
+- 🔍 `[Design Review]` Task → `/rams` 기반 자동 리뷰
+  - Critical 이슈 0개가 될 때까지 반복 수정
 
-**실행**:
+---
+
+### ✅ 완료 조건
+
+`design_validation_required: true`인 모든 Feature의 **모든 Task가 `done`** 상태
+
+---
+
+## 5️⃣ Feedback Loop (반복 가능)
+
+### 5-1️⃣ 재분석 & 재계획 (고객 Confirm 반영)
+
+> 목적: "바로 고치기"가 아니라, **무엇이 어떻게 바뀌는지 구조적 분석**
+
+**방법 1️⃣: 직접 프롬프트 입력**
+
 ```markdown
 /change-analyzer
-<피드백 내용>
+<고객 피드백 내용>
 ```
 
-**처리 내용**:
-- 변경사항 요구사항 문서화
-- 디자인 인사이트 저장 (필요 시)
-- TBD 질문 정리
-- `/change-docs` 자동 호출
+**방법 2️⃣: 피드백 문서로 관리** (권장 - 여러 건의 피드백 추적 가능)
 
-👉 승인 시 Loop 종료
+```
+seed-docs/feedback/
+├── feedback-260120-01.md    # 첫 번째 피드백
+├── feedback-260120-02.md    # 두 번째 피드백
+└── feedback-260121-01.md    # 다음날 피드백
+```
+
+파일 생성 후 프롬프트:
+```markdown
+/change-analyzer
+@seed-docs/feedback/feedback-260120-01.md 내용을 분석해줘
+```
 
 ---
 
-#### 3-3-2. Remaining Task 개발
+### 📋 자동 생성 & 갱신
+
+✅ 생성:
+- `docs/changes/YYYY-MM-DD-HHmm.md` (변경 분석서)
+- `tasks/changes/change-YYYY-MM-DD-HHmm.json` (변경 로그)
+
+✅ 갱신:
+- **`tasks/tasks.json`** ← SSOT 최신 업데이트
+
+✅ 평행 실행:
+- **디자인 관련 피드백 자동 감지** → `/design-insight` 병렬 실행
+  - UI/UX/레이아웃/타이포/간격 등 디자인 이슈에서 재사용 가능한 원칙 추출
+  - `.claude/design-lib/insights/` 에 문서화
+
+✅ 후속:
+- 필요 시 TBD 질문 도출
+- **자동으로 `/change-doc` 호출** → 문서 정합성 복구
+
+---
+
+### 5-2️⃣ 남은 Task 개발 (SSOT 기준)
+
+> 목표: `tasks/tasks.json`에서 **`done`이 아닌 모든 Task 처리**
+
+**프롬프트** (템플릿):
 
 ```markdown
 /feature-executor
@@ -373,39 +235,48 @@ IA와 사용자 액션 기반 기능별 견적서를 생성한다.
 Use @tasks/tasks.json as the single source of truth.
 
 Execution rules:
-1. A feature is "remaining" if at least one task is not completed.
+
+1. A feature is considered "remaining" if it contains at least one task with status != "done".
 2. Execute all remaining features.
-3. If a feature spec exists, DO NOT run /feature-spec.
-4. If no spec exists, run /feature-spec first.
-5. Skip completed tasks.
-6. Respect task dependencies.
-7. Run independent tasks in parallel.
-8. Do NOT ask for confirmation unless information is missing.
+3. For each feature:
+   - If a feature plan/spec already exists, DO NOT run /feature-spec.
+   - If no plan/spec exists, run /feature-spec first.
+4. After plan resolution, develop at the task level.
+5. Skip tasks already marked as "done".
+6. Execute tasks in logical order within a feature, considering dependencies.
+7. If tasks are independent, execute them in parallel.
+8. Do NOT ask the user for confirmation unless information is missing.
 ```
 
 ---
 
-## ✅ 종료 조건
+## 📌 부록) PM 빠른 체크리스트
 
-- `design_validation_required` feature 전부 완료
-- Replan 승인 완료
-- `tasks/tasks.json` 내 **모든 task = completed**
-
----
-
-## 🧠 Why This Works
-
-- **Sales → Dev 연계**: 미팅부터 개발까지 일관된 워크플로우
-- **Human은 결정·검증·변경 관리에만 집중**
-- **AI는 계획 → 실행 → 반복을 자동 수행**
-- **문서 ↔ task ↔ 코드 간 정합성 유지**
-- **회의가 아닌 커맨드 기반 개발 운영**
+| 단계 | 확인 항목 | 방법 |
+|------|---------|------|
+| 🌱 Seed | Seed가 충분한가? | `seed-docs/*.md` 확인 (MVP/비범위/정책) |
+| 📚 Planning | 산출물이 생겼나? | `docs/` + `tasks/tasks.json` 확인 |
+| 🎨 Design | 대표 화면 표시됐나? | `design_validation_required: true` 확인 |
+| 📊 SSOT | 최신 상태인가? | Feedback 후 `tasks/tasks.json` 변경 확인 |
+| ✅ Review | Design Review 완료? | `[Design Review]` Task = `done` 확인 |
 
 ---
 
-## 📚 참고 문서
+## 💡 자주 하는 질문 (FAQ)
 
-- **Sales Workflow**: `.claude/scripts/sales-workflow/sales-workflow.json`
-- **Process Meeting Script**: `.claude/skills/process-meeting-script/SKILL.md`
-- **FE Workflow**: `.claude/scripts/FE-workflow/workflow.json`
-- **Design Guide**: `docs/DESIGN.md`
+**Q: `/change-analyzer` 실행하면 `/design-insight`는 뭐가 자동으로 실행되는 건가요?**
+- A: 피드백에 **UI/UX/레이아웃/타이포/간격** 같은 디자인 이슈가 있으면, 자동으로 `/design-insight`가 병렬 실행됩니다.
+  - 🎨 재사용 가능한 디자인 원칙을 추출 → `.claude/design-lib/insights/` 에 저장
+  - 예: "카드 높이 일관성 필요" → "선택 옵션 카드는 비교를 위해 일정한 높이 유지"로 원칙화
+  - 이후 유사한 디자인 이슈가 나오면 이 원칙을 참고할 수 있습니다.
+
+**Q: Design Review Task가 계속 실패하면?**
+- A: Critical 이슈를 자동 수정 후 재검증합니다. PM은 기다리기만 하면 됩니다.
+
+**Q: 중간에 피드백 반영하려면?**
+- A: 언제든 `/change-analyzer` → 자동 `/change-doc` (+ 필요시 `/design-insight`) → 개발 재개. 루프는 여러 번 가능합니다.
+
+---
+
+**Last Updated**: 2026-01-20  
+**문서 관리**: `.claude/scripts/FE-workflow/README_PM.md`
