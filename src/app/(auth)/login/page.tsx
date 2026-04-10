@@ -55,9 +55,6 @@ export default function LoginPage() {
           <button className="w-full h-11 border border-border text-sm hover:bg-muted">
             네이버로 시작하기
           </button>
-          <button className="w-full h-11 border border-border text-sm hover:bg-muted">
-            Apple로 시작하기
-          </button>
         </div>
       </div>
 
