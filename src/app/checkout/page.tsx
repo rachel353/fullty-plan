@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 
 export default function CheckoutPage() {
@@ -76,11 +77,13 @@ export default function CheckoutPage() {
             <span>총 결제 금액</span>
             <span className="text-base">2,245,000원</span>
           </div>
-          <Button size="lg" className="w-full mt-2">
-            결제하기
-          </Button>
+          <Link href="/checkout/complete" className="block">
+            <Button size="lg" className="w-full mt-2">
+              결제하기
+            </Button>
+          </Link>
           <p className="text-[11px] text-muted-foreground leading-relaxed">
-            모든 상품은 풀티 검수 완료 후 셀러 발송 → 풀티 → 구매자 순서로 진행됩니다.
+            모든 상품은 Fullty 검수 완료 후 셀러 발송 → Fullty → 구매자 순서로 진행됩니다.
           </p>
         </aside>
       </div>

@@ -60,18 +60,51 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
           </div>
 
           {/* Options */}
-          <div className="py-6 border-b border-border space-y-4 text-sm">
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">셀러</span>
-              <span>{product.seller}</span>
+          <div className="py-6 border-b border-border space-y-5">
+            <div>
+              <div className="text-[10px] tracking-[0.18em] uppercase text-muted-foreground mb-2">
+                옵션 선택
+              </div>
+              <div className="grid grid-cols-3 gap-2">
+                {[product.option, "옵션 B", "옵션 C"].map((opt, i) => (
+                  <button
+                    key={opt}
+                    className={
+                      i === 0
+                        ? "h-11 border border-sage-ink bg-sage-ink text-background text-xs font-medium"
+                        : "h-11 border border-border text-xs hover:bg-muted"
+                    }
+                  >
+                    {opt}
+                  </button>
+                ))}
+              </div>
             </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">등급</span>
-              <span>{product.grade} (풀티 검수 완료)</span>
+
+            <div>
+              <div className="text-[10px] tracking-[0.18em] uppercase text-muted-foreground mb-2">
+                수량
+              </div>
+              <div className="inline-flex items-center border border-border h-11">
+                <button className="w-11 h-full text-sm hover:bg-muted">−</button>
+                <div className="w-12 text-center text-sm">1</div>
+                <button className="w-11 h-full text-sm hover:bg-muted">+</button>
+              </div>
             </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">배송</span>
-              <span>표준 배송 · 35,000원</span>
+
+            <div className="space-y-2 text-sm pt-2">
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">셀러</span>
+                <span>{product.seller}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">등급</span>
+                <span>{product.grade} (Fullty 검수 완료)</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">배송</span>
+                <span>표준 배송 · 35,000원</span>
+              </div>
             </div>
           </div>
 
@@ -100,17 +133,23 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
 
           {/* CTA */}
           <div className="pt-6 grid grid-cols-2 gap-2">
-            <Button variant="outline" size="lg" disabled={product.status === "품절"}>
-              장바구니 담기
-            </Button>
-            <Button size="lg" disabled={product.status === "품절"}>
-              바로 구매
-            </Button>
+            <Link href="/cart" className={product.status === "품절" ? "pointer-events-none" : ""}>
+              <Button variant="outline" size="lg" className="w-full" disabled={product.status === "품절"}>
+                장바구니 담기
+              </Button>
+            </Link>
+            <Link href="/checkout" className={product.status === "품절" ? "pointer-events-none" : ""}>
+              <Button size="lg" className="w-full" disabled={product.status === "품절"}>
+                바로 구매
+              </Button>
+            </Link>
           </div>
           {product.rentable && product.status !== "품절" && (
-            <Button variant="outline" size="lg" className="w-full mt-2">
-              렌탈로 시작하기
-            </Button>
+            <Link href="/checkout" className="block mt-2">
+              <Button variant="outline" size="lg" className="w-full">
+                렌탈로 시작하기
+              </Button>
+            </Link>
           )}
         </div>
       </div>
