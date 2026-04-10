@@ -1,0 +1,50 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Warm, editorial palette */
+  --background: #FAF8F3;
+  --foreground: #1F2A1C;
+  --muted: #F1EEE5;
+  --muted-foreground: #6B6E63;
+  --border: #E5E1D6;
+  --input: #E5E1D6;
+
+  /* Brand — natural sage */
+  --sage: #BADCB1;
+  --sage-soft: #D4E8CD;
+  --sage-deep: #5C8D52;
+  --sage-ink: #2E4A28;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Pretendard", "Apple SD Gothic Neo", system-ui, sans-serif;
+  background: var(--background);
+  color: var(--foreground);
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: -0.005em;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font: inherit;
+}
+
+/* Editorial display type */
+.font-display {
+  font-family: "Cormorant Garamond", "Playfair Display", "Times New Roman", Georgia, serif;
+  font-feature-settings: "liga", "dlig";
+  letter-spacing: -0.015em;
+}
