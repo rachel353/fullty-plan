@@ -1,5 +1,6 @@
 import { PageHeader } from "@/components/PageHeader";
 import { ProductCard } from "@/components/ProductCard";
+import { Select } from "@/components/ui/Select";
 import { products, categories } from "@/lib/mock";
 
 export default function ProductsPage() {
@@ -26,19 +27,8 @@ export default function ProductsPage() {
           </button>
         ))}
         <div className="ml-auto flex items-center gap-2">
-          <select className="h-9 px-3 text-xs border border-border bg-background">
-            <option>전체 등급</option>
-            <option>SS</option>
-            <option>S</option>
-            <option>A+</option>
-            <option>A</option>
-            <option>B</option>
-          </select>
-          <select className="h-9 px-3 text-xs border border-border bg-background">
-            <option>최신 등록순</option>
-            <option>낮은 가격순</option>
-            <option>높은 가격순</option>
-          </select>
+          <Select placeholder="전체 등급" options={["SS", "S", "A+", "A", "B"]} className="w-32" />
+          <Select placeholder="최신 등록순" options={["최신 등록순", "낮은 가격순", "높은 가격순"]} className="w-36" />
         </div>
       </div>
 
