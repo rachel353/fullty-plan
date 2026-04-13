@@ -1,6 +1,7 @@
 import { ImageBox } from "@/components/ImageBox";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { Select } from "@/components/ui/Select";
 import { orders } from "@/lib/mock";
 import { formatPrice } from "@/lib/utils";
 
@@ -10,18 +11,8 @@ export default function OrdersPage() {
       <div className="flex items-end justify-between border-b border-border pb-4">
         <h2 className="text-xl font-bold">주문 조회</h2>
         <div className="flex items-center gap-2">
-          <select className="h-9 px-3 text-xs border border-border bg-background">
-            <option>최근 3개월</option>
-            <option>최근 6개월</option>
-            <option>최근 1년</option>
-          </select>
-          <select className="h-9 px-3 text-xs border border-border bg-background">
-            <option>전체 상태</option>
-            <option>배송 준비</option>
-            <option>배송 중</option>
-            <option>배송 완료</option>
-            <option>구매 확정</option>
-          </select>
+          <Select placeholder="최근 3개월" options={["최근 3개월", "최근 6개월", "최근 1년"]} className="w-32" />
+          <Select placeholder="전체 상태" options={["전체 상태", "배송 준비", "배송 중", "배송 완료", "구매 확정"]} className="w-32" />
         </div>
       </div>
 

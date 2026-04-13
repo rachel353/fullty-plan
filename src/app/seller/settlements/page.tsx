@@ -1,5 +1,6 @@
 import { Badge } from "@/components/ui/Badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
+import { Select } from "@/components/ui/Select";
 
 const rows = [
   {
@@ -61,11 +62,9 @@ export default function SettlementsPage() {
             {s}
           </button>
         ))}
-        <select className="ml-auto h-9 px-3 text-xs border border-border bg-background">
-          <option>최근 3개월</option>
-          <option>최근 6개월</option>
-          <option>2026년</option>
-        </select>
+        <div className="ml-auto">
+          <Select placeholder="최근 3개월" options={["최근 3개월", "최근 6개월", "2026년"]} className="w-32" />
+        </div>
       </div>
 
       <Card>

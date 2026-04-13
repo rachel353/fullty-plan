@@ -1,5 +1,11 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
+import { Select } from "@/components/ui/Select";
+
+const banks = [
+  "국민은행", "신한은행", "하나은행", "우리은행", "농협은행",
+  "기업은행", "카카오뱅크", "토스뱅크", "SC제일은행", "대구은행", "부산은행",
+];
 
 export default function IndividualSellerSignupPage() {
   return (
@@ -43,20 +49,7 @@ export default function IndividualSellerSignupPage() {
         <div>
           <label className="text-xs text-muted-foreground mb-1.5 block">정산 계좌</label>
           <div className="grid grid-cols-5 gap-2">
-            <select className="col-span-2 h-11 px-3 text-sm border border-border bg-background">
-              <option value="">은행 선택</option>
-              <option>국민은행</option>
-              <option>신한은행</option>
-              <option>하나은행</option>
-              <option>우리은행</option>
-              <option>농협은행</option>
-              <option>기업은행</option>
-              <option>카카오뱅크</option>
-              <option>토스뱅크</option>
-              <option>SC제일은행</option>
-              <option>대구은행</option>
-              <option>부산은행</option>
-            </select>
+            <Select placeholder="은행 선택" options={banks} className="col-span-2" />
             <input
               placeholder="계좌번호 입력"
               className="col-span-3 h-11 px-3 text-sm border border-border bg-background"
