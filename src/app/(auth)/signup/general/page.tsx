@@ -48,7 +48,7 @@ export default function GeneralSignupPage() {
           </div>
         </div>
 
-        <Link href="/mypage" className="block pt-2">
+        <Link href="/signup/general/complete" className="block pt-2">
           <Button size="lg" className="w-full">
             가입 완료
           </Button>
