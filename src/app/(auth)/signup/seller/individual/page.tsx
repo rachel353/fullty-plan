@@ -37,11 +37,32 @@ export default function IndividualSellerSignupPage() {
       </Section>
 
       <Section title="셀러 정보">
-        <Field label="셀러 활동명" placeholder="예) 빈티지 컬렉터" />
         <Field label="이름 (실명)" placeholder="홍길동" />
         <Field label="휴대폰" placeholder="010-0000-0000" />
         <Field label="신분증 사본" placeholder="" upload />
-        <Field label="정산 계좌" placeholder="국민은행 123-45-67890" />
+        <div>
+          <label className="text-xs text-muted-foreground mb-1.5 block">정산 계좌</label>
+          <div className="grid grid-cols-5 gap-2">
+            <select className="col-span-2 h-11 px-3 text-sm border border-border bg-background">
+              <option value="">은행 선택</option>
+              <option>국민은행</option>
+              <option>신한은행</option>
+              <option>하나은행</option>
+              <option>우리은행</option>
+              <option>농협은행</option>
+              <option>기업은행</option>
+              <option>카카오뱅크</option>
+              <option>토스뱅크</option>
+              <option>SC제일은행</option>
+              <option>대구은행</option>
+              <option>부산은행</option>
+            </select>
+            <input
+              placeholder="계좌번호 입력"
+              className="col-span-3 h-11 px-3 text-sm border border-border bg-background"
+            />
+          </div>
+        </div>
       </Section>
 
       <Section title="취급 카테고리">
