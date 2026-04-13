@@ -8,7 +8,7 @@ export function SiteFooter() {
             프리미엄 빈티지 가구를 사고, 빌리고, 자산이 되게 하는 라이프스타일 플랫폼.
           </p>
           <div className="mt-8 text-[10px] tracking-[0.2em]">
-            © 2026 FULLTY · 프로토타입
+            © 2026 FULLTY
           </div>
         </div>
 
