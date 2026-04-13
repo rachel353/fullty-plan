@@ -5,7 +5,7 @@ const nav = [
   { href: "/products", label: "SHOP" },
   { href: "/get", label: "GET" },
   { href: "/sell", label: "SELL" },
-  { href: "/mypage/collection", label: "COLLECTION" },
+  { href: "/mypage/lounge", label: "LIVING LOUNGE" },
 ];
 
 const subNav = [

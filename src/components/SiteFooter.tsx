@@ -18,7 +18,6 @@ export function SiteFooter() {
             <li>구매 / 렌탈</li>
             <li>구해주세요</li>
             <li>위탁 / 매입</li>
-            <li>가구 자산화</li>
           </ul>
         </div>
         <div className="md:col-span-2">
@@ -27,7 +26,6 @@ export function SiteFooter() {
             <li>공지사항</li>
             <li>FAQ</li>
             <li>1:1 문의</li>
-            <li>리빙 라운지</li>
           </ul>
         </div>
         <div className="md:col-span-2">
@@ -36,7 +34,6 @@ export function SiteFooter() {
             <li>회사 소개</li>
             <li>이용약관</li>
             <li>개인정보처리방침</li>
-            <li>입점 / 셀러 가입</li>
           </ul>
         </div>
         <div className="md:col-span-2">
