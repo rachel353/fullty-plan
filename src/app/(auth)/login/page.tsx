@@ -30,8 +30,8 @@ export default function LoginPage() {
             <input type="checkbox" className="accent-foreground" />
             로그인 상태 유지
           </label>
-          <Link href="#" className="hover:text-foreground">
-            비밀번호 찾기
+          <Link href="/find" className="hover:text-foreground">
+            아이디 / 비밀번호 찾기
           </Link>
         </div>
 
