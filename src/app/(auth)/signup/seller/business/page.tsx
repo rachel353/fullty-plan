@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Select } from "@/components/ui/Select";
+import { FileUpload } from "@/components/ui/FileUpload";
 
 const banks = [
   "국민은행", "신한은행", "하나은행", "우리은행", "농협은행",
@@ -53,8 +54,14 @@ export default function BusinessSellerSignupPage() {
       </Section>
 
       <Section title="첨부 서류">
-        <Field label="사업자등록증 사본" placeholder="" upload />
-        <Field label="통장 사본" placeholder="" upload />
+        <div>
+          <label className="text-xs text-muted-foreground mb-1.5 block">사업자등록증 사본</label>
+          <FileUpload label="사업자등록증 업로드" accept="image/*,.pdf" />
+        </div>
+        <div>
+          <label className="text-xs text-muted-foreground mb-1.5 block">통장 사본</label>
+          <FileUpload label="통장 사본 업로드" accept="image/*,.pdf" />
+        </div>
       </Section>
 
       <Section title="정산 계좌">
