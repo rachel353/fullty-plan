@@ -65,11 +65,18 @@ export default function BusinessSellerSignupPage() {
         </div>
       </Section>
 
-      <Link href="/signup/seller/pending" className="block pt-4">
-        <Button size="lg" className="w-full">
-          심사 신청
-        </Button>
-      </Link>
+      <div className="pt-4 space-y-2">
+        <Link href="/signup/seller/pending" className="block">
+          <Button size="lg" className="w-full">
+            심사 신청
+          </Button>
+        </Link>
+        <Link href="/signup/seller/approved" className="block">
+          <Button variant="ghost" size="sm" className="w-full text-[11px]">
+            (데모) 승인 완료 화면 미리보기 →
+          </Button>
+        </Link>
+      </div>
     </div>
   );
 }
