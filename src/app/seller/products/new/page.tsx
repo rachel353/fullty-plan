@@ -97,7 +97,7 @@ export default function NewSellerProductPage() {
       </Section>
 
       <div className="border-t border-border pt-6 flex items-center justify-between">
-        <Badge variant="muted">검수 대기 → 풀티 검수 → 노출</Badge>
+        <Badge variant="muted">검수 대기 → Fullty 검수 → 노출 (반려 시 반송)</Badge>
         <div className="flex gap-2">
           <Button variant="outline">임시저장</Button>
           <Button>등록 요청</Button>

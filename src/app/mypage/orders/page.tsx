@@ -37,7 +37,7 @@ export default function OrdersPage() {
                 <Button size="sm" variant="outline">
                   배송 조회
                 </Button>
-                {o.status === "배송 완료" && <Button size="sm">구매 확정 (D-5)</Button>}
+                {o.status === "배송 완료" && <Button size="sm">구매 확정 (D-3)</Button>}
                 {o.status === "구매 확정" && (
                   <Button size="sm" variant="outline">
                     리뷰 작성

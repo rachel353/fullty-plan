@@ -65,6 +65,27 @@ export default function MySellPage() {
                   ))}
                 </div>
               </div>
+
+              {/* Reject action for '최종 금액 제안' */}
+              {s.status === "최종 금액 제안" && (
+                <div className="mt-5 pt-5 border-t border-border">
+                  <div className="text-xs font-semibold mb-3">제안 확인 필요</div>
+                  <div className="grid grid-cols-3 gap-2">
+                    <button className="h-10 border border-foreground bg-foreground text-background text-xs">
+                      수락
+                    </button>
+                    <button className="h-10 border border-border text-xs hover:bg-muted">
+                      거절 — 가격 낮음
+                    </button>
+                    <button className="h-10 border border-border text-xs hover:bg-muted">
+                      거절 — 기타 사유
+                    </button>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground mt-2 leading-relaxed">
+                    거절 시 Fullty 운영팀이 재제안을 드릴 수 있도록 채널톡으로 연결됩니다.
+                  </p>
+                </div>
+              )}
             </div>
           );
         })}
