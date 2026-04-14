@@ -64,7 +64,7 @@ export default function IndividualSellerSignupPage() {
 
       <Section title="취급 카테고리">
         <div className="grid grid-cols-3 gap-2">
-          {["체어", "라운지", "소파", "테이블", "수납", "조명"].map((c) => (
+          {["가구", "조명", "테이블웨어", "홈데코", "아트"].map((c) => (
             <label
               key={c}
               className="flex items-center gap-2 border border-border p-2.5 text-xs cursor-pointer hover:bg-muted"

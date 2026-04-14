@@ -17,7 +17,7 @@ export default function NewSellerProductPage() {
           <Field label="브랜드" placeholder="Herman Miller" />
           <Field label="모델명" placeholder="Aeron Chair" />
           <Field label="옵션 / 사이즈" placeholder="Size B / Graphite" />
-          <Field label="카테고리" placeholder="체어" />
+          <Field label="카테고리" placeholder="가구 / 조명 / 테이블웨어 / 홈데코 / 아트" />
         </div>
       </Section>
 
