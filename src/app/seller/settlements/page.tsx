@@ -10,7 +10,7 @@ const rows = [
     sale: 1280000,
     fee: 192000,
     payout: 1088000,
-    status: "지급 완료" as const,
+    status: "정산 완료" as const,
     period: "2026-03",
   },
   {
@@ -20,7 +20,7 @@ const rows = [
     sale: 850000,
     fee: 127500,
     payout: 722500,
-    status: "정산 확정" as const,
+    status: "정산 예정" as const,
     period: "2026-03",
   },
   {
@@ -40,7 +40,7 @@ export default function SettlementsPage() {
     <div className="space-y-6">
       <div className="border-b border-border pb-4">
         <h2 className="text-xl font-bold">정산 내역</h2>
-        <p className="text-sm text-muted-foreground mt-1">매월 15일 정산 지급</p>
+        <p className="text-sm text-muted-foreground mt-1">셀러 정산: 매월 1회 · 월말 일괄 지급</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -97,9 +97,9 @@ export default function SettlementsPage() {
                   <td className="px-4 py-3 text-right">
                     <Badge
                       variant={
-                        r.status === "지급 완료"
+                        r.status === "정산 완료"
                           ? "default"
-                          : r.status === "정산 확정"
+                          : r.status === "정산 예정"
                           ? "outline"
                           : "muted"
                       }

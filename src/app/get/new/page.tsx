@@ -12,9 +12,10 @@ import { formatPrice } from "@/lib/utils";
 type StepDef = {
   id: string;
   question: string;
-  type: "text" | "grade" | "image" | "confirm";
+  type: "text" | "grade" | "image" | "confirm" | "choice";
   placeholder?: string;
   hint?: string;
+  choices?: string[];
 };
 
 const baseSteps: StepDef[] = [
@@ -56,6 +57,19 @@ const afterMatchSteps: StepDef[] = [
     question: "추가로 전달할 사항이 있으신가요? (선택)",
     type: "text",
     placeholder: "찾는 이유, 용도, 특이 조건 등을 자유롭게 적어주세요.",
+  },
+  {
+    id: "alert",
+    question: "요청 조건과 일부 달라도 셀러 제안 알림을 받으시겠어요?",
+    type: "choice",
+    choices: ["알림 받기", "알림 받지 않기"],
+  },
+  {
+    id: "duration",
+    question: "요청 유지 기간을 선택해 주세요.",
+    type: "choice",
+    choices: ["3개월", "6개월", "12개월"],
+    hint: "선택한 기간이 종료되면 요청이 자동으로 취소됩니다.",
   },
   {
     id: "confirm",
@@ -400,6 +414,25 @@ export default function NewGetRequestPage() {
               </div>
             )}
 
+            {currentStep.type === "choice" && currentStep.choices && (
+              <div className="flex justify-end">
+                <div
+                  className="w-[80%] grid gap-2"
+                  style={{ gridTemplateColumns: `repeat(${currentStep.choices.length}, 1fr)` }}
+                >
+                  {currentStep.choices.map((c) => (
+                    <button
+                      key={c}
+                      onClick={() => handleAnswer(c)}
+                      className="h-11 text-sm font-medium border border-border hover:bg-sage-soft hover:border-sage transition-colors"
+                    >
+                      {c}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {currentStep.type === "image" && (
               <div className="flex justify-end">
                 <div className="w-[80%] space-y-2">
@@ -427,7 +460,9 @@ export default function NewGetRequestPage() {
                         key === "option" ? "옵션" :
                         key === "grade" ? "선호 등급" :
                         key === "image" ? "참고 이미지" :
-                        key === "memo" ? "메모" : null;
+                        key === "memo" ? "메모" :
+                        key === "alert" ? "조건 외 알림" :
+                        key === "duration" ? "유지 기간" : null;
                       if (!label) return null;
                       return (
                         <div key={key} className="flex justify-between">

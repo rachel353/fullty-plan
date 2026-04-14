@@ -102,7 +102,7 @@ export default function OrderCompletePage() {
           </li>
           <li className="flex items-start gap-2">
             <span className="font-display text-base leading-none">·</span>
-            <span>배송 완료 후 7일이 지나면 자동으로 구매 확정됩니다.</span>
+            <span>배송 완료 후 4일이 지나면 자동으로 구매 확정됩니다.</span>
           </li>
           <li className="flex items-start gap-2">
             <span className="font-display text-base leading-none">·</span>

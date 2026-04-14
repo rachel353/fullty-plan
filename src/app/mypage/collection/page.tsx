@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { ImageBox } from "@/components/ImageBox";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
@@ -58,17 +59,24 @@ export default function CollectionPage() {
                 <div className="col-span-1">
                   <div className="w-12 h-12 bg-muted" />
                 </div>
-                <div className="col-span-4">
+                <div className="col-span-3">
                   <div className="text-[11px] text-muted-foreground">{a.brand}</div>
                   <div className="font-medium">{a.name}</div>
                 </div>
-                <div className="col-span-2">
+                <div className="col-span-1">
                   <Badge variant="default">{a.grade}</Badge>
                 </div>
                 <div className="col-span-2 text-xs text-muted-foreground">{a.acquiredAt}</div>
                 <div className="col-span-2 font-medium">{formatPrice(a.currentValue)}</div>
                 <div className="col-span-1 text-right">
                   <Badge variant="muted">{a.source}</Badge>
+                </div>
+                <div className="col-span-2 flex justify-end">
+                  <Link href="/sell">
+                    <Button size="sm" variant="outline">
+                      판매하기
+                    </Button>
+                  </Link>
                 </div>
               </div>
             ))}

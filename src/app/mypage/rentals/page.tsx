@@ -29,7 +29,7 @@ export default function RentalsPage() {
       <div className="border-b border-border pb-4 flex items-end justify-between">
         <h2 className="text-xl font-bold">렌탈 중인 상품</h2>
         <div className="text-xs text-muted-foreground">
-          최대 렌탈 기간 90일 (연장 포함)
+          기본 최대 90일 · 연장 시 추가 최대 90일
         </div>
       </div>
 
@@ -66,20 +66,24 @@ export default function RentalsPage() {
             {r.daysLeft <= 7 && (
               <div className="mt-5 pt-5 border-t border-border">
                 <div className="text-xs font-semibold mb-3">종료 후 다음 단계 선택</div>
-                <div className="grid grid-cols-3 gap-2">
-                  <Button variant="outline" size="sm" disabled={r.extended >= 2}>
+                <div className="grid grid-cols-4 gap-2">
+                  <Button variant="outline" size="sm" disabled={r.extended >= 1}>
                     연장하기
                   </Button>
                   <Button variant="outline" size="sm">
                     구매 전환 (차액 결제)
                   </Button>
                   <Button variant="outline" size="sm">
-                    풀티 회수
+                    Fullty 픽업 회수
+                  </Button>
+                  <Button variant="outline" size="sm">
+                    직접 반납
                   </Button>
                 </div>
                 <p className="text-[11px] text-muted-foreground mt-2 leading-relaxed">
-                  연장 이후에는 구매 전환 또는 회수만 가능합니다. 구매 전환 시 차액(판매가 - 누적
-                  렌탈료)을 즉시 결제하면 소유권이 이전되고 자산화 등록이 가능합니다.
+                  연장은 추가 최대 90일까지 가능하며, 연장 이후에는 구매 전환 또는 회수만
+                  가능합니다. 구매 전환 시 <strong>렌탈 시작 시점 판매가 - 누적 렌탈료</strong>를
+                  즉시 결제하면 소유권이 이전되고 자산화 등록이 가능합니다.
                 </p>
               </div>
             )}

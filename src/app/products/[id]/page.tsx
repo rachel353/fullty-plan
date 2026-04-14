@@ -125,8 +125,10 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
                   </button>
                 ))}
               </div>
-              <div className="text-[11px] text-muted-foreground mt-3">
-                * 최대 90일까지 렌탈 가능. 종료 7일 전 연장 / 구매전환 / 회수 선택
+              <div className="text-[11px] text-muted-foreground mt-3 leading-relaxed">
+                * 선택한 배송 시작일 기준 렌탈 시작. 최대 90일 · 연장 시 추가 최대 90일.
+                <br />
+                * 종료 7일 전 알림 발송 (7일 렌탈은 3일 전) → 연장 / 구매전환 / 회수 선택
               </div>
             </div>
           )}
