@@ -1,4 +1,8 @@
+"use client";
+
 import { Button } from "@/components/ui/Button";
+import { DatePicker } from "@/components/ui/DatePicker";
+import { FileUpload } from "@/components/ui/FileUpload";
 
 export default function SellPage() {
   return (
@@ -9,8 +13,8 @@ export default function SellPage() {
         </div>
         <h1 className="font-display text-5xl text-sage-ink leading-none">Send Yours.</h1>
         <p className="text-sm text-muted-foreground mt-4">
-          소유 가구를 풀티에 매입하거나 위탁 판매할 수 있습니다. 신청 후 픽업 → 검수 → 최종 금액
-          제안 순서로 진행됩니다.
+          소유 가구를 Fullty에 매입하거나 위탁 판매할 수 있습니다. 신청서를 작성하시면 검수 후
+          <strong className="text-sage-ink"> 매입가와 위탁 조건을 함께 제안</strong>드립니다.
         </p>
       </div>
 
@@ -21,7 +25,7 @@ export default function SellPage() {
             key={s}
             className={
               i === 0
-                ? "border border-foreground bg-foreground text-background h-12 flex items-center justify-center text-xs font-medium"
+                ? "border border-sage-ink bg-sage-ink text-background h-12 flex items-center justify-center text-xs font-medium"
                 : "border border-border h-12 flex items-center justify-center text-xs text-muted-foreground"
             }
           >
@@ -33,20 +37,12 @@ export default function SellPage() {
       <div className="space-y-6">
         <Field label="브랜드" placeholder="예) Herman Miller" />
         <Field label="모델명" placeholder="예) Aeron Chair" />
-        <Field label="구매 시기" placeholder="예) 2024년 3월" />
 
         <div>
-          <label className="text-xs text-muted-foreground mb-1.5 block">신청 유형</label>
-          <div className="grid grid-cols-2 gap-2">
-            <button className="h-12 border border-foreground bg-foreground text-background text-sm font-medium">
-              위탁 판매
-            </button>
-            <button className="h-12 border border-border text-sm font-medium hover:bg-muted">
-              매입 (풀티가 직접 구매)
-            </button>
-          </div>
-          <p className="text-[11px] text-muted-foreground mt-2 leading-relaxed">
-            위탁: 판매 완료 시 수수료 차감 후 정산 / 매입: 검수 후 풀티가 즉시 구매
+          <label className="text-xs text-muted-foreground mb-1.5 block">구매 시기</label>
+          <DatePicker placeholder="구매하신 날짜를 선택해 주세요" />
+          <p className="text-[11px] text-muted-foreground mt-1">
+            정확한 날짜를 모르시면 구매한 달의 1일로 선택해 주세요.
           </p>
         </div>
 
@@ -67,9 +63,7 @@ export default function SellPage() {
 
         <div>
           <label className="text-xs text-muted-foreground mb-1.5 block">상품 사진</label>
-          <div className="border border-dashed border-border h-32 flex items-center justify-center text-xs text-muted-foreground">
-            정면 / 측면 / 디테일 / 라벨 사진을 업로드해 주세요
-          </div>
+          <FileUpload label="정면 / 측면 / 디테일 / 라벨 사진 업로드" accept="image/*" />
         </div>
 
         <div>
@@ -79,6 +73,18 @@ export default function SellPage() {
             placeholder="흠집, 사용감, 보관 조건 등 자유롭게 작성"
             className="w-full p-3 text-sm border border-border bg-background resize-none"
           />
+        </div>
+
+        <div className="border border-sage/40 bg-sage-soft/30 p-4">
+          <div className="text-[11px] font-semibold text-sage-ink mb-2">
+            이후 프로세스
+          </div>
+          <ul className="text-[11px] text-sage-ink space-y-1 leading-relaxed">
+            <li>· 신청 후 Fullty에서 픽업 → 검수를 진행합니다.</li>
+            <li>· 검수 완료 시 <strong>매입가 / 위탁 조건을 한 번에 제안</strong>드립니다.</li>
+            <li>· 원하시는 방식(매입 or 위탁)을 선택해 계약이 진행됩니다.</li>
+            <li>· 거절 시 반송 또는 Fullty 운영팀의 재제안(채널톡)이 가능합니다.</li>
+          </ul>
         </div>
 
         <div className="border-t border-border pt-6 flex justify-end gap-2">
