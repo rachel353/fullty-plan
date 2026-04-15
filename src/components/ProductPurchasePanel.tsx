@@ -27,12 +27,11 @@ const rentShipping = [
 ];
 
 export function ProductPurchasePanel({ product }: { product: Product }) {
-  const [mode, setMode] = useState<Mode>("buy");
-  const [selectedDays, setSelectedDays] = useState(7);
-  const [selectedShipping, setSelectedShipping] = useState(0);
-
   const soldOut = product.status === "품절";
   const canRent = product.rentable && !soldOut;
+  const [mode, setMode] = useState<Mode>(canRent ? "rent" : "buy");
+  const [selectedDays, setSelectedDays] = useState(7);
+  const [selectedShipping, setSelectedShipping] = useState(0);
 
   const shippingList = mode === "rent" ? rentShipping : buyShipping;
 
