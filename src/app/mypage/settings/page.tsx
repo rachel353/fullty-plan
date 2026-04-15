@@ -1,6 +1,23 @@
+"use client";
+
+import { useState } from "react";
 import { Button } from "@/components/ui/Button";
+import { AddressFormModal } from "@/components/AddressFormModal";
 
 export default function SettingsPage() {
+  const [addressOpen, setAddressOpen] = useState(false);
+  const [editMode, setEditMode] = useState<"add" | "edit">("add");
+
+  function openAdd() {
+    setEditMode("add");
+    setAddressOpen(true);
+  }
+
+  function openEdit() {
+    setEditMode("edit");
+    setAddressOpen(true);
+  }
+
   return (
     <div className="space-y-10">
       <div className="border-b border-border pb-4">
@@ -25,11 +42,11 @@ export default function SettingsPage() {
                 서울특별시 마포구 와우산로 ... · 010-1234-5678
               </div>
             </div>
-            <Button size="sm" variant="outline">
+            <Button size="sm" variant="outline" onClick={openEdit}>
               수정
             </Button>
           </div>
-          <Button variant="outline" className="w-full">
+          <Button variant="outline" className="w-full" onClick={openAdd}>
             새 배송지 추가
           </Button>
         </div>
@@ -37,13 +54,19 @@ export default function SettingsPage() {
 
       <Section title="회원 탈퇴">
         <p className="text-xs text-muted-foreground mb-3">
-          탈퇴 시 모든 자산화 등록, 렌탈 이력, 풀티머니가 삭제됩니다. 진행 중인 거래가 있는 경우
+          탈퇴 시 모든 자산화 등록, 렌탈 이력, Fullty머니가 삭제됩니다. 진행 중인 거래가 있는 경우
           탈퇴할 수 없습니다.
         </p>
         <Button variant="ghost" className="text-muted-foreground">
           탈퇴 진행
         </Button>
       </Section>
+
+      <AddressFormModal
+        open={addressOpen}
+        onClose={() => setAddressOpen(false)}
+        title={editMode === "add" ? "배송지 추가" : "배송지 수정"}
+      />
     </div>
   );
 }
