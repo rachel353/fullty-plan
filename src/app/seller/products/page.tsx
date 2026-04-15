@@ -55,10 +55,12 @@ export default function SellerProductsPage() {
                 <td className="px-4 py-3">{formatPrice(p.price)}</td>
                 <td className="px-4 py-3 text-muted-foreground">15%</td>
                 <td className="px-4 py-3">
-                  {p.rentable ? (
-                    <Badge variant="outline">ON</Badge>
+                  {p.availability === "both" ? (
+                    <Badge variant="outline">BUY·RENT</Badge>
+                  ) : p.availability === "rent" ? (
+                    <Badge variant="sage">RENT ONLY</Badge>
                   ) : (
-                    <span className="text-muted-foreground">OFF</span>
+                    <span className="text-muted-foreground">BUY</span>
                   )}
                 </td>
                 <td className="px-4 py-3">

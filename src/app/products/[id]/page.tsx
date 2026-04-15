@@ -44,7 +44,8 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
         <div>
           <div className="flex items-center gap-2 mb-4">
             <Badge variant="default">{product.grade}</Badge>
-            {product.rentable && <Badge variant="sage">RENT</Badge>}
+            {product.availability === "rent" && <Badge variant="sage">RENT ONLY</Badge>}
+            {product.availability === "both" && <Badge variant="outline">BUY · RENT</Badge>}
             <Badge variant="muted">{product.status}</Badge>
           </div>
           <div className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground">

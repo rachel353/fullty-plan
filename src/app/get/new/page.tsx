@@ -345,7 +345,8 @@ export default function NewGetRequestPage() {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-1.5">
                           <Badge variant="default">{p.grade}</Badge>
-                          {p.rentable && <Badge variant="sage">RENT</Badge>}
+                          {p.availability === "rent" && <Badge variant="sage">RENT ONLY</Badge>}
+                          {p.availability === "both" && <Badge variant="outline">BUY·RENT</Badge>}
                         </div>
                         <div className="text-[10px] text-muted-foreground tracking-[0.18em] uppercase mt-1.5">
                           {p.brand}
