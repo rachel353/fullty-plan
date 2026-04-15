@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/Button";
 import { DatePicker } from "@/components/ui/DatePicker";
 import { FileUpload } from "@/components/ui/FileUpload";
+import { AddressSearch } from "@/components/ui/AddressSearch";
 
 export default function SellPage() {
   return (
@@ -46,9 +47,14 @@ export default function SellPage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
-          <Field label="크기 (가로 × 세로 × 높이 cm)" placeholder="예) 70 × 65 × 110" />
-          <Field label="픽업 지역" placeholder="예) 서울 마포구" />
+        <Field label="크기 (가로 × 세로 × 높이 cm)" placeholder="예) 70 × 65 × 110" />
+
+        <div>
+          <label className="text-xs text-muted-foreground mb-1.5 block">픽업 주소</label>
+          <AddressSearch placeholder="주소 검색 버튼을 눌러 주소를 입력해 주세요" />
+          <p className="text-[11px] text-muted-foreground mt-1">
+            입력하신 주소 기준으로 픽업 배송비가 자동 산출됩니다.
+          </p>
         </div>
 
         <div className="border border-border p-4 text-sm space-y-2">
