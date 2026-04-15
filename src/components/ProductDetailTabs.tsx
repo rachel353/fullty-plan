@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ImageBox } from "./ImageBox";
 import { Badge } from "./ui/Badge";
 import { Button } from "./ui/Button";
+import { QnAModal } from "./QnAModal";
 import { Product } from "@/lib/mock";
 import { cn } from "@/lib/utils";
 
@@ -86,6 +87,7 @@ const qna = [
 
 export function ProductDetailTabs({ product }: { product: Product }) {
   const [active, setActive] = useState<Tab>("상품 정보");
+  const [qnaOpen, setQnaOpen] = useState(false);
 
   return (
     <div className="mt-20 border-t border-border pt-12">
@@ -215,7 +217,9 @@ export function ProductDetailTabs({ product }: { product: Product }) {
         <div>
           <div className="flex items-center justify-between border-b border-border pb-3 mb-6">
             <div className="text-sm font-semibold">Q&A ({qna.length})</div>
-            <Button size="sm">질문 작성</Button>
+            <Button size="sm" onClick={() => setQnaOpen(true)}>
+              질문 작성
+            </Button>
           </div>
 
           <div className="space-y-3">
@@ -264,6 +268,8 @@ export function ProductDetailTabs({ product }: { product: Product }) {
           </div>
         </div>
       )}
+
+      <QnAModal open={qnaOpen} onClose={() => setQnaOpen(false)} />
     </div>
   );
 }
