@@ -16,6 +16,7 @@ type StepDef = {
   placeholder?: string;
   hint?: string;
   choices?: string[];
+  optional?: boolean;
 };
 
 const baseSteps: StepDef[] = [
@@ -57,6 +58,7 @@ const afterMatchSteps: StepDef[] = [
     question: "추가로 전달할 사항이 있으신가요? (선택)",
     type: "text",
     placeholder: "찾는 이유, 용도, 특이 조건 등을 자유롭게 적어주세요.",
+    optional: true,
   },
   {
     id: "alert",
@@ -377,23 +379,33 @@ export default function NewGetRequestPage() {
           <>
             {currentStep.type === "text" && (
               <div className="flex justify-end">
-                <div className="w-[80%] flex gap-2">
-                  <input
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                    placeholder={currentStep.placeholder}
-                    autoFocus
-                    className="flex-1 h-11 px-3 text-sm border border-border bg-background"
-                  />
-                  <Button
-                    size="sm"
-                    onClick={() => input.trim() && handleAnswer(input.trim())}
-                    disabled={!input.trim()}
-                    className="h-11 px-5"
-                  >
-                    →
-                  </Button>
+                <div className="w-[80%] space-y-2">
+                  <div className="flex gap-2">
+                    <input
+                      value={input}
+                      onChange={(e) => setInput(e.target.value)}
+                      onKeyDown={handleKeyDown}
+                      placeholder={currentStep.placeholder}
+                      autoFocus
+                      className="flex-1 h-11 px-3 text-sm border border-border bg-background"
+                    />
+                    <Button
+                      size="sm"
+                      onClick={() => input.trim() && handleAnswer(input.trim())}
+                      disabled={!input.trim()}
+                      className="h-11 px-5"
+                    >
+                      →
+                    </Button>
+                  </div>
+                  {currentStep.optional && (
+                    <button
+                      onClick={() => handleAnswer("없음")}
+                      className="w-full text-xs text-muted-foreground hover:text-sage-ink border border-dashed border-border hover:border-sage-ink/40 py-2 transition-colors"
+                    >
+                      건너뛰기 →
+                    </button>
+                  )}
                 </div>
               </div>
             )}
