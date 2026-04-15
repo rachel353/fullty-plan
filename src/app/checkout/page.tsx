@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
+import { AddressSearch } from "@/components/ui/AddressSearch";
 
 export default function CheckoutPage() {
   return (
@@ -17,7 +18,12 @@ export default function CheckoutPage() {
             <div className="space-y-3">
               <Field label="받는 사람" placeholder="홍길동" />
               <Field label="연락처" placeholder="010-0000-0000" />
-              <Field label="주소" placeholder="서울특별시 강남구 ..." />
+              <div className="grid grid-cols-4 items-start gap-3">
+                <label className="text-xs text-muted-foreground mt-3">주소</label>
+                <div className="col-span-3">
+                  <AddressSearch placeholder="주소 검색 버튼을 눌러 주소를 입력해 주세요" />
+                </div>
+              </div>
               <Field label="배송 메모" placeholder="문 앞에 놓아주세요" />
             </div>
           </Section>
