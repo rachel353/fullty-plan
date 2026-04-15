@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { DatePicker } from "@/components/ui/DatePicker";
 import { FileUpload } from "@/components/ui/FileUpload";
@@ -95,7 +96,9 @@ export default function SellPage() {
 
         <div className="border-t border-border pt-6 flex justify-end gap-2">
           <Button variant="outline">임시 저장</Button>
-          <Button>신청 및 픽업비 결제</Button>
+          <Link href="/sell/payment">
+            <Button>신청 및 픽업비 결제</Button>
+          </Link>
         </div>
       </div>
     </div>
