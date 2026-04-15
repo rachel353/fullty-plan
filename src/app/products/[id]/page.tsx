@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ImageBox } from "@/components/ImageBox";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { ProductDetailTabs } from "@/components/ProductDetailTabs";
 import { products, rentalPricing } from "@/lib/mock";
 import { formatPrice } from "@/lib/utils";
 
@@ -156,58 +157,7 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
         </div>
       </div>
 
-      {/* Detail tabs */}
-      <div className="mt-20 border-t border-border pt-12">
-        <div className="flex gap-8 border-b border-border mb-8">
-          {["상품 정보", "검수 등급", "배송 / 반품", "리뷰"].map((tab, i) => (
-            <button
-              key={tab}
-              className={
-                i === 0
-                  ? "pb-3 border-b-2 border-foreground text-sm font-semibold"
-                  : "pb-3 text-sm text-muted-foreground hover:text-foreground"
-              }
-            >
-              {tab}
-            </button>
-          ))}
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="md:col-span-2 space-y-4 text-sm leading-relaxed text-muted-foreground">
-            <p>
-              {product.brand}의 대표작 {product.name}입니다. 풀티 검수팀의 자체 기준에 의해
-              {product.grade} 등급으로 평가되었습니다.
-            </p>
-            <ImageBox ratio="wide" label="상세 이미지 영역" />
-            <p>
-              사용감과 본래 디자인 의도가 잘 보존된 상태로, 일상에서 매일 사용해도 좋은 컨디션입니다.
-              모든 상품은 풀티 검수 후 노출됩니다.
-            </p>
-          </div>
-          <div className="border border-border p-5 h-fit">
-            <div className="text-xs font-semibold tracking-widest mb-4">FULLTY 등급 기준</div>
-            <ul className="space-y-2 text-xs">
-              {(["SS", "S", "A+", "A", "B"] as const).map((g) => (
-                <li key={g} className="flex items-center justify-between">
-                  <span className="font-medium">{g}</span>
-                  <span className="text-muted-foreground">
-                    {g === "SS"
-                      ? "최상품 / 거의 신품"
-                      : g === "S"
-                      ? "사용감 매우 적음"
-                      : g === "A+"
-                      ? "우수한 컨디션"
-                      : g === "A"
-                      ? "양호한 사용감"
-                      : "기능적 사용감"}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </div>
+      <ProductDetailTabs product={product} />
     </div>
   );
 }
