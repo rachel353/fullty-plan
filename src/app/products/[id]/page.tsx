@@ -93,18 +93,75 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
               </div>
             </div>
 
-            <div className="space-y-2 text-sm pt-2">
-              <div className="flex justify-between">
+            <div>
+              <div className="text-[10px] tracking-[0.18em] uppercase text-muted-foreground mb-2">
+                배송 옵션
+              </div>
+              <div className="space-y-2">
+                {[
+                  {
+                    name: "스탠다드 배송",
+                    desc: "3~5영업일 · 일반 택배",
+                    price: "35,000원",
+                    selected: true,
+                  },
+                  {
+                    name: "프리미엄 배송",
+                    desc: "지정일 · 2인 조립 / 설치 포함",
+                    price: "95,000원",
+                  },
+                  {
+                    name: "초고속 배송",
+                    desc: "당일 / 익일 · 서울·수도권 한정",
+                    price: "80,000원",
+                  },
+                  {
+                    name: "셀프 픽업",
+                    desc: "Fullty 성수 쇼룸 방문 수령",
+                    price: "무료",
+                  },
+                  {
+                    name: "렌탈 전용 배송",
+                    desc: "2인 배송 + 회수 포함 · 렌탈 상품 전용",
+                    price: "49,000원",
+                    rentOnly: true,
+                  },
+                ].map((opt) => (
+                  <label
+                    key={opt.name}
+                    className={
+                      opt.selected
+                        ? "flex items-center gap-3 border border-sage-ink p-3 cursor-pointer bg-sage-soft/40"
+                        : "flex items-center gap-3 border border-border p-3 cursor-pointer hover:bg-muted/40"
+                    }
+                  >
+                    <input
+                      type="radio"
+                      name="shipping"
+                      defaultChecked={opt.selected}
+                      className="accent-sage-ink"
+                    />
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-medium">{opt.name}</span>
+                        {opt.rentOnly && <Badge variant="sage">RENT</Badge>}
+                      </div>
+                      <div className="text-[11px] text-muted-foreground mt-0.5">{opt.desc}</div>
+                    </div>
+                    <div className="text-sm font-medium">{opt.price}</div>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-2 text-sm pt-2 border-t border-border">
+              <div className="flex justify-between pt-3">
                 <span className="text-muted-foreground">셀러</span>
                 <span>{product.seller}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">등급</span>
                 <span>{product.grade} (Fullty 검수 완료)</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">배송</span>
-                <span>표준 배송 · 35,000원</span>
               </div>
             </div>
           </div>
