@@ -124,7 +124,16 @@ export function ProductDetailTabs({ product }: { product: Product }) {
             <InfoRow label="옵션" value={product.option} />
             <InfoRow label="카테고리" value={product.category} />
             <InfoRow label="상태 등급" value={product.grade} />
-            <InfoRow label="렌탈 공급" value={product.rentable ? "가능" : "불가"} />
+            <InfoRow
+              label="판매 방식"
+              value={
+                product.availability === "both"
+                  ? "구매 · 렌탈"
+                  : product.availability === "rent"
+                  ? "렌탈 전용"
+                  : "구매 전용"
+              }
+            />
           </div>
         </div>
       )}

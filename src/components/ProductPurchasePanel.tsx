@@ -28,8 +28,10 @@ const rentShipping = [
 
 export function ProductPurchasePanel({ product }: { product: Product }) {
   const soldOut = product.status === "품절";
-  const canRent = product.rentable && !soldOut;
-  const [mode, setMode] = useState<Mode>(canRent ? "rent" : "buy");
+  const canBuy = (product.availability === "buy" || product.availability === "both") && !soldOut;
+  const canRent = (product.availability === "rent" || product.availability === "both") && !soldOut;
+  const showToggle = canBuy && canRent;
+  const [mode, setMode] = useState<Mode>(canRent && !canBuy ? "rent" : canBuy && !canRent ? "buy" : "rent");
   const [selectedDays, setSelectedDays] = useState(7);
   const [selectedShipping, setSelectedShipping] = useState(0);
 
@@ -43,8 +45,8 @@ export function ProductPurchasePanel({ product }: { product: Product }) {
 
   return (
     <div>
-      {/* Mode toggle */}
-      {canRent && (
+      {/* Mode toggle — only when both are available */}
+      {showToggle && (
         <div className="mb-6 grid grid-cols-2 gap-0 border border-border">
           <button
             onClick={() => switchMode("buy")}

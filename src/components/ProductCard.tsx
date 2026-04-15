@@ -18,7 +18,8 @@ export function ProductCard({ product }: { product: Product }) {
         )}
         <div className="absolute top-3 left-3 flex gap-1.5">
           <Badge variant="default">{product.grade}</Badge>
-          {product.rentable && <Badge variant="sage">RENT</Badge>}
+          {product.availability === "rent" && <Badge variant="sage">RENT ONLY</Badge>}
+          {product.availability === "both" && <Badge variant="outline">BUY · RENT</Badge>}
         </div>
       </div>
       <div className="pt-4 space-y-1">

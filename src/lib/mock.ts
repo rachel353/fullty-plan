@@ -1,5 +1,7 @@
 export type Grade = "SS" | "S" | "A+" | "A" | "B";
 
+export type Availability = "buy" | "rent" | "both";
+
 export type Product = {
   id: string;
   brand: string;
@@ -7,7 +9,7 @@ export type Product = {
   option: string;
   price: number;
   grade: Grade;
-  rentable: boolean;
+  availability: Availability;
   category: string;
   status: "판매중" | "렌탈중" | "품절" | "검수중";
   seller: string;
@@ -21,7 +23,7 @@ export const products: Product[] = [
     option: "Size B / Graphite",
     price: 1280000,
     grade: "S",
-    rentable: true,
+    availability: "both",
     category: "가구",
     status: "판매중",
     seller: "빈티지 웍스",
@@ -33,7 +35,7 @@ export const products: Product[] = [
     option: "Walnut / Black Leather",
     price: 8900000,
     grade: "SS",
-    rentable: true,
+    availability: "both",
     category: "가구",
     status: "판매중",
     seller: "오브제 스튜디오",
@@ -45,7 +47,7 @@ export const products: Product[] = [
     option: "3x1 / Pure White",
     price: 3200000,
     grade: "A+",
-    rentable: true,
+    availability: "rent",
     category: "가구",
     status: "판매중",
     seller: "모듈러 코리아",
@@ -57,7 +59,7 @@ export const products: Product[] = [
     option: "Oak Soap / Natural Paper Cord",
     price: 980000,
     grade: "A",
-    rentable: true,
+    availability: "both",
     category: "가구",
     status: "판매중",
     seller: "노르딕홈",
@@ -69,7 +71,7 @@ export const products: Product[] = [
     option: "Wool Hallingdal 65",
     price: 6500000,
     grade: "S",
-    rentable: false,
+    availability: "rent",
     category: "가구",
     status: "렌탈중",
     seller: "덴마크빈티지",
@@ -81,7 +83,7 @@ export const products: Product[] = [
     option: "Pony Hide / Chrome",
     price: 5400000,
     grade: "A+",
-    rentable: true,
+    availability: "both",
     category: "가구",
     status: "판매중",
     seller: "이태리에디션",
@@ -93,7 +95,7 @@ export const products: Product[] = [
     option: "3-seat / Maxalto Boucle",
     price: 14500000,
     grade: "SS",
-    rentable: true,
+    availability: "rent",
     category: "가구",
     status: "판매중",
     seller: "오브제 스튜디오",
@@ -105,7 +107,7 @@ export const products: Product[] = [
     option: "Round 120 / Marble",
     price: 4200000,
     grade: "A",
-    rentable: true,
+    availability: "both",
     category: "가구",
     status: "품절",
     seller: "미드센추리",
@@ -117,7 +119,7 @@ export const products: Product[] = [
     option: "Classic White",
     price: 980000,
     grade: "S",
-    rentable: false,
+    availability: "buy",
     category: "조명",
     status: "판매중",
     seller: "노르딕홈",
@@ -129,7 +131,7 @@ export const products: Product[] = [
     option: "Marble Base / Steel Arc",
     price: 3200000,
     grade: "A+",
-    rentable: true,
+    availability: "both",
     category: "조명",
     status: "판매중",
     seller: "이태리에디션",
@@ -141,7 +143,7 @@ export const products: Product[] = [
     option: "4인 세트 / White",
     price: 420000,
     grade: "SS",
-    rentable: false,
+    availability: "buy",
     category: "테이블웨어",
     status: "판매중",
     seller: "노르딕홈",
@@ -153,7 +155,7 @@ export const products: Product[] = [
     option: "Small / Stainless",
     price: 680000,
     grade: "S",
-    rentable: false,
+    availability: "buy",
     category: "테이블웨어",
     status: "판매중",
     seller: "덴마크빈티지",
@@ -165,7 +167,7 @@ export const products: Product[] = [
     option: "Cotton / Red",
     price: 280000,
     grade: "A+",
-    rentable: false,
+    availability: "buy",
     category: "홈데코",
     status: "판매중",
     seller: "노르딕홈",
@@ -177,7 +179,7 @@ export const products: Product[] = [
     option: "Large / Clear",
     price: 520000,
     grade: "S",
-    rentable: false,
+    availability: "buy",
     category: "홈데코",
     status: "판매중",
     seller: "이태리에디션",
@@ -189,7 +191,7 @@ export const products: Product[] = [
     option: "Framed / Edition of 100",
     price: 2400000,
     grade: "A+",
-    rentable: false,
+    availability: "buy",
     category: "아트",
     status: "판매중",
     seller: "오브제 스튜디오",
@@ -201,7 +203,7 @@ export const products: Product[] = [
     option: "Signed / 1985",
     price: 5800000,
     grade: "S",
-    rentable: false,
+    availability: "buy",
     category: "아트",
     status: "판매중",
     seller: "오브제 스튜디오",
