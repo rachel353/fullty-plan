@@ -1,52 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { ImageBox } from "@/components/ImageBox";
-
-declare global {
-  interface Window {
-    TossPayments?: (clientKey: string) => {
-      requestPayment: (method: string, options: TossRequestOptions) => Promise<void>;
-    };
-  }
-}
-
-interface TossRequestOptions {
-  amount: number;
-  orderId: string;
-  orderName: string;
-  customerName?: string;
-  customerEmail?: string;
-  successUrl: string;
-  failUrl: string;
-}
-
-// Toss Payments 공식 테스트용 client key (docs 샘플)
-const CLIENT_KEY = "test_ck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
-const SCRIPT_SRC = "https://js.tosspayments.com/v1/payment";
-
-function loadTossScript(): Promise<void> {
-  return new Promise((resolve, reject) => {
-    if (typeof window !== "undefined" && window.TossPayments) {
-      resolve();
-      return;
-    }
-    const existing = document.querySelector(`script[src="${SCRIPT_SRC}"]`);
-    if (existing) {
-      existing.addEventListener("load", () => resolve());
-      return;
-    }
-    const script = document.createElement("script");
-    script.src = SCRIPT_SRC;
-    script.async = true;
-    script.onload = () => resolve();
-    script.onerror = () => reject(new Error("Toss SDK load failed"));
-    document.head.appendChild(script);
-  });
-}
 
 const methods = [
   { id: "카드", label: "신용/체크카드", desc: "국내 모든 카드" },
@@ -56,30 +15,19 @@ const methods = [
 ];
 
 export default function SellPaymentPage() {
+  const router = useRouter();
   const [method, setMethod] = useState("카드");
-  const [loading, setLoading] = useState(false);
+  const [phase, setPhase] = useState<"idle" | "processing" | "done">("idle");
   const amount = 45000;
   const orderId = `FUL-SELL-${Date.now()}`;
 
-  async function handlePay() {
-    setLoading(true);
-    try {
-      await loadTossScript();
-      if (!window.TossPayments) throw new Error("SDK not loaded");
-      const toss = window.TossPayments(CLIENT_KEY);
-      await toss.requestPayment(method, {
-        amount,
-        orderId,
-        orderName: "SELL 픽업 배송비",
-        customerName: "김풀티",
-        customerEmail: "kimfullty@gmail.com",
-        successUrl: window.location.origin + "/sell/complete",
-        failUrl: window.location.origin + "/sell/payment",
-      });
-    } catch (err) {
-      // 사용자가 결제창을 닫거나 오류
-      setLoading(false);
-    }
+  function handlePay() {
+    setPhase("processing");
+    // Simulate Toss-like flow: 인증 → 승인 → 이동
+    setTimeout(() => {
+      setPhase("done");
+      setTimeout(() => router.push("/sell/complete"), 700);
+    }, 1800);
   }
 
   return (
@@ -94,7 +42,6 @@ export default function SellPaymentPage() {
         </p>
       </div>
 
-      {/* Order summary */}
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
         <div className="space-y-8">
           <section>
@@ -147,13 +94,12 @@ export default function SellPaymentPage() {
           </section>
 
           <div className="border border-sage/40 bg-sage-soft/30 p-4 text-[11px] text-sage-ink leading-relaxed">
-            <div className="font-semibold mb-1">Toss Payments 테스트 결제</div>
-            이 프로토타입은 Toss Payments 테스트 환경을 사용합니다. 실제 결제는 발생하지 않으며
-            결제창에서 "테스트 결제하기"를 누르면 완료 페이지로 이동합니다.
+            <div className="font-semibold mb-1">프로토타입 안내</div>
+            실제 결제가 발생하지 않는 시뮬레이션 화면입니다. 결제하기 버튼을 누르면 잠시 후
+            완료 페이지로 이동합니다.
           </div>
         </div>
 
-        {/* Summary sidebar */}
         <aside className="border border-border p-6 h-fit space-y-3 text-sm">
           <div className="text-base font-semibold pb-3 border-b border-border">최종 결제 금액</div>
           <Row label="픽업 배송비" value={`${amount.toLocaleString()}원`} />
@@ -168,20 +114,49 @@ export default function SellPaymentPage() {
             size="lg"
             className="w-full mt-2"
             onClick={handlePay}
-            disabled={loading}
+            disabled={phase !== "idle"}
           >
-            {loading ? "결제창 여는 중..." : `${amount.toLocaleString()}원 결제하기`}
+            {phase === "idle" && `${amount.toLocaleString()}원 결제하기`}
+            {phase === "processing" && "결제 처리 중..."}
+            {phase === "done" && "결제 완료"}
           </Button>
           <Link href="/sell" className="block">
             <Button size="sm" variant="ghost" className="w-full text-[11px]">
               ← 이전 단계로
             </Button>
           </Link>
-          <p className="text-[10px] text-muted-foreground leading-relaxed pt-2 border-t border-border">
-            테스트 카드번호: 4330-1234-1234-1234 / 아무 CVV·유효기간 입력 가능
-          </p>
         </aside>
       </div>
+
+      {/* Processing overlay */}
+      {phase !== "idle" && (
+        <div className="fixed inset-0 z-50 bg-sage-ink/40 flex items-center justify-center p-4">
+          <div className="bg-background border border-border w-full max-w-sm p-8 text-center">
+            {phase === "processing" && (
+              <>
+                <Spinner />
+                <div className="font-display text-2xl text-sage-ink mt-6">결제 처리 중</div>
+                <div className="text-xs text-muted-foreground mt-2 leading-relaxed">
+                  {method} 결제를 처리하고 있습니다.
+                  <br />
+                  창을 닫지 말고 잠시 기다려 주세요.
+                </div>
+              </>
+            )}
+            {phase === "done" && (
+              <>
+                <div className="w-12 h-12 mx-auto bg-sage-deep text-background flex items-center justify-center text-2xl font-display">
+                  ✓
+                </div>
+                <div className="font-display text-2xl text-sage-ink mt-6">결제 완료</div>
+                <div className="text-xs text-muted-foreground mt-2">
+                  완료 페이지로 이동합니다...
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -192,5 +167,11 @@ function Row({ label, value }: { label: string; value: string }) {
       <span className="text-muted-foreground">{label}</span>
       <span>{value}</span>
     </div>
+  );
+}
+
+function Spinner() {
+  return (
+    <div className="w-12 h-12 mx-auto border-2 border-sage/30 border-t-sage-deep rounded-full animate-spin" />
   );
 }
