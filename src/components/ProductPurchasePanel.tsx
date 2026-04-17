@@ -2,10 +2,12 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { Heart } from "lucide-react";
 import { Badge } from "./ui/Badge";
 import { Button } from "./ui/Button";
 import { Product, rentalPricing } from "@/lib/mock";
 import { formatPrice, cn } from "@/lib/utils";
+import { useWishlist } from "@/lib/wishlist-context";
 
 type Mode = "buy" | "rent";
 
@@ -27,6 +29,9 @@ const rentShipping = [
 ];
 
 export function ProductPurchasePanel({ product }: { product: Product }) {
+  const { toggle, isWished } = useWishlist();
+  const wished = isWished(product.id);
+
   const soldOut = product.status === "품절";
   const canBuy = (product.availability === "buy" || product.availability === "both") && !soldOut;
   const canRent = (product.availability === "rent" || product.availability === "both") && !soldOut;
@@ -189,17 +194,31 @@ export function ProductPurchasePanel({ product }: { product: Product }) {
 
       {/* CTA */}
       {mode === "buy" ? (
-        <div className="pt-6 grid grid-cols-2 gap-2">
-          <Link href="/cart" className={soldOut ? "pointer-events-none" : ""}>
-            <Button variant="outline" size="lg" className="w-full" disabled={soldOut}>
-              장바구니 담기
-            </Button>
-          </Link>
-          <Link href="/checkout" className={soldOut ? "pointer-events-none" : ""}>
-            <Button size="lg" className="w-full" disabled={soldOut}>
-              바로 구매
-            </Button>
-          </Link>
+        <div className="pt-6 space-y-2">
+          <div className="grid grid-cols-2 gap-2">
+            <Link href="/cart" className={soldOut ? "pointer-events-none" : ""}>
+              <Button variant="outline" size="lg" className="w-full" disabled={soldOut}>
+                장바구니 담기
+              </Button>
+            </Link>
+            <Link href="/checkout" className={soldOut ? "pointer-events-none" : ""}>
+              <Button size="lg" className="w-full" disabled={soldOut}>
+                바로 구매
+              </Button>
+            </Link>
+          </div>
+          <button
+            onClick={() => toggle(product.id)}
+            className="w-full h-11 border border-border flex items-center justify-center gap-2 text-sm hover:bg-muted transition-colors"
+          >
+            <Heart
+              size={15}
+              className={wished ? "fill-sage-deep text-sage-deep" : "text-muted-foreground"}
+            />
+            <span className={wished ? "text-sage-deep" : "text-muted-foreground"}>
+              {wished ? "위시리스트에 담겼습니다" : "위시리스트에 담기"}
+            </span>
+          </button>
         </div>
       ) : (
         <div className="pt-6 space-y-2">
@@ -218,6 +237,18 @@ export function ProductPurchasePanel({ product }: { product: Product }) {
               렌탈로 시작하기
             </Button>
           </Link>
+          <button
+            onClick={() => toggle(product.id)}
+            className="w-full h-11 border border-border flex items-center justify-center gap-2 text-sm hover:bg-muted transition-colors"
+          >
+            <Heart
+              size={15}
+              className={wished ? "fill-sage-deep text-sage-deep" : "text-muted-foreground"}
+            />
+            <span className={wished ? "text-sage-deep" : "text-muted-foreground"}>
+              {wished ? "위시리스트에 담겼습니다" : "위시리스트에 담기"}
+            </span>
+          </button>
         </div>
       )}
     </div>

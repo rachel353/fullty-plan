@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { Heart } from "lucide-react";
 import { ImageBox } from "@/components/ImageBox";
@@ -8,15 +7,12 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { products } from "@/lib/mock";
 import { formatPrice } from "@/lib/utils";
+import { useWishlist } from "@/lib/wishlist-context";
 
 export default function WishlistPage() {
-  const [wishlist, setWishlist] = useState(products.slice(0, 6).map((p) => p.id));
+  const { wishlist, toggle } = useWishlist();
 
   const wishedProducts = products.filter((p) => wishlist.includes(p.id));
-
-  function remove(id: string) {
-    setWishlist((prev) => prev.filter((i) => i !== id));
-  }
 
   return (
     <div className="space-y-6">
@@ -27,7 +23,7 @@ export default function WishlistPage() {
         </div>
         {wishedProducts.length > 0 && (
           <button
-            onClick={() => setWishlist([])}
+            onClick={() => wishlist.forEach((id) => toggle(id))}
             className="text-[11px] text-muted-foreground hover:text-sage-ink underline underline-offset-2 transition-colors"
           >
             전체 삭제
@@ -56,7 +52,7 @@ export default function WishlistPage() {
                   </div>
                 )}
                 <button
-                  onClick={() => remove(p.id)}
+                  onClick={() => toggle(p.id)}
                   aria-label="위시리스트 삭제"
                   className="absolute top-2 right-2 w-8 h-8 bg-background border border-border flex items-center justify-center hover:bg-muted transition-colors"
                 >
@@ -93,7 +89,7 @@ export default function WishlistPage() {
                   {p.status === "품절" ? "품절" : "장바구니"}
                 </Button>
                 <button
-                  onClick={() => remove(p.id)}
+                  onClick={() => toggle(p.id)}
                   className="w-9 h-9 border border-border flex items-center justify-center text-muted-foreground hover:text-sage-deep hover:border-sage-deep/40 transition-colors text-xs flex-shrink-0"
                   aria-label="삭제"
                 >
