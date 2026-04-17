@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ImageBox } from "@/components/ImageBox";
 import { Badge } from "@/components/ui/Badge";
 import { reviews } from "@/lib/lounge";
+import { CommentSection } from "@/components/lounge/CommentSection";
 
 export default function ReviewDetailPage({ params }: { params: { id: string } }) {
   const review = reviews.find((r) => r.id === params.id);
@@ -46,6 +47,9 @@ export default function ReviewDetailPage({ params }: { params: { id: string } })
           👍 도움돼요 {review.helpful}
         </button>
       </div>
+
+      {/* Comments */}
+      <CommentSection contentLabel="이 리뷰" />
 
       {/* Other reviews */}
       <div className="mt-12">
