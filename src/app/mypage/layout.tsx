@@ -27,6 +27,7 @@ const sections: SidebarSection[] = [
     title: "계정 설정",
     items: [
       { href: "/mypage/settings", label: "계정 정보" },
+      { href: "/mypage/notifications/inbox", label: "알림" },
       { href: "/mypage/notifications", label: "알림 설정" },
       { href: "/mypage/grade", label: "등급 / 쿠폰 / 풀티머니" },
     ],
