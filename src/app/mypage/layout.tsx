@@ -4,10 +4,8 @@ const sections: SidebarSection[] = [
   {
     title: "주문 / 거래",
     items: [
-      { href: "/mypage", label: "개요" },
       { href: "/mypage/orders", label: "주문 조회" },
       { href: "/mypage/rentals", label: "렌탈 중인 상품" },
-      { href: "/mypage/returns", label: "취소 / 반품 내역" },
     ],
   },
   {
@@ -20,7 +18,8 @@ const sections: SidebarSection[] = [
   {
     title: "컬렉션",
     items: [
-      { href: "/mypage/collection", label: "위시리스트 / 자산" },
+      { href: "/mypage/wishlist", label: "위시리스트" },
+      { href: "/mypage/assets", label: "자산 리포트" },
       { href: "/mypage/lounge", label: "리빙 라운지" },
     ],
   },
