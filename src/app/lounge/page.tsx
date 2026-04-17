@@ -31,7 +31,9 @@ export default function LoungePage() {
             <Link href="/mypage/lounge">
               <Button>내 라운지 관리</Button>
             </Link>
-            <Button variant="outline">정보글 작성</Button>
+            <Link href="/lounge/write">
+              <Button variant="outline">정보글 작성</Button>
+            </Link>
           </div>
         </div>
       </section>
@@ -39,17 +41,24 @@ export default function LoungePage() {
       {/* Tabs */}
       <div className="max-w-canvas mx-auto px-12 pt-12">
         <div className="flex gap-8 border-b border-border">
-          {["전체", "리뷰", "정보글", "케어 가이드", "셀러 스토리"].map((tab, i) => (
-            <button
-              key={tab}
+          {[
+            { label: "전체", href: "/lounge", active: true },
+            { label: "리뷰", href: "/lounge/reviews", active: false },
+            { label: "정보글", href: "/lounge/articles", active: false },
+            { label: "케어 가이드", href: "/lounge/articles?tag=케어", active: false },
+            { label: "셀러 스토리", href: "/lounge/articles?tag=셀러+스토리", active: false },
+          ].map((tab) => (
+            <Link
+              key={tab.label}
+              href={tab.href}
               className={
-                i === 0
+                tab.active
                   ? "pb-3 border-b-2 border-sage-ink text-sm font-semibold text-sage-ink"
-                  : "pb-3 text-sm text-muted-foreground hover:text-sage-ink"
+                  : "pb-3 text-sm text-muted-foreground hover:text-sage-ink transition-colors"
               }
             >
-              {tab}
-            </button>
+              {tab.label}
+            </Link>
           ))}
         </div>
       </div>
