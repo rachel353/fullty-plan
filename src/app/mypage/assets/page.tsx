@@ -2,7 +2,6 @@ import Link from "next/link";
 import { ImageBox } from "@/components/ImageBox";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { assets } from "@/lib/mock";
 import { formatPrice } from "@/lib/utils";
 
@@ -18,9 +17,11 @@ export default function AssetsPage() {
             풀티에서 구매했거나 직접 등록한 가구의 실시간 시세
           </p>
         </div>
-        <Button size="sm" variant="outline">
-          가구 등록하기
-        </Button>
+        <Link href="/mypage/assets/register">
+          <Button size="sm" variant="outline">
+            가구 등록하기
+          </Button>
+        </Link>
       </div>
 
       {/* Summary stats */}
