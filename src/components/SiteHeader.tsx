@@ -141,7 +141,7 @@ export function SiteHeader() {
                   </div>
                   <div className="px-4 py-3 border-t border-border">
                     <Link
-                      href="/mypage/notifications"
+                      href="/mypage/notifications/inbox"
                       onClick={() => setBellOpen(false)}
                       className="text-[11px] text-muted-foreground hover:text-sage-ink transition-colors"
                     >
