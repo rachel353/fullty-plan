@@ -1,10 +1,15 @@
+"use client";
+
 import Link from "next/link";
 import { ImageBox } from "@/components/ImageBox";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { reviews, articles } from "@/lib/lounge";
+import { useReviews } from "@/lib/review-context";
 
 export default function LoungePage() {
+  const { userReviews } = useReviews();
+  const allReviews = [...userReviews, ...reviews];
   return (
     <div>
       {/* Hero */}
@@ -64,9 +69,18 @@ export default function LoungePage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {reviews.map((r) => (
-            <Link key={r.id} href={`/lounge/reviews/${r.id}`} className="block group">
+          {allReviews.map((r) => (
+            <Link
+              key={r.id}
+              href={r.id.startsWith("user-") ? "#" : `/lounge/reviews/${r.id}`}
+              className="block group"
+            >
               <article className="border border-border p-5 hover:bg-sage-soft/30 transition-colors h-full">
+                {r.id.startsWith("user-") && (
+                  <div className="text-[10px] text-sage-deep tracking-[0.15em] uppercase mb-2">
+                    내가 작성한 리뷰
+                  </div>
+                )}
                 <ImageBox ratio="landscape" />
                 <div className="pt-4 space-y-2">
                   <div className="flex items-center gap-2">
