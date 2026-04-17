@@ -8,9 +8,10 @@ interface SelectProps {
   placeholder?: string;
   options: string[];
   className?: string;
+  onChange?: (value: string) => void;
 }
 
-export function Select({ placeholder = "선택", options, className }: SelectProps) {
+export function Select({ placeholder = "선택", options, className, onChange }: SelectProps) {
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState("");
   const ref = useRef<HTMLDivElement>(null);
@@ -53,6 +54,7 @@ export function Select({ placeholder = "선택", options, className }: SelectPro
               onClick={() => {
                 setSelected(opt);
                 setOpen(false);
+                onChange?.(opt);
               }}
               className={cn(
                 "w-full text-left px-3 py-2.5 text-sm transition-colors",

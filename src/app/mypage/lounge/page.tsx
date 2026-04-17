@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { ImageBox } from "@/components/ImageBox";
@@ -12,7 +11,6 @@ import { articles } from "@/lib/lounge";
 const myArticles = articles.slice(0, 2);
 
 export default function MyLoungePage() {
-  const router = useRouter();
   const { userReviews } = useReviews();
 
   // 주문조회에서 작성된 리뷰 + mock 3개
@@ -54,9 +52,9 @@ export default function MyLoungePage() {
           <div className="text-xs font-semibold tracking-widest text-muted-foreground uppercase">
             내 리뷰 ({allMyReviews.length})
           </div>
-          <Button size="sm" variant="outline" onClick={() => router.push("/mypage/orders")}>
-            리뷰 작성
-          </Button>
+          <Link href="/mypage/lounge/review/write">
+            <Button size="sm" variant="outline">리뷰 작성</Button>
+          </Link>
         </div>
         {allMyReviews.length === 0 ? (
           <div className="border border-dashed border-border py-10 text-center text-[12px] text-muted-foreground">
@@ -82,7 +80,9 @@ export default function MyLoungePage() {
                   <div className="text-[11px] text-muted-foreground">{r.date}</div>
                 </div>
                 <div className="flex gap-2 mt-3">
-                  <Button size="sm" variant="outline" className="flex-1">수정</Button>
+                  <Link href={`/mypage/lounge/review/${r.id}/edit`} className="flex-1">
+                    <Button size="sm" variant="outline" className="w-full">수정</Button>
+                  </Link>
                   <Button size="sm" variant="ghost" className="text-muted-foreground">삭제</Button>
                 </div>
               </div>
@@ -124,7 +124,9 @@ export default function MyLoungePage() {
                   <Link href={`/lounge/articles/${a.id}`}>
                     <Button size="sm" variant="outline">보기</Button>
                   </Link>
-                  <Button size="sm" variant="ghost" className="text-muted-foreground">수정</Button>
+                  <Link href={`/mypage/lounge/article/${a.id}/edit`}>
+                    <Button size="sm" variant="ghost" className="text-muted-foreground">수정</Button>
+                  </Link>
                   <Button size="sm" variant="ghost" className="text-muted-foreground">삭제</Button>
                 </div>
               </div>
