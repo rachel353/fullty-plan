@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ImageBox } from "@/components/ImageBox";
 import { Badge } from "@/components/ui/Badge";
 import { articles } from "@/lib/lounge";
+import { CommentSection } from "@/components/lounge/CommentSection";
 
 export default function ArticleDetailPage({ params }: { params: { id: string } }) {
   const article = articles.find((a) => a.id === params.id);
@@ -57,6 +58,9 @@ export default function ArticleDetailPage({ params }: { params: { id: string } }
           ♡ 좋아요 {article.likes}
         </button>
       </div>
+
+      {/* Comments */}
+      <CommentSection contentLabel="이 글" />
 
       {/* Other articles */}
       <div className="mt-12">
