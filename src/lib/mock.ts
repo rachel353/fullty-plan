@@ -320,7 +320,7 @@ export type Order = {
   productName: string;
   brand: string;
   price: number;
-  status: "결제 완료" | "배송 준비" | "배송 중" | "배송 완료" | "구매 확정" | "취소" | "반품";
+  status: "결제 완료" | "배송 대기" | "배송 준비" | "배송 중" | "배송 완료" | "구매 확정" | "취소" | "반품";
   type: "구매" | "렌탈";
   date: string;
 };
@@ -335,6 +335,16 @@ export const orders: Order[] = [
     status: "배송 중",
     type: "구매",
     date: "2026-04-08",
+  },
+  {
+    id: "o006",
+    productId: "p006",
+    productName: "LC4 Chaise Longue",
+    brand: "Cassina",
+    price: 5400000,
+    status: "배송 대기",
+    type: "구매",
+    date: "2026-04-15",
   },
   {
     id: "o002",

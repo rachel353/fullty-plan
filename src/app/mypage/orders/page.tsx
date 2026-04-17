@@ -9,7 +9,7 @@ import { Select } from "@/components/ui/Select";
 import { orders, type Order } from "@/lib/mock";
 import { formatPrice } from "@/lib/utils";
 
-type ModalType = "delivery" | "confirm" | "review" | null;
+type ModalType = "delivery" | "confirm" | "review" | "cancel" | null;
 
 const trackingSteps = [
   { date: "2026.04.08 14:32", label: "배송 출발", sub: "서울 동작구 허브 터미널", done: true },
@@ -24,6 +24,7 @@ export default function OrdersPage() {
   const [reviewText, setReviewText] = useState("");
   const [confirmed, setConfirmed] = useState<Set<string>>(new Set());
   const [reviewed, setReviewed] = useState<Set<string>>(new Set());
+  const [cancelled, setCancelled] = useState<Set<string>>(new Set());
 
   function open(type: ModalType, order: Order) {
     setSelected(order);
@@ -47,14 +48,23 @@ export default function OrdersPage() {
     close();
   }
 
+  function handleCancel() {
+    if (!selected) return;
+    setCancelled((prev) => new Set(prev).add(selected.id));
+    close();
+  }
+
   function statusBadgeVariant(status: Order["status"]): "default" | "outline" | "muted" {
     if (status === "취소") return "muted";
     if (status === "반품") return "outline";
     return "default";
   }
 
-  const resolvedStatus = (o: Order): Order["status"] =>
-    confirmed.has(o.id) && o.status === "배송 완료" ? "구매 확정" : o.status;
+  const resolvedStatus = (o: Order): Order["status"] => {
+    if (cancelled.has(o.id)) return "취소";
+    if (confirmed.has(o.id) && o.status === "배송 완료") return "구매 확정";
+    return o.status;
+  };
 
   return (
     <div className="space-y-6">
@@ -64,7 +74,7 @@ export default function OrdersPage() {
           <Select placeholder="최근 3개월" options={["최근 3개월", "최근 6개월", "최근 1년"]} className="w-32" />
           <Select
             placeholder="전체 상태"
-            options={["전체 상태", "배송 준비", "배송 중", "배송 완료", "구매 확정", "취소", "반품"]}
+            options={["전체 상태", "배송 대기", "배송 준비", "배송 중", "배송 완료", "구매 확정", "취소", "반품"]}
             className="w-32"
           />
         </div>
@@ -97,23 +107,31 @@ export default function OrdersPage() {
                 </div>
                 {!isCancelled && (
                   <div className="flex flex-col gap-2">
-                    <Button size="sm" variant="outline" className="w-28" onClick={() => open("delivery", o)}>
-                      배송 조회
-                    </Button>
-                    {status === "배송 완료" && (
-                      <Button size="sm" variant="outline" className="w-28" onClick={() => open("confirm", o)}>
-                        구매 확정 (D-3)
+                    {status === "배송 대기" ? (
+                      <Button size="sm" variant="outline" className="w-28" onClick={() => open("cancel", o)}>
+                        주문 취소
                       </Button>
-                    )}
-                    {status === "구매 확정" && !reviewed.has(o.id) && (
-                      <Button size="sm" variant="outline" className="w-28" onClick={() => open("review", o)}>
-                        리뷰 작성
-                      </Button>
-                    )}
-                    {reviewed.has(o.id) && (
-                      <div className="w-28 h-9 flex items-center justify-center text-[11px] text-muted-foreground border border-border">
-                        리뷰 완료
-                      </div>
+                    ) : (
+                      <>
+                        <Button size="sm" variant="outline" className="w-28" onClick={() => open("delivery", o)}>
+                          배송 조회
+                        </Button>
+                        {status === "배송 완료" && (
+                          <Button size="sm" variant="outline" className="w-28" onClick={() => open("confirm", o)}>
+                            구매 확정 (D-3)
+                          </Button>
+                        )}
+                        {status === "구매 확정" && !reviewed.has(o.id) && (
+                          <Button size="sm" variant="outline" className="w-28" onClick={() => open("review", o)}>
+                            리뷰 작성
+                          </Button>
+                        )}
+                        {reviewed.has(o.id) && (
+                          <div className="w-28 h-9 flex items-center justify-center text-[11px] text-muted-foreground border border-border">
+                            리뷰 완료
+                          </div>
+                        )}
+                      </>
                     )}
                   </div>
                 )}
@@ -122,6 +140,33 @@ export default function OrdersPage() {
           );
         })}
       </div>
+
+      {/* 주문 취소 모달 */}
+      <Modal open={modal === "cancel"} onClose={close} title="주문 취소">
+        <div className="p-6 space-y-5">
+          <div className="space-y-1">
+            <div className="text-[11px] text-muted-foreground">{selected?.brand}</div>
+            <div className="text-base font-semibold">{selected?.productName}</div>
+            <div className="text-sm font-medium text-sage-ink">{selected && formatPrice(selected.price)}</div>
+          </div>
+
+          <div className="bg-muted/50 border border-border p-4 space-y-2 text-[12px] text-sage-ink">
+            <div className="font-semibold mb-1">취소 안내사항</div>
+            <div>· 배송 대기 상태에서만 취소가 가능합니다.</div>
+            <div>· 결제 금액은 3~5 영업일 내 환불됩니다.</div>
+            <div>· 취소 후에는 되돌릴 수 없습니다.</div>
+          </div>
+
+          <div className="flex gap-2 pt-2">
+            <Button variant="outline" size="sm" className="flex-1" onClick={close}>
+              돌아가기
+            </Button>
+            <Button size="sm" className="flex-1" onClick={handleCancel}>
+              취소 확인
+            </Button>
+          </div>
+        </div>
+      </Modal>
 
       {/* 배송 조회 모달 */}
       <Modal open={modal === "delivery"} onClose={close} title="배송 조회">
