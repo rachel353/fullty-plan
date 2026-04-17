@@ -8,6 +8,7 @@ import { Modal } from "@/components/ui/Modal";
 import { Select } from "@/components/ui/Select";
 import { orders, type Order } from "@/lib/mock";
 import { formatPrice } from "@/lib/utils";
+import { useReviews } from "@/lib/review-context";
 
 type ModalType = "delivery" | "confirm" | "review" | "cancel" | null;
 
@@ -18,6 +19,7 @@ const trackingSteps = [
 ];
 
 export default function OrdersPage() {
+  const { addReview } = useReviews();
   const [modal, setModal] = useState<ModalType>(null);
   const [selected, setSelected] = useState<Order | null>(null);
   const [reviewStars, setReviewStars] = useState(5);
@@ -41,7 +43,17 @@ export default function OrdersPage() {
     close();
   }
   function handleReview() {
-    if (!selected) return;
+    if (!selected || !reviewText.trim()) return;
+    addReview({
+      id: `user-${Date.now()}`,
+      author: "김풀티",
+      product: selected.productName,
+      grade: "S",
+      rating: reviewStars,
+      date: new Date().toISOString().slice(0, 10),
+      body: reviewText.trim(),
+      helpful: 0,
+    });
     setReviewed((prev) => new Set(prev).add(selected.id));
     setReviewText("");
     setReviewStars(5);
@@ -74,7 +86,7 @@ export default function OrdersPage() {
           <Select placeholder="최근 3개월" options={["최근 3개월", "최근 6개월", "최근 1년"]} className="w-32" />
           <Select
             placeholder="전체 상태"
-            options={["전체 상태", "배송 대기", "배송 준비", "배송 중", "배송 완료", "구매 확정", "취소", "반품"]}
+            options={["전체 상태", "배송 대기", "배송 중", "배송 완료", "구매 확정", "취소"]}
             className="w-32"
           />
         </div>

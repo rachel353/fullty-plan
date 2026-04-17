@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
+import { Providers } from "@/components/Providers";
 
 export const metadata: Metadata = {
   title: "FULLTY — Premium Vintage Furniture",
@@ -24,9 +25,11 @@ export default function RootLayout({
         />
       </head>
       <body>
-        <SiteHeader />
-        <main className="min-h-[calc(100vh-300px)]">{children}</main>
-        <SiteFooter />
+        <Providers>
+          <SiteHeader />
+          <main className="min-h-[calc(100vh-300px)]">{children}</main>
+          <SiteFooter />
+        </Providers>
       </body>
     </html>
   );
