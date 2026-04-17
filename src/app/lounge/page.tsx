@@ -63,9 +63,9 @@ export default function LoungePage() {
             </div>
             <h2 className="font-display text-3xl text-sage-ink mt-2">커뮤니티 리뷰</h2>
           </div>
-          <button className="text-[11px] tracking-[0.18em] uppercase border-b border-sage-ink pb-1">
+          <Link href="/lounge/reviews" className="text-[11px] tracking-[0.18em] uppercase border-b border-sage-ink pb-1 hover:text-sage-deep transition-colors">
             View All →
-          </button>
+          </Link>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
