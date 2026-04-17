@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 import { Search, ShoppingBag, User } from "lucide-react";
 
@@ -14,9 +17,11 @@ const subNav = [
 ];
 
 export function SiteHeader() {
+  const [loggedIn, setLoggedIn] = useState(true);
+
   return (
     <header className="bg-sage sticky top-0 z-40">
-      {/* Main row — slim but breathable: 112px header, 40px top / 20px bottom padding */}
+      {/* Main row */}
       <div
         className="max-w-canvas mx-auto px-12 flex items-center justify-between"
         style={{ paddingTop: 40, paddingBottom: 20, minHeight: 112 }}
@@ -31,11 +36,8 @@ export function SiteHeader() {
           </span>
         </Link>
 
-        {/* Center — Main menu (60px gaps) */}
-        <nav
-          className="hidden md:flex items-center"
-          style={{ columnGap: 60 }}
-        >
+        {/* Center — Main menu */}
+        <nav className="hidden md:flex items-center" style={{ columnGap: 60 }}>
           {nav.map((item) => (
             <Link
               key={item.href}
@@ -55,17 +57,42 @@ export function SiteHeader() {
           <Link href="/cart" aria-label="cart" className="text-sage-ink hover:text-sage-deep transition-colors">
             <ShoppingBag size={18} strokeWidth={1.5} />
           </Link>
-          <Link href="/mypage" aria-label="mypage" className="text-sage-ink hover:text-sage-deep transition-colors">
+          <Link
+            href={loggedIn ? "/mypage" : "/login"}
+            aria-label="mypage"
+            className="text-sage-ink hover:text-sage-deep transition-colors"
+          >
             <User size={18} strokeWidth={1.5} />
           </Link>
           <div className="hidden md:flex items-center text-[11px] text-sage-ink/70 ml-2 pl-4 border-l border-sage-ink/15" style={{ columnGap: 8 }}>
-            <Link href="/login" className="hover:text-sage-deep transition-colors">
-              LOGIN
-            </Link>
-            <span>·</span>
-            <Link href="/signup" className="hover:text-sage-deep transition-colors">
-              JOIN
-            </Link>
+            {loggedIn ? (
+              <>
+                <Link href="/mypage" className="hover:text-sage-deep transition-colors font-medium text-sage-ink">
+                  MY PAGE
+                </Link>
+                <span>·</span>
+                <button
+                  onClick={() => setLoggedIn(false)}
+                  className="hover:text-sage-deep transition-colors"
+                >
+                  LOGOUT
+                </button>
+              </>
+            ) : (
+              <>
+                <Link href="/login" className="hover:text-sage-deep transition-colors">
+                  LOGIN
+                </Link>
+                <span>·</span>
+                <Link
+                  href="/signup"
+                  className="hover:text-sage-deep transition-colors"
+                  onClick={() => setLoggedIn(true)}
+                >
+                  JOIN
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </div>

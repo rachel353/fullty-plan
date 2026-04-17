@@ -320,7 +320,7 @@ export type Order = {
   productName: string;
   brand: string;
   price: number;
-  status: "결제 완료" | "배송 준비" | "배송 중" | "배송 완료" | "구매 확정";
+  status: "결제 완료" | "배송 준비" | "배송 중" | "배송 완료" | "구매 확정" | "취소" | "반품";
   type: "구매" | "렌탈";
   date: string;
 };
@@ -355,6 +355,26 @@ export const orders: Order[] = [
     status: "구매 확정",
     type: "구매",
     date: "2026-02-28",
+  },
+  {
+    id: "o004",
+    productId: "p003",
+    productName: "Haller Sideboard",
+    brand: "USM",
+    price: 3200000,
+    status: "취소",
+    type: "구매",
+    date: "2026-04-01",
+  },
+  {
+    id: "o005",
+    productId: "p002",
+    productName: "DSW Side Chair",
+    brand: "Vitra",
+    price: 560000,
+    status: "반품",
+    type: "구매",
+    date: "2026-03-20",
   },
 ];
 
