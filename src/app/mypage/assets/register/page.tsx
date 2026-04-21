@@ -13,6 +13,14 @@ import { cn } from "@/lib/utils";
 const GRADES = ["SS", "S", "A+", "A", "B"] as const;
 const CATEGORIES = ["의자", "소파", "테이블", "수납/선반", "조명", "침대/침구", "기타"];
 
+const GRADE_MULTIPLIERS: Record<string, number> = {
+  SS: 0.95,
+  S: 0.9,
+  "A+": 0.85,
+  A: 0.8,
+  B: 0.7,
+};
+
 type PriceResult = {
   source: string;
   grade: string;
@@ -320,23 +328,81 @@ export default function AssetRegisterPage() {
             상태 등급 <span className="text-sage-deep">*</span>
           </label>
           <div className="grid grid-cols-5 gap-2">
-            {GRADES.map((g) => (
-              <button
-                key={g}
-                onClick={() => setGrade(grade === g ? "" : g)}
-                className={cn(
-                  "border py-3 text-sm font-semibold transition-colors",
-                  grade === g
-                    ? "border-sage-ink bg-sage-soft/40 text-sage-ink"
-                    : "border-border hover:bg-muted/40 text-muted-foreground"
-                )}
-              >
-                {g}
-              </button>
-            ))}
+            {GRADES.map((g) => {
+              const multiplier = GRADE_MULTIPLIERS[g];
+              const calcPrice = lowestPrice ? Math.round(lowestPrice * multiplier / 10000) * 10000 : null;
+              const isSelected = grade === g;
+              return (
+                <button
+                  key={g}
+                  onClick={() => {
+                    const next = grade === g ? "" : g;
+                    setGrade(next);
+                    if (next && lowestPrice) {
+                      const p = Math.round(lowestPrice * GRADE_MULTIPLIERS[next] / 10000) * 10000;
+                      setPurchasePrice(String(p));
+                    }
+                  }}
+                  className={cn(
+                    "border py-3 flex flex-col items-center gap-0.5 transition-colors",
+                    isSelected
+                      ? "border-sage-ink bg-sage-soft/40"
+                      : "border-border hover:bg-muted/40"
+                  )}
+                >
+                  <span className={cn("text-sm font-semibold", isSelected ? "text-sage-ink" : "text-muted-foreground")}>
+                    {g}
+                  </span>
+                  {calcPrice && lowestPrice && (
+                    <span className={cn("text-[10px]", isSelected ? "text-sage-deep font-medium" : "text-muted-foreground")}>
+                      {(lowestPrice * multiplier / 10000).toFixed(0)}만
+                    </span>
+                  )}
+                </button>
+              );
+            })}
           </div>
           <div className="mt-2 text-[10px] text-muted-foreground leading-relaxed">
-            SS: 거의 새것 수준 &nbsp;·&nbsp; S: 미세 사용감 &nbsp;·&nbsp; A+: 소량 사용감 &nbsp;·&nbsp; A: 일반 빈티지 &nbsp;·&nbsp; B: 눈에 띄는 흔적
+            SS ×0.95 &nbsp;·&nbsp; S ×0.9 &nbsp;·&nbsp; A+ ×0.85 &nbsp;·&nbsp; A ×0.8 &nbsp;·&nbsp; B ×0.7 &nbsp;
+            {lowestPrice && <span className="text-sage-deep">(최저가 {formatPrice(lowestPrice)} 기준)</span>}
+          </div>
+        </div>
+
+        {/* 가구 금액 */}
+        <div id="purchase-price-field">
+          <label className="text-xs text-muted-foreground mb-2 block">
+            가구 금액 (원) <span className="text-sage-deep">*</span>
+          </label>
+          {/* 계산식 표시 */}
+          {lowestPrice && grade && (
+            <div className="mb-2 px-3 py-2 bg-sage-soft/30 border border-sage/30 text-[11px] text-sage-ink flex items-center gap-1.5">
+              <span className="text-muted-foreground">최저가</span>
+              <span className="font-medium">{formatPrice(lowestPrice)}</span>
+              <span className="text-muted-foreground">×</span>
+              <span className="font-medium">{GRADE_MULTIPLIERS[grade]} ({grade}등급)</span>
+              <span className="text-muted-foreground">=</span>
+              <span className="font-semibold text-sage-deep">
+                {formatPrice(Math.round(lowestPrice * GRADE_MULTIPLIERS[grade] / 10000) * 10000)}
+              </span>
+            </div>
+          )}
+          <div className="relative">
+            <input
+              type="number"
+              value={purchasePrice}
+              onChange={(e) => setPurchasePrice(e.target.value)}
+              placeholder="등급을 선택하면 자동 계산됩니다"
+              min={0}
+              className="w-full h-11 px-4 text-sm border border-border bg-background focus:outline-none focus:border-sage-ink/50"
+            />
+            {purchasePrice && (
+              <div className="absolute right-4 top-1/2 -translate-y-1/2 text-[11px] text-muted-foreground pointer-events-none">
+                {formatPrice(Number(purchasePrice))}
+              </div>
+            )}
+          </div>
+          <div className="text-[10px] text-muted-foreground mt-1">
+            직접 수정도 가능합니다. 현재 시세 추정에 활용됩니다.
           </div>
         </div>
 
@@ -351,42 +417,6 @@ export default function AssetRegisterPage() {
             onChange={(e) => setAcquiredAt(e.target.value)}
             className="w-full h-11 px-4 text-sm border border-border bg-background focus:outline-none focus:border-sage-ink/50"
           />
-        </div>
-
-        {/* 구입 금액 */}
-        <div id="purchase-price-field">
-          <label className="text-xs text-muted-foreground mb-2 block">
-            구입 금액 (원) <span className="text-sage-deep">*</span>
-          </label>
-          <div className="relative">
-            <input
-              type="number"
-              value={purchasePrice}
-              onChange={(e) => setPurchasePrice(e.target.value)}
-              placeholder="0"
-              min={0}
-              className="w-full h-11 px-4 text-sm border border-border bg-background focus:outline-none focus:border-sage-ink/50"
-            />
-            {purchasePrice && (
-              <div className="absolute right-4 top-1/2 -translate-y-1/2 text-[11px] text-muted-foreground pointer-events-none">
-                {formatPrice(Number(purchasePrice))}
-              </div>
-            )}
-          </div>
-          {priceResults && lowestPrice && (
-            <div className="mt-1.5 flex items-center gap-2">
-              <span className="text-[10px] text-muted-foreground">시세 기준:</span>
-              <button
-                onClick={() => applyPrice(lowestPrice)}
-                className="text-[10px] text-sage-deep underline underline-offset-2 hover:text-sage-ink transition-colors"
-              >
-                최저가 {formatPrice(lowestPrice)} 적용
-              </button>
-            </div>
-          )}
-          <div className="text-[10px] text-muted-foreground mt-1">
-            구입 당시 금액 기준 (현재 시세 추정에 활용됩니다)
-          </div>
         </div>
 
         {/* 사진 */}
