@@ -18,7 +18,6 @@ export default function NewSellerProductPage() {
   const [rentalOn, setRentalOn] = useState(false);
   const [carrier, setCarrier] = useState("CJ대한통운");
   const [shipDay, setShipDay] = useState("2일");
-  const [freeShip, setFreeShip] = useState(true);
 
   const isBusiness = sellerType === "사업자";
 
@@ -86,7 +85,11 @@ export default function NewSellerProductPage() {
         <div className="grid grid-cols-2 gap-3">
           <Field label="공급가" placeholder="900,000" suffix="원" />
           <Field label="판매가" placeholder="1,280,000" suffix="원" />
-          {!isBusiness && <Field label="배송비 (풀티 → 구매자)" placeholder="35,000" suffix="원" />}
+          <Field
+            label={isBusiness ? "배송비 (직접 배송)" : "배송비 (풀티 → 구매자)"}
+            placeholder="35,000"
+            suffix="원"
+          />
           <Field label="VAT" placeholder="0" suffix="원" />
         </div>
         <div className="border border-border p-4 mt-4 bg-muted/40">
@@ -147,35 +150,6 @@ export default function NewSellerProductPage() {
             </div>
 
             <div className="grid grid-cols-2 gap-3 items-start">
-              <div>
-                <label className="text-xs text-muted-foreground mb-1.5 block">배송비</label>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => setFreeShip(true)}
-                    className={cn(
-                      "px-3 h-9 border text-xs transition-colors",
-                      freeShip ? "border-sage-ink bg-sage-ink text-background" : "border-border hover:bg-muted"
-                    )}
-                  >
-                    무료배송
-                  </button>
-                  <button
-                    onClick={() => setFreeShip(false)}
-                    className={cn(
-                      "px-3 h-9 border text-xs transition-colors",
-                      !freeShip ? "border-sage-ink bg-sage-ink text-background" : "border-border hover:bg-muted"
-                    )}
-                  >
-                    유료배송
-                  </button>
-                  {!freeShip && (
-                    <div className="flex items-center border border-border h-9 flex-1">
-                      <input placeholder="35,000" className="flex-1 h-full px-3 text-sm bg-transparent" />
-                      <span className="text-xs text-muted-foreground px-3">원</span>
-                    </div>
-                  )}
-                </div>
-              </div>
               <div>
                 <label className="text-xs text-muted-foreground mb-1.5 block">반품 배송비</label>
                 <div className="flex items-center border border-border h-9">
