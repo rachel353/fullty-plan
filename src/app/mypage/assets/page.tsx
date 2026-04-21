@@ -7,8 +7,6 @@ import { assets } from "@/lib/mock";
 import { formatPrice } from "@/lib/utils";
 
 const CHART_DATA = [
-  { month: "Sep", value: 980000 },
-  { month: "Oct", value: 1300000 },
   { month: "Nov", value: 1620000 },
   { month: "Dec", value: 2250000 },
   { month: "Jan", value: 3100000 },
@@ -149,7 +147,7 @@ export default function AssetsPage() {
           <div className="text-[10px] text-muted-foreground tracking-[0.2em] uppercase">
             보유 가구 합산 가치 추이
           </div>
-          <div className="text-[10px] text-muted-foreground">2025.09 — 2026.04</div>
+          <div className="text-[10px] text-muted-foreground">2025.11 — 2026.04</div>
         </div>
         <AssetChart />
       </div>
