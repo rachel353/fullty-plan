@@ -3,12 +3,68 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { Search, TrendingDown, ExternalLink, ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { FileUpload } from "@/components/ui/FileUpload";
+import { products } from "@/lib/mock";
+import { formatPrice } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 
 const GRADES = ["SS", "S", "A+", "A", "B"] as const;
 const CATEGORIES = ["의자", "소파", "테이블", "수납/선반", "조명", "침대/침구", "기타"];
+
+type PriceResult = {
+  source: string;
+  grade: string;
+  price: number;
+  date: string;
+  url?: string;
+};
+
+function generateMockPrices(brand: string, name: string): PriceResult[] {
+  // 풀티 DB에서 일치하는 상품 찾기
+  const matched = products.find(
+    (p) =>
+      p.brand.toLowerCase().includes(brand.toLowerCase()) ||
+      p.name.toLowerCase().includes(name.toLowerCase())
+  );
+  const basePrice = matched ? matched.price : Math.ceil((Math.random() * 2000 + 500) * 1000);
+
+  return [
+    {
+      source: "Fullty",
+      grade: "S",
+      price: Math.round(basePrice * 0.92 / 10000) * 10000,
+      date: "2026.04.18",
+      url: "/products",
+    },
+    {
+      source: "Fullty",
+      grade: "A+",
+      price: Math.round(basePrice * 0.78 / 10000) * 10000,
+      date: "2026.04.15",
+      url: "/products",
+    },
+    {
+      source: "중고나라",
+      grade: "직거래",
+      price: Math.round(basePrice * 0.71 / 10000) * 10000,
+      date: "2026.04.12",
+    },
+    {
+      source: "번개장터",
+      grade: "상태 불명",
+      price: Math.round(basePrice * 0.65 / 10000) * 10000,
+      date: "2026.04.10",
+    },
+    {
+      source: "당근마켓",
+      grade: "상태 불명",
+      price: Math.round(basePrice * 0.58 / 10000) * 10000,
+      date: "2026.04.08",
+    },
+  ].sort((a, b) => a.price - b.price);
+}
 
 export default function AssetRegisterPage() {
   const router = useRouter();
@@ -21,7 +77,31 @@ export default function AssetRegisterPage() {
   const [note, setNote] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
+  // 시세 조회
+  const [priceResults, setPriceResults] = useState<PriceResult[] | null>(null);
+  const [searching, setSearching] = useState(false);
+  const [priceOpen, setPriceOpen] = useState(true);
+
   const isValid = brand.trim() && name.trim() && grade && acquiredAt && purchasePrice;
+  const canSearch = brand.trim().length >= 2 && name.trim().length >= 2;
+
+  function handleSearch() {
+    if (!canSearch) return;
+    setSearching(true);
+    setPriceResults(null);
+    setPriceOpen(true);
+    // 300ms 딜레이로 검색 흉내
+    setTimeout(() => {
+      setPriceResults(generateMockPrices(brand, name));
+      setSearching(false);
+    }, 800);
+  }
+
+  function applyPrice(price: number) {
+    setPurchasePrice(String(price));
+    // 스크롤을 구입금액 필드 쪽으로
+    document.getElementById("purchase-price-field")?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
 
   function handleSubmit() {
     if (!isValid) return;
@@ -40,6 +120,8 @@ export default function AssetRegisterPage() {
       </div>
     );
   }
+
+  const lowestPrice = priceResults ? priceResults[0].price : null;
 
   return (
     <div className="space-y-6">
@@ -65,24 +147,151 @@ export default function AssetRegisterPage() {
           </label>
           <input
             value={brand}
-            onChange={(e) => setBrand(e.target.value)}
+            onChange={(e) => { setBrand(e.target.value); setPriceResults(null); }}
             placeholder="예: Herman Miller, Vitra, USM"
             className="w-full h-11 px-4 text-sm border border-border bg-background focus:outline-none focus:border-sage-ink/50"
           />
         </div>
 
-        {/* 모델명 */}
+        {/* 모델명 + 시세 조회 버튼 */}
         <div>
           <label className="text-xs text-muted-foreground mb-2 block">
             모델명 / 상품명 <span className="text-sage-deep">*</span>
           </label>
-          <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="예: Aeron Chair Size B, Eames Lounge Chair"
-            className="w-full h-11 px-4 text-sm border border-border bg-background focus:outline-none focus:border-sage-ink/50"
-          />
+          <div className="flex gap-2">
+            <input
+              value={name}
+              onChange={(e) => { setName(e.target.value); setPriceResults(null); }}
+              placeholder="예: Aeron Chair Size B, Eames Lounge Chair"
+              className="flex-1 h-11 px-4 text-sm border border-border bg-background focus:outline-none focus:border-sage-ink/50"
+            />
+            <button
+              onClick={handleSearch}
+              disabled={!canSearch || searching}
+              className={cn(
+                "h-11 px-4 flex items-center gap-2 text-xs border transition-colors flex-shrink-0",
+                canSearch && !searching
+                  ? "border-sage-ink bg-sage-ink text-background hover:bg-sage-deep"
+                  : "border-border text-muted-foreground cursor-not-allowed"
+              )}
+            >
+              {searching ? (
+                <>
+                  <div className="w-3 h-3 border border-current border-t-transparent rounded-full animate-spin" />
+                  검색 중
+                </>
+              ) : (
+                <>
+                  <Search size={13} />
+                  시세 조회
+                </>
+              )}
+            </button>
+          </div>
+          <div className="text-[10px] text-muted-foreground mt-1">
+            브랜드와 모델명 입력 후 시세 조회로 현재 최저가를 확인할 수 있습니다.
+          </div>
         </div>
+
+        {/* 시세 조회 결과 */}
+        {priceResults && (
+          <div className="border border-border">
+            <button
+              onClick={() => setPriceOpen((v) => !v)}
+              className="w-full flex items-center justify-between px-4 py-3 bg-sage-soft/30 hover:bg-sage-soft/50 transition-colors"
+            >
+              <div className="flex items-center gap-2">
+                <TrendingDown size={14} className="text-sage-deep" />
+                <span className="text-xs font-semibold text-sage-ink">
+                  시세 조회 결과 — {brand} {name}
+                </span>
+                <span className="text-[10px] text-muted-foreground">
+                  ({priceResults.length}건)
+                </span>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="text-[11px] text-sage-deep font-semibold">
+                  최저가 {formatPrice(lowestPrice!)}
+                </span>
+                {priceOpen ? <ChevronUp size={14} className="text-muted-foreground" /> : <ChevronDown size={14} className="text-muted-foreground" />}
+              </div>
+            </button>
+
+            {priceOpen && (
+              <div className="divide-y divide-border">
+                {priceResults.map((r, i) => (
+                  <div
+                    key={i}
+                    className={cn(
+                      "flex items-center gap-3 px-4 py-3",
+                      i === 0 && "bg-sage-soft/10"
+                    )}
+                  >
+                    {/* 순위 */}
+                    <div className={cn(
+                      "w-5 h-5 flex items-center justify-center text-[10px] font-bold flex-shrink-0",
+                      i === 0 ? "bg-sage-deep text-background" : "bg-muted text-muted-foreground"
+                    )}>
+                      {i + 1}
+                    </div>
+
+                    {/* 출처 */}
+                    <div className="w-20 flex-shrink-0">
+                      <div className="text-xs font-medium text-sage-ink">{r.source}</div>
+                      <div className="text-[10px] text-muted-foreground">{r.grade}</div>
+                    </div>
+
+                    {/* 가격 */}
+                    <div className="flex-1">
+                      <span className={cn(
+                        "text-sm font-semibold",
+                        i === 0 ? "text-sage-deep" : "text-sage-ink"
+                      )}>
+                        {formatPrice(r.price)}
+                      </span>
+                      {i === 0 && (
+                        <span className="ml-2 text-[10px] bg-sage-deep text-background px-1.5 py-0.5">
+                          최저
+                        </span>
+                      )}
+                    </div>
+
+                    {/* 날짜 */}
+                    <div className="text-[10px] text-muted-foreground w-20 text-right flex-shrink-0">
+                      {r.date}
+                    </div>
+
+                    {/* 액션 */}
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      {r.url ? (
+                        <Link href={r.url} className="text-[11px] text-sage-ink hover:text-sage-deep flex items-center gap-0.5">
+                          보기 <ExternalLink size={10} />
+                        </Link>
+                      ) : (
+                        <span className="w-10" />
+                      )}
+                      <button
+                        onClick={() => applyPrice(r.price)}
+                        className={cn(
+                          "h-7 px-2.5 text-[11px] border transition-colors",
+                          purchasePrice === String(r.price)
+                            ? "border-sage-ink bg-sage-ink text-background"
+                            : "border-border hover:border-sage-ink hover:text-sage-ink"
+                        )}
+                      >
+                        {purchasePrice === String(r.price) ? "적용됨" : "적용"}
+                      </button>
+                    </div>
+                  </div>
+                ))}
+
+                <div className="px-4 py-2.5 bg-muted/30 text-[10px] text-muted-foreground">
+                  * 시세는 최근 거래 데이터 기반 참고값입니다. 실제 거래가와 차이가 있을 수 있습니다.
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* 카테고리 */}
         <div>
@@ -145,18 +354,36 @@ export default function AssetRegisterPage() {
         </div>
 
         {/* 구입 금액 */}
-        <div>
+        <div id="purchase-price-field">
           <label className="text-xs text-muted-foreground mb-2 block">
             구입 금액 (원) <span className="text-sage-deep">*</span>
           </label>
-          <input
-            type="number"
-            value={purchasePrice}
-            onChange={(e) => setPurchasePrice(e.target.value)}
-            placeholder="0"
-            min={0}
-            className="w-full h-11 px-4 text-sm border border-border bg-background focus:outline-none focus:border-sage-ink/50"
-          />
+          <div className="relative">
+            <input
+              type="number"
+              value={purchasePrice}
+              onChange={(e) => setPurchasePrice(e.target.value)}
+              placeholder="0"
+              min={0}
+              className="w-full h-11 px-4 text-sm border border-border bg-background focus:outline-none focus:border-sage-ink/50"
+            />
+            {purchasePrice && (
+              <div className="absolute right-4 top-1/2 -translate-y-1/2 text-[11px] text-muted-foreground pointer-events-none">
+                {formatPrice(Number(purchasePrice))}
+              </div>
+            )}
+          </div>
+          {priceResults && lowestPrice && (
+            <div className="mt-1.5 flex items-center gap-2">
+              <span className="text-[10px] text-muted-foreground">시세 기준:</span>
+              <button
+                onClick={() => applyPrice(lowestPrice)}
+                className="text-[10px] text-sage-deep underline underline-offset-2 hover:text-sage-ink transition-colors"
+              >
+                최저가 {formatPrice(lowestPrice)} 적용
+              </button>
+            </div>
+          )}
           <div className="text-[10px] text-muted-foreground mt-1">
             구입 당시 금액 기준 (현재 시세 추정에 활용됩니다)
           </div>
