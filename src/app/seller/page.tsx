@@ -2,6 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
+import { useSellerType } from "@/lib/seller-context";
 
 const MONTHLY = [
   { month: "Nov", sales: 4200000, payout: 3570000 },
@@ -92,7 +93,20 @@ function SalesChart() {
   );
 }
 
+const PRODUCTS = [
+  { name: "Herman Miller Aeron", price: "1,280,000원", rent: true, status: "판매중", payout: "1,088,000원" },
+  { name: "USM Haller Sideboard", price: "3,200,000원", rent: true, status: "검수중", payout: "2,720,000원" },
+  { name: "Vitra Eames LCW", price: "2,400,000원", rent: false, status: "판매중", payout: "2,040,000원" },
+];
+
 export default function SellerDashboard() {
+  const { sellerType } = useSellerType();
+  const isBusiness = sellerType === "사업자";
+
+  const products = PRODUCTS.map((p) =>
+    isBusiness && p.status === "검수중" ? { ...p, status: "판매중" } : p
+  );
+
   return (
     <div className="space-y-8">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
@@ -172,11 +186,7 @@ export default function SellerDashboard() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {[
-                { name: "Herman Miller Aeron", price: "1,280,000원", rent: true, status: "판매중", payout: "1,088,000원" },
-                { name: "USM Haller Sideboard", price: "3,200,000원", rent: true, status: "검수중", payout: "2,720,000원" },
-                { name: "Vitra Eames LCW", price: "2,400,000원", rent: false, status: "판매중", payout: "2,040,000원" },
-              ].map((row) => (
+              {products.map((row) => (
                 <tr key={row.name}>
                   <td className="px-5 py-4 font-medium">{row.name}</td>
                   <td className="px-5 py-4">{row.price}</td>
