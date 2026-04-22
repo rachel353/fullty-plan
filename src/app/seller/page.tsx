@@ -123,7 +123,7 @@ export default function SellerDashboard() {
               <CardTitle>월별 매출 · 정산 추이</CardTitle>
               <div className="flex items-center gap-3 text-[10px] text-muted-foreground">
                 <span className="flex items-center gap-1">
-                  <span className="w-3 h-2 bg-sage-ink/20 inline-block" /> 매출
+                  <span className="w-3 h-2 bg-sage-ink inline-block" style={{ opacity: 0.2 }} /> 매출
                 </span>
                 <span className="flex items-center gap-1">
                   <span className="w-3 h-2 bg-sage-deep inline-block" /> 정산
