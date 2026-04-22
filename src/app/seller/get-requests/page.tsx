@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import Link from "next/link";
 import { ChevronDown, X, Check } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
@@ -207,7 +208,9 @@ export default function SellerGetRequestsPage() {
                 제안 작성 시 <strong>상품 / 사진 / 사용 기간 / 가격</strong>을 입력합니다.<br />
                 Fullty 검수 후 사용자에게 전달됩니다.
               </div>
-              <Button size="sm">제안 작성</Button>
+              <Link href={`/seller/get-requests/${req.id}/propose`}>
+                <Button size="sm">제안 작성</Button>
+              </Link>
             </div>
           </div>
         ))}
