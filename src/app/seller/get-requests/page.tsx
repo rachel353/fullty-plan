@@ -34,15 +34,25 @@ function MultiSelectDropdown({
   onChange: (next: string[]) => void;
 }) {
   const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState("");
   const ref = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setOpen(false);
+        setQuery("");
+      }
     }
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
+
+  function openDropdown() {
+    setOpen(true);
+    setTimeout(() => inputRef.current?.focus(), 0);
+  }
 
   function toggle(opt: string) {
     onChange(
@@ -50,10 +60,14 @@ function MultiSelectDropdown({
     );
   }
 
+  const filtered = query.trim()
+    ? options.filter((o) => o.toLowerCase().includes(query.toLowerCase()))
+    : options;
+
   return (
     <div ref={ref} className="relative">
       <button
-        onClick={() => setOpen((v) => !v)}
+        onClick={open ? () => { setOpen(false); setQuery(""); } : openDropdown}
         className={cn(
           "w-full flex items-center justify-between px-3 h-10 border text-sm transition-colors",
           open ? "border-sage-ink" : "border-border hover:border-sage-ink/50"
@@ -74,30 +88,48 @@ function MultiSelectDropdown({
       </button>
 
       {open && (
-        <div className="absolute z-20 top-full left-0 right-0 mt-1 border border-border bg-background shadow-sm max-h-48 overflow-y-auto">
-          {options.map((opt) => {
-            const checked = selected.includes(opt);
-            return (
-              <button
-                key={opt}
-                onClick={() => toggle(opt)}
-                className={cn(
-                  "w-full flex items-center gap-2.5 px-3 py-2 text-sm text-left transition-colors",
-                  checked ? "bg-sage-soft/30 text-sage-ink" : "hover:bg-muted"
-                )}
-              >
-                <span
-                  className={cn(
-                    "w-4 h-4 border flex items-center justify-center flex-shrink-0",
-                    checked ? "border-sage-ink bg-sage-ink" : "border-border"
-                  )}
-                >
-                  {checked && <Check size={10} className="text-background" />}
-                </span>
-                {opt}
-              </button>
-            );
-          })}
+        <div className="absolute z-20 top-full left-0 right-0 mt-1 border border-border bg-background shadow-sm">
+          {/* 검색 인풋 */}
+          <div className="border-b border-border px-3 py-2">
+            <input
+              ref={inputRef}
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="검색..."
+              className="w-full text-sm bg-transparent outline-none placeholder:text-muted-foreground"
+            />
+          </div>
+
+          {/* 필터된 목록 */}
+          <div className="max-h-44 overflow-y-auto">
+            {filtered.length === 0 ? (
+              <div className="px-3 py-3 text-xs text-muted-foreground">결과 없음</div>
+            ) : (
+              filtered.map((opt) => {
+                const checked = selected.includes(opt);
+                return (
+                  <button
+                    key={opt}
+                    onClick={() => toggle(opt)}
+                    className={cn(
+                      "w-full flex items-center gap-2.5 px-3 py-2 text-sm text-left transition-colors",
+                      checked ? "bg-sage-soft/30 text-sage-ink" : "hover:bg-muted"
+                    )}
+                  >
+                    <span
+                      className={cn(
+                        "w-4 h-4 border flex items-center justify-center flex-shrink-0",
+                        checked ? "border-sage-ink bg-sage-ink" : "border-border"
+                      )}
+                    >
+                      {checked && <Check size={10} className="text-background" />}
+                    </span>
+                    {opt}
+                  </button>
+                );
+              })
+            )}
+          </div>
         </div>
       )}
     </div>
