@@ -118,8 +118,8 @@ export default function SettlementsPage() {
             <CardTitle>월별 정산 추이</CardTitle>
             <div className="flex items-center gap-3 text-[10px] text-muted-foreground">
               <span className="flex items-center gap-1"><span className="w-3 h-2 bg-sage-deep inline-block" /> 판매</span>
-              <span className="flex items-center gap-1"><span className="w-3 h-2 bg-sage-ink/55 inline-block" /> 렌탈</span>
-              <span className="flex items-center gap-1"><span className="w-3 h-2 bg-sage-ink/25 inline-block" /> 위탁</span>
+              <span className="flex items-center gap-1"><span className="w-3 h-2 bg-sage-ink inline-block" style={{ opacity: 0.55 }} /> 렌탈</span>
+              <span className="flex items-center gap-1"><span className="w-3 h-2 bg-sage-ink inline-block" style={{ opacity: 0.25 }} /> 위탁</span>
             </div>
           </div>
         </CardHeader>
