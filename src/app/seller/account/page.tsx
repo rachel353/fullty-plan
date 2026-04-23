@@ -98,9 +98,11 @@ export default function AccountPage() {
 
 function ViewField({ label, value }: { label: string; value: string }) {
   return (
-    <div className="grid grid-cols-4 items-center gap-3 px-5 py-4">
+    <div className="grid grid-cols-4 items-center gap-3 px-5 py-3">
       <span className="text-xs text-muted-foreground">{label}</span>
-      <span className="col-span-3 text-sm font-medium">{value}</span>
+      <div className="col-span-3 h-10 px-3 text-sm border border-border bg-muted/30 flex items-center">
+        {value}
+      </div>
     </div>
   );
 }
