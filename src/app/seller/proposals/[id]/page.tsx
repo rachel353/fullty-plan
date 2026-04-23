@@ -145,11 +145,23 @@ function AcceptedBanner({
         </div>
 
         {isBusiness ? (
-          <Button className="w-full" onClick={() => setModalOpen(true)}>거래 진행하기</Button>
+          proposal.tracking ? (
+            <Link href={`/seller/proposals/${proposal.id}/deal`} className="block">
+              <Button variant="outline" className="w-full">배송 현황 보기</Button>
+            </Link>
+          ) : (
+            <Button className="w-full" onClick={() => setModalOpen(true)}>거래 진행하기</Button>
+          )
         ) : (
-          <Link href={`/seller/proposals/${proposal.id}/deal`} className="block">
-            <Button className="w-full">거래 진행하기</Button>
-          </Link>
+          (proposal.sellerTracking || proposal.fullttiTracking) ? (
+            <Link href={`/seller/proposals/${proposal.id}/deal`} className="block">
+              <Button variant="outline" className="w-full">거래 현황 보기</Button>
+            </Link>
+          ) : (
+            <Link href={`/seller/proposals/${proposal.id}/deal`} className="block">
+              <Button className="w-full">거래 진행하기</Button>
+            </Link>
+          )
         )}
       </div>
 
