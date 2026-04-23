@@ -428,6 +428,70 @@ export const assets: Asset[] = [
   },
 ];
 
+export type ProposalStatus = "풀티 검수 중" | "사용자 확인 대기" | "사용자 수락" | "거절됨";
+
+export type Proposal = {
+  id: string;
+  getRequestId: string;
+  target: string;
+  brand: string;
+  model: string;
+  option: string;
+  budget: number;
+  productName: string;
+  productBrand: string;
+  productGrade: Grade;
+  usagePeriod: string;
+  price: number;
+  note: string;
+  status: ProposalStatus;
+  sentAt: string;
+  reviewedAt?: string;
+  rejectionReason?: string;
+};
+
+export const proposals: Proposal[] = [
+  { id: "pp001", getRequestId: "g001", target: "Herman Miller Aeron Remastered", brand: "Herman Miller", model: "Aeron Remastered", option: "Size C / Carbon", budget: 1500000, productName: "Aeron Chair", productBrand: "Herman Miller", productGrade: "S", usagePeriod: "1~2년", price: 1380000, note: "직접 구매 후 1년 반 사용. 등판 교체 이력 있음. 구성품 모두 포함.", status: "풀티 검수 중", sentAt: "2026-04-08" },
+  { id: "pp002", getRequestId: "g002", target: "Vitra Panton Chair", brand: "Vitra", model: "Panton Chair", option: "Glacier Blue", budget: 380000, productName: "Panton Chair", productBrand: "Vitra", productGrade: "A+", usagePeriod: "2~3년", price: 360000, note: "", status: "사용자 확인 대기", sentAt: "2026-04-06" },
+  { id: "pp003", getRequestId: "g003", target: "Artek Stool 60", brand: "Artek", model: "Stool 60", option: "Birch / 3-Legged", budget: 450000, productName: "Stool 60", productBrand: "Artek", productGrade: "A", usagePeriod: "6개월~1년", price: 420000, note: "깨끗하게 사용. 실내 전용.", status: "사용자 수락", sentAt: "2026-04-04" },
+  { id: "pp004", getRequestId: "g004", target: "USM Haller Trolley", brand: "USM", model: "Haller Trolley", option: "Pure White", budget: 980000, productName: "Haller Trolley", productBrand: "USM", productGrade: "A", usagePeriod: "3년 이상", price: 980000, note: "", status: "거절됨", sentAt: "2026-03-29", reviewedAt: "2026-04-02", rejectionReason: "동일 상품 더 낮은 가격 제안 수락" },
+  { id: "pp005", getRequestId: "g001", target: "Fritz Hansen Series 7", brand: "Fritz Hansen", model: "Series 7", option: "Lacquered / Black", budget: 680000, productName: "Series 7", productBrand: "Fritz Hansen", productGrade: "S", usagePeriod: "1~2년", price: 620000, note: "정품 인증서 포함.", status: "사용자 수락", sentAt: "2026-03-25" },
+  { id: "pp006", getRequestId: "g002", target: "Knoll Womb Chair", brand: "Knoll", model: "Womb Chair", option: "Cashmere Fabric", budget: 2200000, productName: "Womb Chair", productBrand: "Knoll", productGrade: "A+", usagePeriod: "2~3년", price: 2100000, note: "오토만 포함.", status: "사용자 확인 대기", sentAt: "2026-03-21" },
+  { id: "pp007", getRequestId: "g003", target: "Cassina LC2 Sofa", brand: "Cassina", model: "LC2 Sofa", option: "2-seater / White", budget: 3500000, productName: "LC2 Sofa", productBrand: "Cassina", productGrade: "A", usagePeriod: "3년 이상", price: 3400000, note: "", status: "거절됨", sentAt: "2026-03-18", reviewedAt: "2026-03-22", rejectionReason: "상품 상태 사진 불충분" },
+  { id: "pp008", getRequestId: "g004", target: "Muuto E27 Lamp", brand: "Muuto", model: "E27 Lamp", option: "White", budget: 200000, productName: "E27 Lamp", productBrand: "Muuto", productGrade: "SS", usagePeriod: "6개월 미만", price: 180000, note: "미개봉 수준.", status: "사용자 수락", sentAt: "2026-03-15" },
+  { id: "pp009", getRequestId: "g001", target: "HAY About A Chair", brand: "HAY", model: "About A Chair AAC22", option: "Soft Black", budget: 310000, productName: "About A Chair", productBrand: "HAY", productGrade: "A+", usagePeriod: "1~2년", price: 290000, note: "", status: "풀티 검수 중", sentAt: "2026-03-10" },
+  { id: "pp010", getRequestId: "g002", target: "Kartell Louis Ghost", brand: "Kartell", model: "Louis Ghost", option: "Crystal", budget: 260000, productName: "Louis Ghost", productBrand: "Kartell", productGrade: "A", usagePeriod: "6개월~1년", price: 240000, note: "스크래치 없음.", status: "사용자 확인 대기", sentAt: "2026-03-07" },
+  { id: "pp011", getRequestId: "g003", target: "Vitra Eames DSW", brand: "Vitra", model: "Eames DSW", option: "White / Maple", budget: 600000, productName: "Eames DSW", productBrand: "Vitra", productGrade: "S", usagePeriod: "6개월~1년", price: 580000, note: "", status: "사용자 수락", sentAt: "2026-03-03" },
+  { id: "pp012", getRequestId: "g004", target: "Artek 81C Side Table", brand: "Artek", model: "81C Side Table", option: "Birch", budget: 340000, productName: "81C Side Table", productBrand: "Artek", productGrade: "A", usagePeriod: "2~3년", price: 320000, note: "", status: "거절됨", sentAt: "2026-02-28", reviewedAt: "2026-03-03", rejectionReason: "다른 셀러 제안 수락" },
+];
+
+export type SettlementStatus = "정산 완료" | "정산 예정" | "보류";
+
+export type Settlement = {
+  id: string;
+  name: string;
+  brand: string;
+  type: "판매" | "렌탈" | "위탁";
+  sale: number;
+  fee: number;
+  payout: number;
+  status: SettlementStatus;
+  period: string;
+  orderId: string;
+  settledAt?: string;
+  bank?: string;
+  accountNo?: string;
+  memo: string;
+};
+
+export const settlements: Settlement[] = [
+  { id: "st001", name: "Aeron Chair", brand: "Herman Miller", type: "판매", sale: 1280000, fee: 192000, payout: 1088000, status: "정산 완료", period: "2026-03", orderId: "o001", settledAt: "2026-04-05", bank: "카카오뱅크", accountNo: "333-12-****56", memo: "" },
+  { id: "st002", name: "Egg Chair", brand: "Fritz Hansen", type: "렌탈", sale: 850000, fee: 127500, payout: 722500, status: "정산 예정", period: "2026-03", orderId: "o002", bank: "카카오뱅크", accountNo: "333-12-****56", memo: "" },
+  { id: "st003", name: "Panton Chair", brand: "Vitra", type: "위탁", sale: 380000, fee: 76000, payout: 304000, status: "정산 예정", period: "2026-04", orderId: "o003", bank: "카카오뱅크", accountNo: "333-12-****56", memo: "" },
+  { id: "st004", name: "Haller Sideboard", brand: "USM", type: "판매", sale: 3200000, fee: 480000, payout: 2720000, status: "정산 완료", period: "2026-02", orderId: "o004", settledAt: "2026-03-05", bank: "카카오뱅크", accountNo: "333-12-****56", memo: "3월 초 정산 완료 확인" },
+  { id: "st005", name: "LC4 Chaise Longue", brand: "Cassina", type: "위탁", sale: 5400000, fee: 810000, payout: 4590000, status: "정산 완료", period: "2026-02", orderId: "o006", settledAt: "2026-03-05", bank: "카카오뱅크", accountNo: "333-12-****56", memo: "" },
+];
+
 export const rentalPricing = (price: number, days: number): number => {
   let raw = 0;
   if (days <= 7) raw = price * 0.1;

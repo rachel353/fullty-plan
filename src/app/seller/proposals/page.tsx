@@ -1,30 +1,16 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
 import { cn } from "@/lib/utils";
-
-type Status = "풀티 검수 중" | "사용자 확인 대기" | "사용자 수락" | "거절됨";
-
-const PROPOSALS: { id: string; target: string; price: number; status: Status; sentAt: string }[] = [
-  { id: "pp001", target: "Herman Miller Aeron Remastered", price: 1380000, status: "풀티 검수 중", sentAt: "2026-04-08" },
-  { id: "pp002", target: "Vitra Panton Chair", price: 360000, status: "사용자 확인 대기", sentAt: "2026-04-06" },
-  { id: "pp003", target: "Artek Stool 60", price: 420000, status: "사용자 수락", sentAt: "2026-04-04" },
-  { id: "pp004", target: "USM Haller Trolley", price: 980000, status: "거절됨", sentAt: "2026-03-29" },
-  { id: "pp005", target: "Fritz Hansen Series 7", price: 620000, status: "사용자 수락", sentAt: "2026-03-25" },
-  { id: "pp006", target: "Knoll Womb Chair", price: 2100000, status: "사용자 확인 대기", sentAt: "2026-03-21" },
-  { id: "pp007", target: "Cassina LC2 Sofa", price: 3400000, status: "거절됨", sentAt: "2026-03-18" },
-  { id: "pp008", target: "Muuto E27 Lamp", price: 180000, status: "사용자 수락", sentAt: "2026-03-15" },
-  { id: "pp009", target: "HAY About A Chair", price: 290000, status: "풀티 검수 중", sentAt: "2026-03-10" },
-  { id: "pp010", target: "Kartell Louis Ghost", price: 240000, status: "사용자 확인 대기", sentAt: "2026-03-07" },
-  { id: "pp011", target: "Vitra Eames DSW", price: 580000, status: "사용자 수락", sentAt: "2026-03-03" },
-  { id: "pp012", target: "Artek 81C Side Table", price: 320000, status: "거절됨", sentAt: "2026-02-28" },
-];
+import { proposals } from "@/lib/mock";
+import type { ProposalStatus } from "@/lib/mock";
 
 const STATUSES = ["전체", "풀티 검수 중", "사용자 확인 대기", "사용자 수락", "거절됨"] as const;
 const ITEMS_PER_PAGE = 5;
 
-const badgeVariant = (status: Status) => {
+const badgeVariant = (status: ProposalStatus) => {
   if (status === "사용자 수락") return "default";
   if (status === "거절됨") return "muted";
   return "outline";
@@ -34,7 +20,7 @@ export default function ProposalsPage() {
   const [activeStatus, setActiveStatus] = useState<string>("전체");
   const [page, setPage] = useState(1);
 
-  const filtered = PROPOSALS.filter(
+  const filtered = proposals.filter(
     (p) => activeStatus === "전체" || p.status === activeStatus
   );
   const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
@@ -49,7 +35,7 @@ export default function ProposalsPage() {
         </p>
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 flex-wrap">
         {STATUSES.map((s) => (
           <button
             key={s}
@@ -79,7 +65,11 @@ export default function ProposalsPage() {
           </thead>
           <tbody className="divide-y divide-border">
             {paged.map((p) => (
-              <tr key={p.id}>
+              <tr
+                key={p.id}
+                className="hover:bg-muted/40 transition-colors cursor-pointer"
+                onClick={() => window.location.href = `/seller/proposals/${p.id}`}
+              >
                 <td className="px-4 py-3 text-[11px] text-muted-foreground">{p.id}</td>
                 <td className="px-4 py-3 font-medium">{p.target}</td>
                 <td className="px-4 py-3">{p.price.toLocaleString()}원</td>

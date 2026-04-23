@@ -4,12 +4,7 @@ import { useState } from "react";
 import { Badge } from "@/components/ui/Badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { cn } from "@/lib/utils";
-
-const rows = [
-  { id: "st001", name: "Herman Miller Aeron", type: "판매" as const, sale: 1280000, fee: 192000, payout: 1088000, status: "정산 완료" as const, period: "2026-03" },
-  { id: "st002", name: "Fritz Hansen Egg Chair", type: "렌탈" as const, sale: 850000, fee: 127500, payout: 722500, status: "정산 예정" as const, period: "2026-03" },
-  { id: "st003", name: "Vitra Panton Chair", type: "위탁" as const, sale: 380000, fee: 76000, payout: 304000, status: "정산 예정" as const, period: "2026-04" },
-];
+import { settlements } from "@/lib/mock";
 
 const MONTHLY = [
   { month: "Nov", sell: 1800000, rent: 520000, consign: 280000 },
@@ -59,13 +54,10 @@ function SettlementChart() {
 
         return (
           <g key={i}>
-            {/* 위탁 (bottom) */}
             <rect x={x} y={yPos(d.consign)} width={BAR_W} height={consignH}
               fill="currentColor" opacity={0.25} className="text-sage-ink" />
-            {/* 렌탈 (middle) */}
             <rect x={x} y={yPos(d.consign + d.rent)} width={BAR_W} height={rentH}
               fill="currentColor" opacity={0.55} className="text-sage-ink" />
-            {/* 판매 (top) */}
             <rect x={x} y={yPos(total)} width={BAR_W} height={sellH}
               fill="currentColor" opacity={isLast ? 1 : 0.85} className="text-sage-deep" />
 
@@ -96,7 +88,7 @@ type Filter = typeof FILTERS[number];
 export default function SettlementsPage() {
   const [filter, setFilter] = useState<Filter>("전체");
 
-  const filtered = rows.filter((r) => filter === "전체" || r.type === filter);
+  const filtered = settlements.filter((r) => filter === "전체" || r.type === filter);
 
   return (
     <div className="space-y-6">
@@ -111,7 +103,6 @@ export default function SettlementsPage() {
         <Stat label="누적 정산" value="42,650,000원" />
       </div>
 
-      {/* Chart */}
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
@@ -128,7 +119,6 @@ export default function SettlementsPage() {
         </CardContent>
       </Card>
 
-      {/* Filter + Table */}
       <div className="flex items-center gap-2">
         {FILTERS.map((f) => (
           <button
@@ -163,7 +153,11 @@ export default function SettlementsPage() {
             </thead>
             <tbody className="divide-y divide-border">
               {filtered.map((r) => (
-                <tr key={r.id}>
+                <tr
+                  key={r.id}
+                  className="hover:bg-muted/40 transition-colors cursor-pointer"
+                  onClick={() => window.location.href = `/seller/settlements/${r.id}`}
+                >
                   <td className="px-4 py-3 text-[11px] text-muted-foreground">{r.id}</td>
                   <td className="px-4 py-3 font-medium">{r.name}</td>
                   <td className="px-4 py-3"><Badge variant="outline">{r.type}</Badge></td>
