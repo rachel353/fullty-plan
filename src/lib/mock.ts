@@ -430,6 +430,15 @@ export const assets: Asset[] = [
 
 export type ProposalStatus = "풀티 검수 중" | "사용자 확인 대기" | "사용자 수락" | "거절됨";
 
+export type DeliveryStatus = "배송 준비 중" | "배송 중" | "배송 완료";
+
+export type Tracking = {
+  carrier: string;
+  trackingNo: string;
+  status: DeliveryStatus;
+  registeredAt: string;
+};
+
 export type Proposal = {
   id: string;
   getRequestId: string;
@@ -448,6 +457,7 @@ export type Proposal = {
   sentAt: string;
   reviewedAt?: string;
   rejectionReason?: string;
+  tracking?: Tracking;
 };
 
 export const proposals: Proposal[] = [
@@ -455,7 +465,7 @@ export const proposals: Proposal[] = [
   { id: "pp002", getRequestId: "g002", target: "Vitra Panton Chair", brand: "Vitra", model: "Panton Chair", option: "Glacier Blue", budget: 380000, productName: "Panton Chair", productBrand: "Vitra", productGrade: "A+", usagePeriod: "2~3년", price: 360000, note: "", status: "사용자 확인 대기", sentAt: "2026-04-06" },
   { id: "pp003", getRequestId: "g003", target: "Artek Stool 60", brand: "Artek", model: "Stool 60", option: "Birch / 3-Legged", budget: 450000, productName: "Stool 60", productBrand: "Artek", productGrade: "A", usagePeriod: "6개월~1년", price: 420000, note: "깨끗하게 사용. 실내 전용.", status: "사용자 수락", sentAt: "2026-04-04" },
   { id: "pp004", getRequestId: "g004", target: "USM Haller Trolley", brand: "USM", model: "Haller Trolley", option: "Pure White", budget: 980000, productName: "Haller Trolley", productBrand: "USM", productGrade: "A", usagePeriod: "3년 이상", price: 980000, note: "", status: "거절됨", sentAt: "2026-03-29", reviewedAt: "2026-04-02", rejectionReason: "동일 상품 더 낮은 가격 제안 수락" },
-  { id: "pp005", getRequestId: "g001", target: "Fritz Hansen Series 7", brand: "Fritz Hansen", model: "Series 7", option: "Lacquered / Black", budget: 680000, productName: "Series 7", productBrand: "Fritz Hansen", productGrade: "S", usagePeriod: "1~2년", price: 620000, note: "정품 인증서 포함.", status: "사용자 수락", sentAt: "2026-03-25" },
+  { id: "pp005", getRequestId: "g001", target: "Fritz Hansen Series 7", brand: "Fritz Hansen", model: "Series 7", option: "Lacquered / Black", budget: 680000, productName: "Series 7", productBrand: "Fritz Hansen", productGrade: "S", usagePeriod: "1~2년", price: 620000, note: "정품 인증서 포함.", status: "사용자 수락", sentAt: "2026-03-25", tracking: { carrier: "CJ대한통운", trackingNo: "1234567890123", status: "배송 중", registeredAt: "2026-03-26" } },
   { id: "pp006", getRequestId: "g002", target: "Knoll Womb Chair", brand: "Knoll", model: "Womb Chair", option: "Cashmere Fabric", budget: 2200000, productName: "Womb Chair", productBrand: "Knoll", productGrade: "A+", usagePeriod: "2~3년", price: 2100000, note: "오토만 포함.", status: "사용자 확인 대기", sentAt: "2026-03-21" },
   { id: "pp007", getRequestId: "g003", target: "Cassina LC2 Sofa", brand: "Cassina", model: "LC2 Sofa", option: "2-seater / White", budget: 3500000, productName: "LC2 Sofa", productBrand: "Cassina", productGrade: "A", usagePeriod: "3년 이상", price: 3400000, note: "", status: "거절됨", sentAt: "2026-03-18", reviewedAt: "2026-03-22", rejectionReason: "상품 상태 사진 불충분" },
   { id: "pp008", getRequestId: "g004", target: "Muuto E27 Lamp", brand: "Muuto", model: "E27 Lamp", option: "White", budget: 200000, productName: "E27 Lamp", productBrand: "Muuto", productGrade: "SS", usagePeriod: "6개월 미만", price: 180000, note: "미개봉 수준.", status: "사용자 수락", sentAt: "2026-03-15" },

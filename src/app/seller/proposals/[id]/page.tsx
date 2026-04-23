@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { ChevronLeft, Check, X } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
@@ -90,6 +90,7 @@ function AcceptedBanner({
   proposal: NonNullable<ReturnType<typeof proposals.find>>;
   isBusiness: boolean;
 }) {
+  const router = useRouter();
   const [modalOpen, setModalOpen] = useState(false);
   const [confirmed, setConfirmed] = useState(false);
 
@@ -155,7 +156,7 @@ function AcceptedBanner({
       {modalOpen && (
         <ConfirmModal
           price={proposal.price}
-          onConfirm={() => { setConfirmed(true); setModalOpen(false); }}
+          onConfirm={() => { setModalOpen(false); router.push(`/seller/proposals/${proposal.id}/deal`); }}
           onClose={() => setModalOpen(false)}
         />
       )}
