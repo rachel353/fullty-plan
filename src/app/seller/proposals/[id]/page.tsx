@@ -1,13 +1,15 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { ChevronLeft, Check } from "lucide-react";
+import { ChevronLeft, Check, X } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 import { proposals } from "@/lib/mock";
 import type { ProposalStatus } from "@/lib/mock";
+import { useSellerType } from "@/lib/seller-context";
 
 const STATUS_STEPS: ProposalStatus[] = ["풀티 검수 중", "사용자 확인 대기", "사용자 수락"];
 
@@ -55,7 +57,117 @@ function StatusTimeline({ status }: { status: ProposalStatus }) {
   );
 }
 
-function StatusBanner({ status, proposal }: { status: ProposalStatus; proposal: ReturnType<typeof proposals.find> }) {
+function ConfirmModal({ price, onConfirm, onClose }: { price: number; onConfirm: () => void; onClose: () => void }) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      <div className="absolute inset-0 bg-black/40" onClick={onClose} />
+      <div className="relative bg-background border border-border w-full max-w-sm p-6 space-y-5 z-10">
+        <div className="flex items-center justify-between">
+          <h3 className="text-base font-semibold">거래 확정</h3>
+          <button onClick={onClose} className="text-muted-foreground hover:text-foreground"><X size={16} /></button>
+        </div>
+        <p className="text-sm text-muted-foreground leading-relaxed">
+          거래를 확정하면 구매자에게 알림이 전송되고 직접 배송을 진행합니다.<br />
+          확정 후에는 취소가 불가합니다.
+        </p>
+        <div className="border border-border px-4 py-3 flex justify-between text-sm">
+          <span className="text-muted-foreground">정산 예정액</span>
+          <span className="font-bold text-sage-deep">{(price * 0.85).toLocaleString()}원</span>
+        </div>
+        <div className="flex gap-2 pt-1">
+          <Button variant="outline" className="flex-1" onClick={onClose}>취소</Button>
+          <Button className="flex-1" onClick={onConfirm}>거래 확정</Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function AcceptedBanner({
+  proposal,
+  isBusiness,
+}: {
+  proposal: NonNullable<ReturnType<typeof proposals.find>>;
+  isBusiness: boolean;
+}) {
+  const [modalOpen, setModalOpen] = useState(false);
+  const [confirmed, setConfirmed] = useState(false);
+
+  if (confirmed) {
+    return (
+      <div className="border border-sage-deep/30 bg-sage-soft/10 px-5 py-4 flex items-center gap-3">
+        <div className="w-7 h-7 bg-sage-deep flex items-center justify-center flex-shrink-0">
+          <Check size={13} className="text-background" />
+        </div>
+        <div>
+          <div className="text-sm font-semibold">거래가 확정되었습니다</div>
+          <div className="text-[11px] text-muted-foreground mt-0.5">구매자에게 직접 배송을 진행해주세요.</div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <div className="border border-sage-deep/30 bg-sage-soft/10 px-5 py-5 space-y-4">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 bg-sage-deep flex items-center justify-center flex-shrink-0">
+            <Check size={14} className="text-background" />
+          </div>
+          <div>
+            <div className="text-sm font-semibold">사용자가 제안을 수락했습니다</div>
+            <div className="text-[11px] text-muted-foreground mt-0.5">
+              {isBusiness ? "거래를 확정하고 직접 배송을 진행하세요." : "풀티를 통해 거래를 진행해주세요."}
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-3 gap-2 text-[11px]">
+          {(isBusiness
+            ? [
+                { step: "01", label: "거래 확정", desc: "구매자 알림 발송" },
+                { step: "02", label: "직접 배송", desc: "운송장 직접 등록" },
+                { step: "03", label: "거래 완료", desc: "대금 정산" },
+              ]
+            : [
+                { step: "01", label: "거래 확정", desc: "풀티 거래 승인" },
+                { step: "02", label: "상품 발송", desc: "풀티 물류 센터" },
+                { step: "03", label: "거래 완료", desc: "대금 정산" },
+              ]
+          ).map((s) => (
+            <div key={s.step} className="border border-sage-deep/20 px-3 py-2.5 bg-background">
+              <div className="text-[10px] text-sage-deep font-semibold">{s.step}</div>
+              <div className="font-medium mt-0.5">{s.label}</div>
+              <div className="text-muted-foreground">{s.desc}</div>
+            </div>
+          ))}
+        </div>
+
+        {isBusiness ? (
+          <Button className="w-full" onClick={() => setModalOpen(true)}>거래 진행하기</Button>
+        ) : (
+          <Link href={`/seller/proposals/${proposal.id}/deal`} className="block">
+            <Button className="w-full">거래 진행하기</Button>
+          </Link>
+        )}
+      </div>
+
+      {modalOpen && (
+        <ConfirmModal
+          price={proposal.price}
+          onConfirm={() => { setConfirmed(true); setModalOpen(false); }}
+          onClose={() => setModalOpen(false)}
+        />
+      )}
+    </>
+  );
+}
+
+function StatusBanner({ status, proposal, isBusiness }: {
+  status: ProposalStatus;
+  proposal: ReturnType<typeof proposals.find>;
+  isBusiness: boolean;
+}) {
   if (!proposal) return null;
 
   if (status === "사용자 확인 대기") {
@@ -78,35 +190,7 @@ function StatusBanner({ status, proposal }: { status: ProposalStatus; proposal: 
   }
 
   if (status === "사용자 수락") {
-    return (
-      <div className="border border-sage-deep/30 bg-sage-soft/10 px-5 py-5 space-y-4">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-sage-deep flex items-center justify-center flex-shrink-0">
-            <Check size={14} className="text-background" />
-          </div>
-          <div>
-            <div className="text-sm font-semibold">사용자가 제안을 수락했습니다</div>
-            <div className="text-[11px] text-muted-foreground mt-0.5">풀티를 통해 거래를 진행해주세요</div>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-3 gap-2 text-[11px]">
-          {[
-            { step: "01", label: "거래 확정", desc: "풀티 거래 승인" },
-            { step: "02", label: "상품 발송", desc: "구매자에게 배송" },
-            { step: "03", label: "거래 완료", desc: "대금 정산" },
-          ].map((s) => (
-            <div key={s.step} className="border border-sage-deep/20 px-3 py-2.5 bg-background">
-              <div className="text-[10px] text-sage-deep font-semibold">{s.step}</div>
-              <div className="font-medium mt-0.5">{s.label}</div>
-              <div className="text-muted-foreground">{s.desc}</div>
-            </div>
-          ))}
-        </div>
-
-        <Button className="w-full">거래 진행하기</Button>
-      </div>
-    );
+    return <AcceptedBanner proposal={proposal} isBusiness={isBusiness} />;
   }
 
   if (status === "거절됨") {
@@ -115,18 +199,14 @@ function StatusBanner({ status, proposal }: { status: ProposalStatus; proposal: 
         <div className="flex items-center gap-2">
           <div className="w-5 h-5 border border-border flex items-center justify-center text-[11px] text-muted-foreground">✕</div>
           <span className="text-sm font-medium">제안이 거절되었습니다</span>
-          {proposal.reviewedAt && (
-            <span className="text-[11px] text-muted-foreground ml-auto">{proposal.reviewedAt}</span>
-          )}
+          {proposal.reviewedAt && <span className="text-[11px] text-muted-foreground ml-auto">{proposal.reviewedAt}</span>}
         </div>
-
         {proposal.rejectionReason && (
           <div className="border border-border px-4 py-3 bg-background">
             <div className="text-[10px] text-muted-foreground mb-1">거절 사유</div>
             <div className="text-sm">{proposal.rejectionReason}</div>
           </div>
         )}
-
         <div className="pt-1 border-t border-border flex items-center justify-between">
           <span className="text-[11px] text-muted-foreground">같은 GET 요청에 다시 제안할 수 있습니다.</span>
           <Link href={`/seller/get-requests/${proposal.getRequestId}/propose`}>
@@ -142,27 +222,23 @@ function StatusBanner({ status, proposal }: { status: ProposalStatus; proposal: 
 
 export default function ProposalDetailPage() {
   const { id } = useParams<{ id: string }>();
+  const { sellerType } = useSellerType();
+  const isBusiness = sellerType === "사업자";
   const proposal = proposals.find((p) => p.id === id);
 
   if (!proposal) {
     return (
       <div className="py-20 text-center text-sm text-muted-foreground">
         제안을 찾을 수 없습니다.
-        <Link href="/seller/proposals" className="block mt-3 text-sage-ink underline">
-          제안 현황으로 돌아가기
-        </Link>
+        <Link href="/seller/proposals" className="block mt-3 text-sage-ink underline">제안 현황으로 돌아가기</Link>
       </div>
     );
   }
 
   return (
     <div className="space-y-8 max-w-2xl">
-      {/* 헤더 */}
       <div className="border-b border-border pb-4">
-        <Link
-          href="/seller/proposals"
-          className="flex items-center gap-1 text-xs text-muted-foreground hover:text-sage-ink mb-3 transition-colors"
-        >
+        <Link href="/seller/proposals" className="flex items-center gap-1 text-xs text-muted-foreground hover:text-sage-ink mb-3 transition-colors">
           <ChevronLeft size={13} /> 제안 현황
         </Link>
         <div className="flex items-start justify-between">
@@ -174,13 +250,9 @@ export default function ProposalDetailPage() {
         </div>
       </div>
 
-      {/* 상태별 배너 */}
-      <StatusBanner status={proposal.status} proposal={proposal} />
-
-      {/* 진행 타임라인 */}
+      <StatusBanner status={proposal.status} proposal={proposal} isBusiness={isBusiness} />
       <StatusTimeline status={proposal.status} />
 
-      {/* GET 요청 정보 */}
       <section>
         <div className="text-[10px] text-muted-foreground tracking-widest uppercase mb-3">대상 GET 요청</div>
         <div className="border border-border p-4 bg-muted/10 space-y-1">
@@ -193,10 +265,8 @@ export default function ProposalDetailPage() {
         </div>
       </section>
 
-      {/* 제안 내용 */}
       <section className="space-y-4">
         <div className="text-[10px] text-muted-foreground tracking-widest uppercase">제안 내용</div>
-
         <div className="grid grid-cols-2 gap-3">
           <InfoBox label="제안 상품" value={`${proposal.productBrand} ${proposal.productName}`} />
           <InfoBox label="상품 등급" value={<Badge variant="default">{proposal.productGrade}</Badge>} />
@@ -207,43 +277,29 @@ export default function ProposalDetailPage() {
             </span>
           } />
         </div>
-
         <div className={cn(
           "flex items-center gap-2 text-[11px] px-3 py-2 border",
-          proposal.price > proposal.budget
-            ? "border-amber-200 bg-amber-50 text-amber-700"
-            : "border-sage-deep/20 bg-sage-deep/5 text-sage-ink"
+          proposal.price > proposal.budget ? "border-amber-200 bg-amber-50 text-amber-700" : "border-sage-deep/20 bg-sage-deep/5 text-sage-ink"
         )}>
           구매자 희망가 대비{" "}
-          {proposal.price > proposal.budget
-            ? `+${(proposal.price - proposal.budget).toLocaleString()}원 초과`
-            : `${(proposal.budget - proposal.price).toLocaleString()}원 이내`}
+          {proposal.price > proposal.budget ? `+${(proposal.price - proposal.budget).toLocaleString()}원 초과` : `${(proposal.budget - proposal.price).toLocaleString()}원 이내`}
         </div>
-
         <div>
           <div className="text-xs text-muted-foreground mb-2">첨부 사진</div>
           <div className="grid grid-cols-5 gap-2">
-            {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="border border-border aspect-square bg-muted/20" />
-            ))}
+            {[1, 2, 3, 4].map((i) => <div key={i} className="border border-border aspect-square bg-muted/20" />)}
           </div>
         </div>
-
         {proposal.note && (
           <div>
             <div className="text-xs text-muted-foreground mb-2">추가 메모</div>
-            <div className="border border-border px-4 py-3 text-sm bg-muted/10 leading-relaxed">
-              {proposal.note}
-            </div>
+            <div className="border border-border px-4 py-3 text-sm bg-muted/10 leading-relaxed">{proposal.note}</div>
           </div>
         )}
       </section>
 
-      {/* 하단 버튼 */}
       <div className="border-t border-border pt-6 flex justify-end gap-2">
-        <Link href="/seller/proposals">
-          <Button variant="outline">목록으로</Button>
-        </Link>
+        <Link href="/seller/proposals"><Button variant="outline">목록으로</Button></Link>
         {(proposal.status === "풀티 검수 중" || proposal.status === "사용자 확인 대기") && (
           <Link href={`/seller/get-requests/${proposal.getRequestId}/propose`}>
             <Button variant="outline">제안 수정</Button>
