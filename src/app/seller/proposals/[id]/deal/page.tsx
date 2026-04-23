@@ -3,24 +3,15 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { ChevronLeft, Check } from "lucide-react";
+import { Check } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 import { proposals } from "@/lib/mock";
-import type { InspectionStatus } from "@/lib/mock";
 import { useSellerType } from "@/lib/seller-context";
 
 const CARRIERS = ["CJ대한통운", "롯데택배", "한진택배", "우체국택배", "로젠택배"];
 
-const INDIVIDUAL_STEPS = ["운송장 등록", "풀티 도착 대기", "검수", "배송 · 정산"];
-
-function stepIndex(inspection?: { status: InspectionStatus }, hasTracking?: boolean): number {
-  if (!hasTracking) return 0;
-  if (!inspection) return 1;
-  if (inspection.status === "풀티 도착 대기") return 1;
-  if (inspection.status === "검수 중") return 2;
-  return 3; // 승인 or 반려
-}
+const INDIVIDUAL_STEPS = ["운송장 등록", "풀티 물류센터", "구매자 배송", "거래 완료"];
 
 export default function ProposalDealPage() {
   const { id } = useParams<{ id: string }>();
@@ -41,7 +32,7 @@ export default function ProposalDealPage() {
     );
   }
 
-  /* ── 사업자: 기존 플로우 (구매자 직접 배송) ──────────────────── */
+  /* ── 사업자: 구매자 직접 배송 ──────────────────────────────────── */
   if (isBusiness) {
     if (registered) {
       return (
@@ -65,85 +56,40 @@ export default function ProposalDealPage() {
         </div>
       );
     }
-
     return <ShippingForm isBusiness proposal={proposal} carrier={carrier} setCarrier={setCarrier} trackingNo={trackingNo} setTrackingNo={setTrackingNo} onSubmit={() => setRegistered(true)} />;
   }
 
-  /* ── 개인 셀러: 상태별 분기 ──────────────────────────────────── */
-  const hasTracking = !!proposal.sellerTracking || registered;
-  const inspection = proposal.inspection;
-  const currentStep = registered ? 1 : stepIndex(inspection, hasTracking);
+  /* ── 개인 셀러: 풀티 물류센터 경유 → 구매자 배송 ─────────────── */
+  const hasSellerTracking = !!proposal.sellerTracking || registered;
 
-  // 반려
-  if (inspection?.status === "반려") {
+  // 풀티 → 구매자 배송 진행 중 / 완료
+  if (proposal.fullttiTracking) {
+    const isDone = proposal.fullttiTracking.status === "배송 완료";
     return (
       <div className="space-y-8 max-w-2xl">
         <PageHeader id={id} title="거래 진행" />
-        <StepBar steps={INDIVIDUAL_STEPS} current={2} failed />
-
-        <div className="border border-red-200 bg-red-50 px-5 py-4 space-y-3">
-          <div className="flex items-center gap-2">
-            <div className="w-5 h-5 border-2 border-red-400 flex items-center justify-center text-[10px] text-red-500">✕</div>
-            <span className="text-sm font-semibold text-red-700">풀티 검수에서 반려되었습니다</span>
-            {inspection.date && <span className="text-[11px] text-red-400 ml-auto">{inspection.date}</span>}
-          </div>
-          {inspection.note && (
-            <div className="border border-red-200 bg-white px-4 py-3 text-sm text-red-700 leading-relaxed">
-              {inspection.note}
-            </div>
-          )}
-        </div>
-
-        <div className="border border-border p-4 text-sm space-y-2">
-          <div className="font-medium text-xs mb-2">반송 안내</div>
-          <div className="text-muted-foreground text-[11px] leading-relaxed">
-            상품은 셀러 등록 주소로 반송됩니다. 반송 운송장은 풀티 앱 알림으로 전달됩니다.<br />
-            반송 배송비는 셀러 부담이며, 착불로 청구됩니다.
-          </div>
-          {proposal.sellerTracking && (
-            <div className="pt-2 border-t border-border grid grid-cols-2 gap-2 text-[11px]">
-              <div><span className="text-muted-foreground">발송 택배사</span><div className="font-medium mt-0.5">{proposal.sellerTracking.carrier}</div></div>
-              <div><span className="text-muted-foreground">발송 운송장</span><div className="font-medium mt-0.5">{proposal.sellerTracking.trackingNo}</div></div>
-            </div>
-          )}
-        </div>
-
-        <div className="border-t border-border pt-6 flex justify-end gap-2">
-          <Link href="/seller/proposals"><Button variant="outline">제안 현황</Button></Link>
-          <Link href={`/seller/get-requests/${proposal.getRequestId}/propose`}><Button>재제안 작성</Button></Link>
-        </div>
-      </div>
-    );
-  }
-
-  // 승인 → 풀티가 구매자에게 배송 중
-  if (inspection?.status === "승인") {
-    return (
-      <div className="space-y-8 max-w-2xl">
-        <PageHeader id={id} title="거래 진행" />
-        <StepBar steps={INDIVIDUAL_STEPS} current={3} />
+        <StepBar steps={INDIVIDUAL_STEPS} current={isDone ? 4 : 2} />
 
         <div className="border border-sage-deep/30 bg-sage-soft/10 px-5 py-4 space-y-1">
           <div className="flex items-center gap-2">
-            <div className="w-5 h-5 bg-sage-deep flex items-center justify-center flex-shrink-0"><Check size={11} className="text-background" /></div>
-            <span className="text-sm font-semibold">풀티 검수 승인</span>
-            {inspection.date && <span className="text-[11px] text-muted-foreground ml-auto">{inspection.date}</span>}
+            <div className="w-5 h-5 bg-sage-deep flex items-center justify-center flex-shrink-0">
+              <Check size={11} className="text-background" />
+            </div>
+            <span className="text-sm font-semibold">풀티가 구매자에게 발송했습니다</span>
           </div>
-          <p className="text-[11px] text-muted-foreground pl-7">풀티가 구매자에게 배송을 진행합니다.</p>
+          <p className="text-[11px] text-muted-foreground pl-7">배송 완료 후 정산이 자동 진행됩니다.</p>
         </div>
 
-        {proposal.fullttiTracking && (
-          <section>
-            <div className="text-[10px] text-muted-foreground tracking-widest uppercase mb-3">풀티 → 구매자 배송 현황</div>
-            <div className="border border-border p-4 space-y-3">
-              <DeliverySteps status={proposal.fullttiTracking.status} />
-              <div className="border-t border-border pt-3 grid grid-cols-2 gap-2 text-sm">
-                <div><div className="text-[10px] text-muted-foreground mb-0.5">택배사</div><div className="font-medium">{proposal.fullttiTracking.carrier}</div></div>
-                <div><div className="text-[10px] text-muted-foreground mb-0.5">운송장 번호</div><div className="font-medium">{proposal.fullttiTracking.trackingNo}</div></div>
-              </div>
+        <section>
+          <div className="text-[10px] text-muted-foreground tracking-widest uppercase mb-3">풀티 → 구매자 배송 현황</div>
+          <div className="border border-border p-4 space-y-3">
+            <DeliverySteps status={proposal.fullttiTracking.status} />
+            <div className="border-t border-border pt-3 grid grid-cols-2 gap-2 text-sm">
+              <div><div className="text-[10px] text-muted-foreground mb-0.5">택배사</div><div className="font-medium">{proposal.fullttiTracking.carrier}</div></div>
+              <div><div className="text-[10px] text-muted-foreground mb-0.5">운송장 번호</div><div className="font-medium">{proposal.fullttiTracking.trackingNo}</div></div>
             </div>
-          </section>
-        )}
+          </div>
+        </section>
 
         <div className="border border-border divide-y divide-border text-sm">
           <div className="flex justify-between px-4 py-3"><span className="text-muted-foreground">제안 가격</span><span>{proposal.price.toLocaleString()}원</span></div>
@@ -158,44 +104,8 @@ export default function ProposalDealPage() {
     );
   }
 
-  // 검수 중
-  if (inspection?.status === "검수 중") {
-    return (
-      <div className="space-y-8 max-w-2xl">
-        <PageHeader id={id} title="거래 진행" />
-        <StepBar steps={INDIVIDUAL_STEPS} current={2} />
-
-        <div className="border border-border bg-muted/20 px-5 py-4 space-y-2">
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
-            <span className="text-sm font-medium">풀티 검수가 진행 중입니다</span>
-          </div>
-          <p className="text-[11px] text-muted-foreground leading-relaxed">
-            상품 상태, 구성품, 사진을 확인하고 있습니다. 평균 1~2 영업일 소요됩니다.<br />
-            결과는 알림으로 안내드립니다.
-          </p>
-          {inspection.date && <div className="text-[11px] text-muted-foreground">검수 시작: {inspection.date}</div>}
-        </div>
-
-        {proposal.sellerTracking && (
-          <section>
-            <div className="text-[10px] text-muted-foreground tracking-widest uppercase mb-3">발송 운송장</div>
-            <div className="border border-border p-4 grid grid-cols-2 gap-2 text-sm">
-              <div><div className="text-[10px] text-muted-foreground mb-0.5">택배사</div><div className="font-medium">{proposal.sellerTracking.carrier}</div></div>
-              <div><div className="text-[10px] text-muted-foreground mb-0.5">운송장 번호</div><div className="font-medium">{proposal.sellerTracking.trackingNo}</div></div>
-            </div>
-          </section>
-        )}
-
-        <div className="border-t border-border pt-6 flex justify-end">
-          <Link href="/seller/proposals"><Button variant="outline">제안 현황으로</Button></Link>
-        </div>
-      </div>
-    );
-  }
-
-  // 풀티 도착 대기 (운송장 등록 완료, 아직 미도착)
-  if (registered || inspection?.status === "풀티 도착 대기") {
+  // 풀티 물류센터 이동 중 (운송장 등록 완료, 아직 미도착)
+  if (hasSellerTracking) {
     const tc = registered ? { carrier, trackingNo } : proposal.sellerTracking;
     return (
       <div className="space-y-8 max-w-2xl">
@@ -205,16 +115,22 @@ export default function ProposalDealPage() {
         <div className="border border-border bg-muted/20 px-5 py-4 space-y-2">
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-sage-deep animate-pulse" />
-            <span className="text-sm font-medium">풀티 물류센터 도착을 기다리고 있습니다</span>
+            <span className="text-sm font-medium">풀티 물류센터로 이동 중입니다</span>
           </div>
-          <p className="text-[11px] text-muted-foreground">도착 확인 후 검수가 시작됩니다. 결과는 알림으로 안내드립니다.</p>
+          <p className="text-[11px] text-muted-foreground leading-relaxed">
+            상품 도착 확인 후 구매자에게 바로 발송됩니다.<br />
+            발송 시 알림으로 안내드립니다.
+          </p>
         </div>
 
         {tc && (
-          <div className="border border-border p-4 grid grid-cols-2 gap-2 text-sm">
-            <div><div className="text-[10px] text-muted-foreground mb-0.5">택배사</div><div className="font-medium">{tc.carrier}</div></div>
-            <div><div className="text-[10px] text-muted-foreground mb-0.5">운송장 번호</div><div className="font-medium">{tc.trackingNo}</div></div>
-          </div>
+          <section>
+            <div className="text-[10px] text-muted-foreground tracking-widest uppercase mb-3">발송 운송장</div>
+            <div className="border border-border p-4 grid grid-cols-2 gap-2 text-sm">
+              <div><div className="text-[10px] text-muted-foreground mb-0.5">택배사</div><div className="font-medium">{tc.carrier}</div></div>
+              <div><div className="text-[10px] text-muted-foreground mb-0.5">운송장 번호</div><div className="font-medium">{tc.trackingNo}</div></div>
+            </div>
+          </section>
         )}
 
         <div className="border-t border-border pt-6 flex justify-end">
@@ -241,28 +157,25 @@ function PageHeader({ id, title }: { id: string; title: string }) {
   );
 }
 
-function StepBar({ steps, current, failed }: { steps: string[]; current: number; failed?: boolean }) {
+function StepBar({ steps, current }: { steps: string[]; current: number }) {
   return (
     <div className="flex items-center">
       {steps.map((label, i) => {
         const isDone = i < current;
         const isCurrent = i === current;
-        const isFailed = failed && isCurrent;
         return (
           <div key={label} className="flex items-center flex-1 last:flex-none">
             <div className="flex flex-col items-center gap-1.5">
               <div className={cn(
                 "w-6 h-6 border-2 flex items-center justify-center text-[10px]",
-                isFailed ? "border-red-400 bg-red-400 text-background" :
                 isDone ? "border-sage-deep bg-sage-deep text-background" :
                 isCurrent ? "border-sage-deep text-sage-deep font-semibold" :
                 "border-border text-muted-foreground opacity-40"
               )}>
-                {isFailed ? "✕" : isDone ? "✓" : i + 1}
+                {isDone ? "✓" : i + 1}
               </div>
               <span className={cn(
                 "text-[10px] whitespace-nowrap",
-                isFailed ? "text-red-500 font-semibold" :
                 isCurrent ? "text-sage-deep font-semibold" :
                 isDone ? "text-muted-foreground" : "text-muted-foreground opacity-40"
               )}>{label}</span>
