@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 
@@ -34,7 +35,7 @@ export default function MembersPage() {
           </thead>
           <tbody className="divide-y divide-border">
             {members.map((m) => (
-              <tr key={m.id}>
+              <tr key={m.id} className="hover:bg-muted/30 transition-colors">
                 <td className="px-4 py-3 text-[11px] text-muted-foreground">{m.id}</td>
                 <td className="px-4 py-3 font-medium">{m.name}</td>
                 <td className="px-4 py-3 text-muted-foreground">{m.email}</td>
@@ -46,9 +47,9 @@ export default function MembersPage() {
                   <Badge variant={m.status === "정상" ? "default" : "muted"}>{m.status}</Badge>
                 </td>
                 <td className="px-4 py-3 text-right">
-                  <Button size="sm" variant="ghost">
-                    상세
-                  </Button>
+                  <Link href={`/admin/members/${m.id}`}>
+                    <Button size="sm" variant="ghost">상세</Button>
+                  </Link>
                 </td>
               </tr>
             ))}

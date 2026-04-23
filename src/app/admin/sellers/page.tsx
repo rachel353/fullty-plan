@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 
@@ -47,7 +48,7 @@ export default function AdminSellersPage() {
           </thead>
           <tbody className="divide-y divide-border">
             {sellers.map((s) => (
-              <tr key={s.id}>
+              <tr key={s.id} className="hover:bg-muted/30 transition-colors">
                 <td className="px-4 py-3 text-[11px] text-muted-foreground">{s.id}</td>
                 <td className="px-4 py-3 font-medium">{s.name}</td>
                 <td className="px-4 py-3">
@@ -55,27 +56,16 @@ export default function AdminSellersPage() {
                 </td>
                 <td className="px-4 py-3 text-muted-foreground">{s.applied}</td>
                 <td className="px-4 py-3">
-                  <Badge
-                    variant={
-                      s.status === "승인" ? "default" : s.status === "반려" ? "muted" : "outline"
-                    }
-                  >
+                  <Badge variant={s.status === "승인" ? "default" : s.status === "반려" ? "muted" : "outline"}>
                     {s.status}
                   </Badge>
                 </td>
                 <td className="px-4 py-3 text-right">
-                  {s.status === "심사 대기" ? (
-                    <div className="flex justify-end gap-2">
-                      <Button size="sm" variant="outline">
-                        반려
-                      </Button>
-                      <Button size="sm">승인</Button>
-                    </div>
-                  ) : (
-                    <Button size="sm" variant="ghost">
-                      상세
+                  <Link href={`/admin/sellers/${s.id}`}>
+                    <Button size="sm" variant={s.status === "심사 대기" ? "default" : "ghost"}>
+                      {s.status === "심사 대기" ? "심사하기" : "상세"}
                     </Button>
-                  )}
+                  </Link>
                 </td>
               </tr>
             ))}
