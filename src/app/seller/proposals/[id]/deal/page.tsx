@@ -41,7 +41,7 @@ export default function ProposalDealPage() {
   }
 
   /* ── 사업자: 구매자 직접 배송 ──────────────────────────────────── */
-  if (isBusiness) {
+  if (isBusiness && !proposal.fullttiTracking) {
     if (registered) {
       return (
         <div className="py-20 flex flex-col items-center gap-4 text-center">
