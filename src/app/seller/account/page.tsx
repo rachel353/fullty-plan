@@ -32,7 +32,7 @@ export default function AccountPage() {
   }
 
   return (
-    <div className="space-y-6 max-w-xl">
+    <div className="space-y-6">
       <div className="border-b border-border pb-4 flex items-center justify-between">
         <div>
           <h2 className="text-xl font-bold">정산 계좌 관리</h2>
