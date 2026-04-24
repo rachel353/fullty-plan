@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { X } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
@@ -210,10 +211,15 @@ export default function AdminProductsPage() {
           renderAction={(p) => {
             const state = processed[p.id];
             if (state) return (
-              <Badge variant={state.result === "승인" ? "default" : "muted"}>{state.result}</Badge>
+              <div className="flex justify-end gap-2">
+                <Badge variant={state.result === "승인" ? "default" : "muted"}>{state.result}</Badge>
+              </div>
             );
             return (
               <div className="flex justify-end gap-2">
+                <Link href={`/admin/products/${p.id}`}>
+                  <Button size="sm" variant="ghost">상세</Button>
+                </Link>
                 <Button size="sm" variant="outline" onClick={() => setRejectTarget(p)}>반려</Button>
                 <Button size="sm" onClick={() => setApproveTarget(p)}>승인</Button>
               </div>
