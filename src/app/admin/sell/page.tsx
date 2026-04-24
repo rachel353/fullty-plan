@@ -1,6 +1,18 @@
+import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { sellRequests } from "@/lib/mock";
+
+const STATUS_VARIANT: Record<string, "default" | "outline" | "muted"> = {
+  "접수 완료": "outline",
+  "배송비 결제 완료": "outline",
+  "픽업 대기": "outline",
+  "픽업 완료": "outline",
+  "검수 중": "default",
+  "최종 금액 제안": "default",
+  "계약 완료": "muted",
+  "반려": "muted",
+};
 
 export default function AdminSellPage() {
   return (
@@ -35,7 +47,7 @@ export default function AdminSellPage() {
           </thead>
           <tbody className="divide-y divide-border">
             {sellRequests.map((s) => (
-              <tr key={s.id}>
+              <tr key={s.id} className="hover:bg-muted/30 transition-colors">
                 <td className="px-4 py-3 text-[11px] text-muted-foreground">{s.id}</td>
                 <td className="px-4 py-3">
                   <div className="text-[11px] text-muted-foreground">{s.brand}</div>
@@ -47,12 +59,12 @@ export default function AdminSellPage() {
                 <td className="px-4 py-3">{s.estimated.toLocaleString()}원</td>
                 <td className="px-4 py-3 text-muted-foreground">{s.createdAt}</td>
                 <td className="px-4 py-3">
-                  <Badge variant="muted">{s.status}</Badge>
+                  <Badge variant={STATUS_VARIANT[s.status] ?? "outline"}>{s.status}</Badge>
                 </td>
                 <td className="px-4 py-3 text-right">
-                  <Button size="sm" variant="ghost">
-                    상세
-                  </Button>
+                  <Link href={`/admin/sell/${s.id}`}>
+                    <Button size="sm" variant="ghost">상세</Button>
+                  </Link>
                 </td>
               </tr>
             ))}
