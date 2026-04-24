@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 
@@ -62,7 +63,7 @@ export default function AdminCouponsPage() {
             자동 발행 · 쿠폰 코드 생성 · 특정 등급 지정 발행 · 이용 가능 수량 조정
           </p>
         </div>
-        <Button>+ 쿠폰 생성</Button>
+        <Link href="/admin/coupons/new"><Button>+ 쿠폰 생성</Button></Link>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
@@ -120,9 +121,9 @@ export default function AdminCouponsPage() {
                   <Badge variant={c.status === "활성" ? "default" : "muted"}>{c.status}</Badge>
                 </td>
                 <td className="px-4 py-3 text-right">
-                  <Button size="sm" variant="ghost">
-                    수정
-                  </Button>
+                  <Link href={`/admin/coupons/${c.id}`}>
+                    <Button size="sm" variant="ghost">수정</Button>
+                  </Link>
                 </td>
               </tr>
             ))}

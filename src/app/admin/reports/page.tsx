@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 
@@ -70,9 +71,9 @@ export default function AdminReportsPage() {
                   </Badge>
                 </td>
                 <td className="px-4 py-3 text-right">
-                  <Button size="sm" variant="ghost">
-                    상세
-                  </Button>
+                  <Link href={`/admin/reports/${r.id}`}>
+                    <Button size="sm" variant={r.status === "조사 중" ? "default" : "ghost"}>상세</Button>
+                  </Link>
                 </td>
               </tr>
             ))}
