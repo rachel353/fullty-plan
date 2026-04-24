@@ -36,27 +36,27 @@ type AdminProduct = {
   approvedAt?: string;
 };
 
+// IDs managed as admin-specific "검수 대기" — excluded from mock status filters
+const PENDING_IDS = new Set(["p008", "p017", "p018"]);
+
 const ALL_PRODUCTS: AdminProduct[] = [
-  // 검수 대기
+  // 검수 대기 (admin-managed)
   { id: "p008", brand: "Knoll", name: "Saarinen Tulip Table", option: "Round 120 / Marble", seller: "미드센추리", grade: "A", price: 4200000, tab: "검수 대기" },
   { id: "p017", brand: "Muuto", name: "E27 Pendant", option: "White", seller: "노르딕홈", grade: "S", price: 380000, tab: "검수 대기" },
   { id: "p018", brand: "HAY", name: "About A Chair AAC22", option: "Soft Black", seller: "빈티지 웍스", grade: "A+", price: 290000, tab: "검수 대기" },
   // 판매중
-  ...mockProducts.filter((p) => p.status === "판매중").map((p) => ({
+  ...mockProducts.filter((p) => p.status === "판매중" && !PENDING_IDS.has(p.id)).map((p) => ({
     id: p.id, brand: p.brand, name: p.name, option: p.option, seller: p.seller,
     grade: p.grade, price: p.price, tab: "판매중" as Tab,
     availability: p.availability === "both" ? "판매 · 렌탈" : p.availability === "rent" ? "렌탈 전용" : "판매 전용",
   })),
   // 렌탈중
-  ...mockProducts.filter((p) => p.status === "렌탈중").map((p) => ({
+  ...mockProducts.filter((p) => p.status === "렌탈중" && !PENDING_IDS.has(p.id)).map((p) => ({
     id: p.id, brand: p.brand, name: p.name, option: p.option, seller: p.seller,
     grade: p.grade, price: p.price, tab: "렌탈중" as Tab,
   })),
   // 품절
-  ...mockProducts.filter((p) => p.status === "품절").map((p) => ({
-    id: p.id, brand: p.brand, name: p.name, option: p.option, seller: p.seller,
-    grade: p.grade, price: p.price, tab: "품절" as Tab,
-  })),
+  { id: "p022", brand: "String", name: "String System", option: "3×3 / Pure White", seller: "모듈러 코리아", grade: "A+", price: 980000, tab: "품절" },
   // 반려
   { id: "p019", brand: "Cassina", name: "LC2 Armchair", option: "2-seater / Black Leather", seller: "이태리에디션", grade: "A", price: 2800000, tab: "반려", rejectedAt: "2026-04-10", rejectReason: "상품 사진과 실물 상태 불일치" },
   { id: "p020", brand: "Vitra", name: "DSW Chair", option: "White / Maple", seller: "오브제 스튜디오", grade: "B", price: 450000, tab: "반려", rejectedAt: "2026-04-08", rejectReason: "등급 기준 미달" },
@@ -155,15 +155,62 @@ function RejectModal({ product, onConfirm, onClose }: {
   );
 }
 
+function SuspendModal({ name, onConfirm, onClose }: {
+  name: string;
+  onConfirm: () => void;
+  onClose: () => void;
+}) {
+  const [reason, setReason] = useState("");
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      <div className="absolute inset-0 bg-black/40" onClick={onClose} />
+      <div className="relative bg-background border border-border w-full max-w-sm p-6 space-y-5 z-10">
+        <div className="flex items-center justify-between">
+          <h3 className="text-base font-semibold">판매 중단</h3>
+          <button onClick={onClose}><X size={16} className="text-muted-foreground" /></button>
+        </div>
+        <p className="text-sm text-muted-foreground leading-relaxed">
+          <span className="font-semibold text-foreground">{name}</span>의 판매를 중단합니다.<br />
+          중단 즉시 플랫폼 노출이 해제됩니다.
+        </p>
+        <select
+          value={reason}
+          onChange={(e) => setReason(e.target.value)}
+          className="w-full h-10 border border-border px-3 text-sm bg-background"
+        >
+          <option value="">중단 사유 선택</option>
+          <option>셀러 요청</option>
+          <option>상품 상태 이슈</option>
+          <option>가격 정책 위반</option>
+          <option>기타</option>
+        </select>
+        <div className="flex gap-2 pt-1">
+          <Button variant="outline" className="flex-1" onClick={onClose}>취소</Button>
+          <Button
+            className="flex-1 bg-red-500 hover:bg-red-600"
+            disabled={!reason}
+            onClick={onConfirm}
+          >
+            판매 중단
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function AdminProductsPage() {
   const [activeTab, setActiveTab] = useState<Tab>("검수 대기");
   const [approveTarget, setApproveTarget] = useState<AdminProduct | null>(null);
   const [rejectTarget, setRejectTarget] = useState<AdminProduct | null>(null);
+  const [suspendTarget, setSuspendTarget] = useState<AdminProduct | null>(null);
   const [processed, setProcessed] = useState<Record<string, { result: "승인" | "반려"; reason?: string }>>({});
+  const [suspended, setSuspended] = useState<Set<string>>(new Set());
 
   const filtered = activeTab === "전체"
     ? ALL_PRODUCTS.filter((p) => !processed[p.id] || processed[p.id].result === p.tab)
     : ALL_PRODUCTS.filter((p) => {
+        if (suspended.has(p.id)) return false;
         if (processed[p.id]) return processed[p.id].result === activeTab;
         return p.tab === activeTab;
       });
@@ -203,6 +250,7 @@ export default function AdminProductsPage() {
       </div>
 
       {/* 검수 대기 */}
+      {activeTab === "전체" && <SectionHeader label="검수 대기" />}
       {(activeTab === "검수 대기" || activeTab === "전체") && (
         <ProductTable
           products={ALL_PRODUCTS.filter((p) => p.tab === "검수 대기")}
@@ -229,25 +277,27 @@ export default function AdminProductsPage() {
       )}
 
       {/* 판매중 */}
-      {activeTab === "전체" && <SectionHeader show label="판매중" />}
+      {activeTab === "전체" && <SectionHeader label="판매중" />}
       {(activeTab === "판매중" || activeTab === "전체") && (
         <ProductTable
           products={activeTab === "전체"
-            ? ALL_PRODUCTS.filter((p) => p.tab === "판매중")
+            ? ALL_PRODUCTS.filter((p) => p.tab === "판매중" && !suspended.has(p.id))
             : filtered}
           processed={processed}
           columns={["상품", "셀러", "등급", "판매가", "유형"]}
-          renderAction={() => (
+          renderAction={(p) => (
             <div className="flex justify-end gap-2">
-              <Button size="sm" variant="ghost">상세</Button>
-              <Button size="sm" variant="outline">판매 중단</Button>
+              <Link href={`/admin/products/${p.id}`}>
+                <Button size="sm" variant="ghost">상세</Button>
+              </Link>
+              <Button size="sm" variant="outline" onClick={() => setSuspendTarget(p)}>판매 중단</Button>
             </div>
           )}
-          show={activeTab === "판매중" || activeTab === "전체"}
         />
       )}
 
       {/* 렌탈중 */}
+      {activeTab === "전체" && <SectionHeader label="렌탈중" />}
       {(activeTab === "렌탈중" || activeTab === "전체") && (
         <ProductTable
           products={activeTab === "전체"
@@ -255,12 +305,16 @@ export default function AdminProductsPage() {
             : filtered}
           processed={processed}
           columns={["상품", "셀러", "등급", "렌탈가"]}
-          renderAction={() => <Button size="sm" variant="ghost">상세</Button>}
-          show={activeTab === "렌탈중" || activeTab === "전체"}
+          renderAction={(p) => (
+            <Link href={`/admin/products/${p.id}`}>
+              <Button size="sm" variant="ghost">상세</Button>
+            </Link>
+          )}
         />
       )}
 
       {/* 품절 */}
+      {activeTab === "전체" && <SectionHeader label="품절" />}
       {(activeTab === "품절" || activeTab === "전체") && (
         <ProductTable
           products={activeTab === "전체"
@@ -268,12 +322,16 @@ export default function AdminProductsPage() {
             : filtered}
           processed={processed}
           columns={["상품", "셀러", "등급", "판매가"]}
-          renderAction={() => <Button size="sm" variant="ghost">상세</Button>}
-          show={activeTab === "품절" || activeTab === "전체"}
+          renderAction={(p) => (
+            <Link href={`/admin/products/${p.id}`}>
+              <Button size="sm" variant="ghost">상세</Button>
+            </Link>
+          )}
         />
       )}
 
       {/* 반려 */}
+      {activeTab === "전체" && <SectionHeader label="반려" />}
       {(activeTab === "반려" || activeTab === "전체") && (
         <ProductTable
           products={activeTab === "전체"
@@ -281,12 +339,15 @@ export default function AdminProductsPage() {
             : filtered}
           processed={processed}
           columns={["상품", "셀러", "등급", "반려일", "반려 사유"]}
-          renderAction={() => <Button size="sm" variant="ghost">상세</Button>}
-          show={activeTab === "반려" || activeTab === "전체"}
+          renderAction={(p) => (
+            <Link href={`/admin/products/${p.id}`}>
+              <Button size="sm" variant="ghost">상세</Button>
+            </Link>
+          )}
         />
       )}
 
-      {filtered.length === 0 && (
+      {filtered.length === 0 && activeTab !== "전체" && (
         <div className="border border-border py-16 text-center text-sm text-muted-foreground">
           해당 상태의 상품이 없습니다.
         </div>
@@ -313,12 +374,22 @@ export default function AdminProductsPage() {
           onClose={() => setRejectTarget(null)}
         />
       )}
+
+      {suspendTarget && (
+        <SuspendModal
+          name={suspendTarget.name}
+          onConfirm={() => {
+            setSuspended((prev) => new Set([...prev, suspendTarget.id]));
+            setSuspendTarget(null);
+          }}
+          onClose={() => setSuspendTarget(null)}
+        />
+      )}
     </div>
   );
 }
 
-function SectionHeader({ show, label }: { show: boolean; label: string }) {
-  if (!show) return null;
+function SectionHeader({ label }: { label: string }) {
   return <div className="text-[10px] text-muted-foreground tracking-widest uppercase pt-2">{label}</div>;
 }
 
@@ -327,15 +398,13 @@ function ProductTable({
   processed,
   columns,
   renderAction,
-  show = true,
 }: {
   products: AdminProduct[];
   processed: Record<string, { result: "승인" | "반려"; reason?: string }>;
   columns: string[];
   renderAction: (p: AdminProduct) => React.ReactNode;
-  show?: boolean;
 }) {
-  if (!show || products.length === 0) return null;
+  if (products.length === 0) return null;
   return (
     <div className="border border-border">
       <table className="w-full text-sm">
