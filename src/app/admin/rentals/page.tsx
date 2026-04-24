@@ -1,35 +1,14 @@
+import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 
 const rentals = [
-  {
-    id: "rt001",
-    user: "김풀티",
-    product: "Fritz Hansen Egg Chair",
-    period: "2026-03-15 ~ 2026-04-13",
-    extended: 0,
-    status: "렌탈 중",
-    daysLeft: 3,
-  },
-  {
-    id: "rt002",
-    user: "이가구",
-    product: "Cassina LC4",
-    period: "2026-03-25 ~ 2026-04-23",
-    extended: 1,
-    status: "연장 1차",
-    daysLeft: 13,
-  },
-  {
-    id: "rt003",
-    user: "박빈티",
-    product: "USM Haller",
-    period: "2026-02-08 ~ 2026-04-08",
-    extended: 2,
-    status: "회수 대기",
-    daysLeft: 0,
-  },
+  { id: "rt001", user: "김풀티", product: "Fritz Hansen Egg Chair", period: "2026-03-15 ~ 2026-04-13", extended: 0, status: "렌탈 중" as const, daysLeft: 3 },
+  { id: "rt002", user: "이가구", product: "Cassina LC4", period: "2026-03-25 ~ 2026-04-23", extended: 1, status: "연장 1차" as const, daysLeft: 13 },
+  { id: "rt003", user: "박빈티", product: "USM Haller", period: "2026-02-08 ~ 2026-04-08", extended: 2, status: "회수 대기" as const, daysLeft: 0 },
 ];
+
+type RentalStatus = "렌탈 중" | "연장 1차" | "연장 2차" | "회수 대기" | "회수 완료";
 
 export default function AdminRentalsPage() {
   return (
@@ -57,22 +36,24 @@ export default function AdminRentalsPage() {
           </thead>
           <tbody className="divide-y divide-border">
             {rentals.map((r) => (
-              <tr key={r.id}>
+              <tr key={r.id} className="hover:bg-muted/30 transition-colors">
                 <td className="px-4 py-3 text-[11px] text-muted-foreground">{r.id}</td>
                 <td className="px-4 py-3">{r.user}</td>
                 <td className="px-4 py-3 font-medium">{r.product}</td>
                 <td className="px-4 py-3 text-[11px] text-muted-foreground">{r.period}</td>
                 <td className="px-4 py-3">{r.extended}회</td>
-                <td className="px-4 py-3">D-{r.daysLeft}</td>
+                <td className="px-4 py-3">
+                  {r.daysLeft > 0 ? `D-${r.daysLeft}` : <span className="text-red-500 font-medium">만료</span>}
+                </td>
                 <td className="px-4 py-3">
                   <Badge variant={r.status === "회수 대기" ? "default" : "outline"}>
                     {r.status}
                   </Badge>
                 </td>
                 <td className="px-4 py-3 text-right">
-                  <Button size="sm" variant="ghost">
-                    상세
-                  </Button>
+                  <Link href={`/admin/rentals/${r.id}`}>
+                    <Button size="sm" variant={r.status === "회수 대기" ? "default" : "ghost"}>상세</Button>
+                  </Link>
                 </td>
               </tr>
             ))}

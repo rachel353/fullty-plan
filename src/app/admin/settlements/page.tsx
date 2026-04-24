@@ -1,4 +1,6 @@
+import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
+import { Button } from "@/components/ui/Button";
 
 const rows = [
   { id: "ad001", seller: "빈티지 웍스", type: "판매", amount: 1088000, period: "2026-03", status: "정산 완료" as const },
@@ -35,12 +37,13 @@ export default function AdminSettlementsPage() {
               <th className="px-4 py-3">유형</th>
               <th className="px-4 py-3">실 정산액</th>
               <th className="px-4 py-3">기간</th>
-              <th className="px-4 py-3 text-right">상태</th>
+              <th className="px-4 py-3">상태</th>
+              <th className="px-4 py-3 text-right">작업</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
             {rows.map((r) => (
-              <tr key={r.id}>
+              <tr key={r.id} className="hover:bg-muted/30 transition-colors">
                 <td className="px-4 py-3 text-[11px] text-muted-foreground">{r.id}</td>
                 <td className="px-4 py-3 font-medium">{r.seller}</td>
                 <td className="px-4 py-3">
@@ -48,18 +51,15 @@ export default function AdminSettlementsPage() {
                 </td>
                 <td className="px-4 py-3 font-semibold">{r.amount.toLocaleString()}원</td>
                 <td className="px-4 py-3 text-muted-foreground">{r.period}</td>
+                <td className="px-4 py-3">
+                  <Badge variant={r.status === "정산 완료" ? "default" : "outline"}>{r.status}</Badge>
+                </td>
                 <td className="px-4 py-3 text-right">
-                  <Badge
-                    variant={
-                      r.status === "정산 완료"
-                        ? "default"
-                        : r.status === "정산 예정"
-                        ? "outline"
-                        : "muted"
-                    }
-                  >
-                    {r.status}
-                  </Badge>
+                  <Link href={`/admin/settlements/${r.id}`}>
+                    <Button size="sm" variant={r.status === "정산 예정" ? "default" : "ghost"}>
+                      {r.status === "정산 예정" ? "정산 처리" : "상세"}
+                    </Button>
+                  </Link>
                 </td>
               </tr>
             ))}

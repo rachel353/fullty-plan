@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { getRequests } from "@/lib/mock";
@@ -34,7 +35,7 @@ export default function AdminGetPage() {
           </thead>
           <tbody className="divide-y divide-border">
             {getRequests.map((g) => (
-              <tr key={g.id}>
+              <tr key={g.id} className="hover:bg-muted/30 transition-colors">
                 <td className="px-4 py-3 text-[11px] text-muted-foreground">{g.id}</td>
                 <td className="px-4 py-3">
                   <div className="text-[11px] text-muted-foreground">{g.brand}</div>
@@ -44,22 +45,16 @@ export default function AdminGetPage() {
                 <td className="px-4 py-3">{g.proposalCount}건</td>
                 <td className="px-4 py-3 text-muted-foreground">{g.createdAt}</td>
                 <td className="px-4 py-3">
-                  <Badge
-                    variant={
-                      g.status === "거래 완료"
-                        ? "muted"
-                        : g.status === "셀러 제안"
-                        ? "default"
-                        : "outline"
-                    }
-                  >
+                  <Badge variant={g.status === "거래 완료" ? "muted" : g.status === "셀러 제안" ? "default" : "outline"}>
                     {g.status}
                   </Badge>
                 </td>
                 <td className="px-4 py-3 text-right">
-                  <Button size="sm" variant="ghost">
-                    제안 검수
-                  </Button>
+                  <Link href={`/admin/get/${g.id}`}>
+                    <Button size="sm" variant={g.proposalCount > 0 ? "default" : "ghost"}>
+                      제안 검수
+                    </Button>
+                  </Link>
                 </td>
               </tr>
             ))}
