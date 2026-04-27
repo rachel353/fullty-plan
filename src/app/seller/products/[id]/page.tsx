@@ -208,10 +208,7 @@ export default function EditSellerProductPage() {
         <Link href="/seller/products">
           <Button variant="outline">취소</Button>
         </Link>
-        <div className="flex gap-2">
-          <Button variant="outline">임시저장</Button>
-          <Button onClick={handleSave}>저장</Button>
-        </div>
+        <Button onClick={handleSave}>저장</Button>
       </div>
     </div>
   );
