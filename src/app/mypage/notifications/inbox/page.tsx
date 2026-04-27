@@ -2,11 +2,11 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Bell, Package, RotateCcw, Tag, TrendingUp, MessageSquare } from "lucide-react";
+import { Bell, Package, RotateCcw, Tag, TrendingUp, MessageSquare, HelpCircle } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 
-type NotifCategory = "주문/배송" | "렌탈" | "GET·SELL" | "라운지" | "자산";
+type NotifCategory = "주문/배송" | "렌탈" | "GET·SELL" | "라운지" | "자산" | "Q&A";
 
 type Notification = {
   id: string;
@@ -80,6 +80,26 @@ const MOCK: Notification[] = [
     actionHref: "/mypage/assets",
   },
   {
+    id: "nq1",
+    category: "Q&A",
+    text: "Aeron Chair Q&A에 답변이 등록되었습니다.",
+    detail: "\"실제 수령까지 보통 며칠 걸리나요?\" 질문에 Fullty 운영팀이 답변했습니다.",
+    unread: true,
+    time: "2시간 전",
+    actionLabel: "답변 보기",
+    actionHref: "/products/p001",
+  },
+  {
+    id: "nq2",
+    category: "Q&A",
+    text: "Eames Lounge Chair Q&A에 셀러가 답변을 달았습니다.",
+    detail: "\"다른 색상 옵션 입고 예정이 있나요?\" 질문에 답변이 등록되었습니다.",
+    unread: false,
+    time: "2일 전",
+    actionLabel: "답변 보기",
+    actionHref: "/products/p002",
+  },
+  {
     id: "n7",
     category: "라운지",
     text: "내 리뷰에 '도움이 돼요' 18명이 눌렀습니다.",
@@ -108,6 +128,7 @@ const TABS: { label: string; value: NotifCategory | "전체" | "읽지 않음" }
   { label: "GET·SELL", value: "GET·SELL" },
   { label: "라운지", value: "라운지" },
   { label: "자산", value: "자산" },
+  { label: "Q&A", value: "Q&A" },
 ];
 
 function CategoryIcon({ category }: { category: NotifCategory }) {
@@ -116,6 +137,7 @@ function CategoryIcon({ category }: { category: NotifCategory }) {
   if (category === "렌탈") return <div className={cn(cls, "bg-muted")}><RotateCcw size={14} className="text-sage-ink" /></div>;
   if (category === "GET·SELL") return <div className={cn(cls, "bg-muted")}><Tag size={14} className="text-sage-ink" /></div>;
   if (category === "자산") return <div className={cn(cls, "bg-sage-soft/60")}><TrendingUp size={14} className="text-sage-ink" /></div>;
+  if (category === "Q&A") return <div className={cn(cls, "bg-muted")}><HelpCircle size={14} className="text-sage-ink" /></div>;
   return <div className={cn(cls, "bg-muted")}><MessageSquare size={14} className="text-sage-ink" /></div>;
 }
 
