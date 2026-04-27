@@ -111,7 +111,9 @@ export default function SellerProductsPage() {
                           </td>
                         )}
                         <td className="px-4 py-3 text-right">
-                          <Button size="sm" variant="ghost">수정</Button>
+                          <Link href={`/seller/products/${p.id}`}>
+                            <Button size="sm" variant="ghost">수정</Button>
+                          </Link>
                         </td>
                       </tr>
                     );
