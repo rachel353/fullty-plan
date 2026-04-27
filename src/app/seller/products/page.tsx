@@ -42,6 +42,7 @@ export default function SellerProductsPage() {
   const [activeStatus, setActiveStatus] = useState("전체");
   const [page, setPage] = useState(1);
   const [drafts, setDrafts] = useState(DRAFTS);
+  const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
 
   return (
     <div className="space-y-6">
@@ -246,7 +247,7 @@ export default function SellerProductsPage() {
                     size="sm"
                     variant="ghost"
                     className="text-muted-foreground hover:text-red-500"
-                    onClick={() => setDrafts((prev) => prev.filter((x) => x.id !== d.id))}
+                    onClick={() => setDeleteTarget(d.id)}
                   >
                     삭제
                   </Button>
@@ -257,6 +258,40 @@ export default function SellerProductsPage() {
           <p className="text-[11px] text-muted-foreground">임시저장은 최대 30일간 보관됩니다.</p>
         </div>
       )}
+
+      {/* 삭제 확인 모달 */}
+      {deleteTarget && (() => {
+        const target = drafts.find((d) => d.id === deleteTarget);
+        if (!target) return null;
+        return (
+          <div className="fixed inset-0 z-50 flex items-center justify-center">
+            <div className="absolute inset-0 bg-black/40" onClick={() => setDeleteTarget(null)} />
+            <div className="relative bg-background border border-border w-full max-w-sm p-6 space-y-5 z-10">
+              <h3 className="text-base font-semibold">임시저장 삭제</h3>
+              <div className="border border-border px-4 py-3 space-y-0.5">
+                <div className="text-[11px] text-muted-foreground">{target.brand}</div>
+                <div className="text-sm font-medium">{target.name}</div>
+                <div className="text-[11px] text-muted-foreground">{target.savedAt} 저장</div>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                삭제하면 복구할 수 없습니다.
+              </p>
+              <div className="flex gap-2">
+                <Button variant="outline" className="flex-1" onClick={() => setDeleteTarget(null)}>취소</Button>
+                <Button
+                  className="flex-1 bg-red-500 hover:bg-red-600"
+                  onClick={() => {
+                    setDrafts((prev) => prev.filter((x) => x.id !== deleteTarget));
+                    setDeleteTarget(null);
+                  }}
+                >
+                  삭제
+                </Button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 }
