@@ -85,9 +85,14 @@ const qna = [
   },
 ];
 
+const REVIEWS_PER_PAGE = 2;
+const QNA_PER_PAGE = 2;
+
 export function ProductDetailTabs({ product }: { product: Product }) {
   const [active, setActive] = useState<Tab>("상품 정보");
   const [qnaOpen, setQnaOpen] = useState(false);
+  const [reviewPage, setReviewPage] = useState(1);
+  const [qnaPage, setQnaPage] = useState(1);
 
   return (
     <div className="mt-20 border-t border-border pt-12">
@@ -187,29 +192,38 @@ export function ProductDetailTabs({ product }: { product: Product }) {
             </div>
           </div>
 
-          <div className="space-y-4">
-            {reviews.map((r) => (
-              <div key={r.id} className="border border-border p-5">
-                <div className="flex items-start justify-between mb-3">
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <div className="text-sm font-medium text-sage-ink">{r.author}</div>
-                      <Badge variant="outline">{r.grade}</Badge>
+          {(() => {
+            const totalReviewPages = Math.ceil(reviews.length / REVIEWS_PER_PAGE);
+            const pagedReviews = reviews.slice((reviewPage - 1) * REVIEWS_PER_PAGE, reviewPage * REVIEWS_PER_PAGE);
+            return (
+              <>
+                <div className="space-y-4">
+                  {pagedReviews.map((r) => (
+                    <div key={r.id} className="border border-border p-5">
+                      <div className="flex items-start justify-between mb-3">
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <div className="text-sm font-medium text-sage-ink">{r.author}</div>
+                            <Badge variant="outline">{r.grade}</Badge>
+                          </div>
+                          <div className="text-[11px] text-muted-foreground mt-1">{r.date}</div>
+                        </div>
+                        <Stars rating={r.rating} />
+                      </div>
+                      <p className="text-sm leading-relaxed text-muted-foreground">{r.body}</p>
+                      <div className="flex items-center gap-4 mt-4 pt-3 border-t border-border text-[11px] text-muted-foreground">
+                        <button className="hover:text-sage-ink">👍 도움이 돼요 ({r.helpful})</button>
+                        <button className="hover:text-sage-ink">신고</button>
+                      </div>
                     </div>
-                    <div className="text-[11px] text-muted-foreground mt-1">{r.date}</div>
-                  </div>
-                  <Stars rating={r.rating} />
+                  ))}
                 </div>
-                <p className="text-sm leading-relaxed text-muted-foreground">{r.body}</p>
-                <div className="flex items-center gap-4 mt-4 pt-3 border-t border-border text-[11px] text-muted-foreground">
-                  <button className="hover:text-sage-ink">
-                    👍 도움이 돼요 ({r.helpful})
-                  </button>
-                  <button className="hover:text-sage-ink">신고</button>
-                </div>
-              </div>
-            ))}
-          </div>
+                {totalReviewPages > 1 && (
+                  <Pagination page={reviewPage} total={totalReviewPages} onChange={setReviewPage} />
+                )}
+              </>
+            );
+          })()}
         </div>
       )}
 
@@ -222,45 +236,51 @@ export function ProductDetailTabs({ product }: { product: Product }) {
             </Button>
           </div>
 
-          <div className="space-y-3">
-            {qna.map((q) => (
-              <div key={q.id} className="border border-border">
-                <div className="p-5">
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex items-center gap-2">
-                      <span className="font-display text-lg text-sage-ink">Q.</span>
-                      <Badge
-                        variant={q.status === "답변 완료" ? "default" : "outline"}
-                      >
-                        {q.status}
-                      </Badge>
-                    </div>
-                    <div className="text-[11px] text-muted-foreground">
-                      {q.author} · {q.date}
-                    </div>
-                  </div>
-                  <p className="text-sm leading-relaxed">{q.question}</p>
-                </div>
-
-                {q.answer && (
-                  <div className="border-t border-border bg-sage-soft/30 p-5">
-                    <div className="flex items-start gap-2 mb-2">
-                      <span className="font-display text-lg text-sage-deep">A.</span>
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between">
-                          <div className="text-[11px] font-medium text-sage-deep">
-                            {q.answeredBy}
+          {(() => {
+            const totalQnaPages = Math.ceil(qna.length / QNA_PER_PAGE);
+            const pagedQna = qna.slice((qnaPage - 1) * QNA_PER_PAGE, qnaPage * QNA_PER_PAGE);
+            return (
+              <>
+                <div className="space-y-3">
+                  {pagedQna.map((q) => (
+                    <div key={q.id} className="border border-border">
+                      <div className="p-5">
+                        <div className="flex items-start justify-between mb-3">
+                          <div className="flex items-center gap-2">
+                            <span className="font-display text-lg text-sage-ink">Q.</span>
+                            <Badge variant={q.status === "답변 완료" ? "default" : "outline"}>
+                              {q.status}
+                            </Badge>
                           </div>
-                          <div className="text-[11px] text-muted-foreground">{q.answeredAt}</div>
+                          <div className="text-[11px] text-muted-foreground">
+                            {q.author} · {q.date}
+                          </div>
                         </div>
-                        <p className="text-sm leading-relaxed text-sage-ink mt-2">{q.answer}</p>
+                        <p className="text-sm leading-relaxed">{q.question}</p>
                       </div>
+                      {q.answer && (
+                        <div className="border-t border-border bg-sage-soft/30 p-5">
+                          <div className="flex items-start gap-2 mb-2">
+                            <span className="font-display text-lg text-sage-deep">A.</span>
+                            <div className="flex-1">
+                              <div className="flex items-center justify-between">
+                                <div className="text-[11px] font-medium text-sage-deep">{q.answeredBy}</div>
+                                <div className="text-[11px] text-muted-foreground">{q.answeredAt}</div>
+                              </div>
+                              <p className="text-sm leading-relaxed text-sage-ink mt-2">{q.answer}</p>
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </div>
-                  </div>
+                  ))}
+                </div>
+                {totalQnaPages > 1 && (
+                  <Pagination page={qnaPage} total={totalQnaPages} onChange={setQnaPage} />
                 )}
-              </div>
-            ))}
-          </div>
+              </>
+            );
+          })()}
 
           <div className="border border-border p-4 text-[11px] text-muted-foreground leading-relaxed mt-6">
             상품 사용법, 옵션 추가 여부, 배송 등 궁금한 점을 남겨주세요. Fullty 운영팀 또는 셀러가
@@ -279,6 +299,33 @@ function InfoRow({ label, value }: { label: string; value: string }) {
     <div className="border-b border-border py-3 flex justify-between text-xs">
       <span className="text-muted-foreground">{label}</span>
       <span className="text-sage-ink font-medium">{value}</span>
+    </div>
+  );
+}
+
+function Pagination({ page, total, onChange }: { page: number; total: number; onChange: (n: number) => void }) {
+  return (
+    <div className="flex items-center justify-center gap-1 mt-6">
+      <button
+        onClick={() => onChange(Math.max(1, page - 1))}
+        disabled={page === 1}
+        className="w-8 h-8 border border-border flex items-center justify-center text-sm disabled:opacity-30 hover:bg-muted transition-colors"
+      >←</button>
+      {Array.from({ length: total }, (_, i) => i + 1).map((n) => (
+        <button
+          key={n}
+          onClick={() => onChange(n)}
+          className={cn(
+            "w-8 h-8 border text-xs transition-colors",
+            page === n ? "border-foreground bg-foreground text-background" : "border-border hover:bg-muted"
+          )}
+        >{n}</button>
+      ))}
+      <button
+        onClick={() => onChange(Math.min(total, page + 1))}
+        disabled={page === total}
+        className="w-8 h-8 border border-border flex items-center justify-center text-sm disabled:opacity-30 hover:bg-muted transition-colors"
+      >→</button>
     </div>
   );
 }
