@@ -15,6 +15,7 @@ const groups = [
     title: "렌탈",
     items: [
       { id: "n4", label: "렌탈 종료 알림", desc: "기본: 종료 7일 전 · 7일 렌탈은 종료 3일 전 알림." },
+      { id: "n4b", label: "렌탈 D-1 재알림", desc: "종료 전일까지 연장·구매 전환·반납 액션이 없으면 D-1 자동 재알림." },
       { id: "n5", label: "구매 전환 안내", desc: "차액 결제 잔여 시 푸시 발송." },
     ],
   },
@@ -43,6 +44,7 @@ export default function NotificationsPage() {
     n2: true,
     n3: true,
     n4: true,
+    n4b: true,
     n5: false,
     n6: true,
     n7: true,

@@ -41,6 +41,16 @@ const MOCK: Notification[] = [
     actionHref: "/mypage/rentals",
   },
   {
+    id: "n2b",
+    category: "렌탈",
+    text: "[재알림] Aeron Chair 렌탈이 내일 종료됩니다.",
+    detail: "2026.04.28 회수 예정 · 아직 연장·구매 전환·반납 신청이 없습니다. 오늘 중으로 확인해 주세요.",
+    unread: true,
+    time: "30분 전",
+    actionLabel: "렌탈 관리",
+    actionHref: "/mypage/rentals",
+  },
+  {
     id: "n3",
     category: "GET·SELL",
     text: "GET 요청 'Stool 60'에 새 셀러 제안 1건이 도착했습니다.",
