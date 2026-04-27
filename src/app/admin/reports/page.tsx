@@ -5,18 +5,18 @@ import { Button } from "@/components/ui/Button";
 const reports = [
   {
     id: "rp001",
-    target: "셀러: 무료가구",
-    reason: "허위 등급 의심",
+    target: "리뷰 rv041",
+    reason: "허위 / 조작 리뷰 의심",
     reporter: "kimfullty@gmail.com",
-    date: "2026-04-09",
+    date: "2026-04-22",
     status: "조사 중" as const,
   },
   {
     id: "rp002",
-    target: "GET g005",
-    reason: "악의적 가격 입력",
+    target: "정보글 ar018",
+    reason: "광고성 콘텐츠",
     reporter: "park@gmail.com",
-    date: "2026-04-07",
+    date: "2026-04-19",
     status: "조치 완료" as const,
   },
   {
@@ -24,8 +24,16 @@ const reports = [
     target: "리뷰 rv023",
     reason: "광고성 내용",
     reporter: "lee@kakao.com",
-    date: "2026-04-04",
+    date: "2026-04-15",
     status: "반려" as const,
+  },
+  {
+    id: "rp004",
+    target: "정보글 ar009",
+    reason: "부적절한 외부 링크 포함",
+    reporter: "choi@naver.com",
+    date: "2026-04-11",
+    status: "접수" as const,
   },
 ];
 
