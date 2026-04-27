@@ -249,7 +249,10 @@ export default function NewSellerProductPage() {
         ) : (
           <Badge variant="muted">검수 대기 → Fullty 검수 → 노출 (반려 시 반송)</Badge>
         )}
-        <Button>{isBusiness ? "바로 등록" : "등록 요청"}</Button>
+        <div className="flex gap-2">
+          <Button variant="outline">임시저장</Button>
+          <Button>{isBusiness ? "바로 등록" : "등록 요청"}</Button>
+        </div>
       </div>
     </div>
   );
