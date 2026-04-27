@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 
@@ -42,7 +43,7 @@ export default function AdminMoneyPage() {
               placeholder="회원 검색"
               className="h-9 px-3 text-xs border border-border bg-background w-60"
             />
-            <Button size="sm">수동 조정</Button>
+            <Link href="/admin/money/m001"><Button size="sm">수동 조정</Button></Link>
           </div>
         </div>
         <div className="border border-border">
@@ -66,9 +67,9 @@ export default function AdminMoneyPage() {
                     {b.balance.toLocaleString()}원
                   </td>
                   <td className="px-4 py-3 text-right">
-                    <Button size="sm" variant="ghost">
-                      조정
-                    </Button>
+                    <Link href={`/admin/money/${b.id}`}>
+                      <Button size="sm" variant="ghost">조정</Button>
+                    </Link>
                   </td>
                 </tr>
               ))}
