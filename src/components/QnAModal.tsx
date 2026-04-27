@@ -28,7 +28,7 @@ export function QnAModal({ open, onClose }: { open: boolean; onClose: () => void
             <input
               readOnly
               value={USER_PROFILE.name}
-              className="w-full h-11 px-3 pr-20 text-sm border border-border bg-muted/40 text-muted-foreground cursor-default"
+              className="w-full h-11 px-3 pr-20 text-sm border border-border bg-background text-muted-foreground cursor-default"
             />
             <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-sage-ink bg-sage-soft/60 px-1.5 py-0.5">
               자동완성
