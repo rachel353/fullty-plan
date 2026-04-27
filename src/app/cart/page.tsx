@@ -76,6 +76,11 @@ export default function CartPage() {
               주문하기
             </Button>
           </Link>
+          <Link href="/" className="block mt-2">
+            <Button variant="outline" size="lg" className="w-full">
+              계속 쇼핑하기
+            </Button>
+          </Link>
         </aside>
       </div>
     </div>
