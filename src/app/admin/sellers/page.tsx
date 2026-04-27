@@ -197,7 +197,17 @@ function SellerList() {
   );
 }
 
+type ReviewStatus = "심사 대기" | "승인" | "반려";
+
 function SellerReview() {
+  const [statuses, setStatuses] = useState<Record<string, ReviewStatus>>({});
+  const [confirmTarget, setConfirmTarget] = useState<{ id: string; name: string; action: "승인" | "반려" } | null>(null);
+
+  function handleAction(id: string, action: "승인" | "반려") {
+    setStatuses((prev) => ({ ...prev, [id]: action }));
+    setConfirmTarget(null);
+  }
+
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-2">
@@ -229,31 +239,79 @@ function SellerReview() {
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
-            {pendingSellers.map((s) => (
-              <tr key={s.id} className="hover:bg-muted/30 transition-colors">
-                <td className="px-4 py-3 text-[11px] text-muted-foreground">{s.id}</td>
-                <td className="px-4 py-3 font-medium">{s.name}</td>
-                <td className="px-4 py-3">
-                  <Badge variant="outline">{s.type}</Badge>
-                </td>
-                <td className="px-4 py-3 text-muted-foreground">{s.applied}</td>
-                <td className="px-4 py-3">
-                  <Badge variant={s.status === "승인" ? "default" : s.status === "반려" ? "muted" : "outline"}>
-                    {s.status}
-                  </Badge>
-                </td>
-                <td className="px-4 py-3 text-right">
-                  <Link href={`/admin/sellers/${s.id}`}>
-                    <Button size="sm" variant={s.status === "심사 대기" ? "default" : "ghost"}>
-                      {s.status === "심사 대기" ? "심사하기" : "상세"}
-                    </Button>
-                  </Link>
-                </td>
-              </tr>
-            ))}
+            {pendingSellers.map((s) => {
+              const currentStatus = statuses[s.id] ?? s.status;
+              const isPending = currentStatus === "심사 대기";
+              return (
+                <tr key={s.id} className="hover:bg-muted/30 transition-colors">
+                  <td className="px-4 py-3 text-[11px] text-muted-foreground">{s.id}</td>
+                  <td className="px-4 py-3 font-medium">{s.name}</td>
+                  <td className="px-4 py-3">
+                    <Badge variant="outline">{s.type}</Badge>
+                  </td>
+                  <td className="px-4 py-3 text-muted-foreground">{s.applied}</td>
+                  <td className="px-4 py-3">
+                    <Badge variant={currentStatus === "승인" ? "default" : currentStatus === "반려" ? "muted" : "outline"}>
+                      {currentStatus}
+                    </Badge>
+                  </td>
+                  <td className="px-4 py-3 text-right">
+                    {isPending ? (
+                      <div className="flex items-center justify-end gap-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="text-red-500 border-red-200 hover:bg-red-50"
+                          onClick={() => setConfirmTarget({ id: s.id, name: s.name, action: "반려" })}
+                        >
+                          반려
+                        </Button>
+                        <Button
+                          size="sm"
+                          onClick={() => setConfirmTarget({ id: s.id, name: s.name, action: "승인" })}
+                        >
+                          승인
+                        </Button>
+                      </div>
+                    ) : (
+                      <Link href={`/admin/sellers/${s.id}`}>
+                        <Button size="sm" variant="ghost">상세</Button>
+                      </Link>
+                    )}
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
+
+      {/* 확인 모달 */}
+      {confirmTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/40" onClick={() => setConfirmTarget(null)} />
+          <div className="relative bg-background border border-border w-full max-w-sm p-6 space-y-5 z-10">
+            <h3 className="text-base font-semibold">
+              {confirmTarget.action === "승인" ? "셀러 승인" : "셀러 반려"}
+            </h3>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              <span className="font-semibold text-foreground">{confirmTarget.name}</span>
+              {confirmTarget.action === "승인"
+                ? "을(를) 셀러로 승인합니다.\n승인 즉시 셀러 기능이 활성화됩니다."
+                : "의 셀러 신청을 반려합니다.\n반려 사유는 상세 페이지에서 입력할 수 있습니다."}
+            </p>
+            <div className="flex gap-2">
+              <Button variant="outline" className="flex-1" onClick={() => setConfirmTarget(null)}>취소</Button>
+              <Button
+                className={cn("flex-1", confirmTarget.action === "반려" && "bg-red-500 hover:bg-red-600")}
+                onClick={() => handleAction(confirmTarget.id, confirmTarget.action)}
+              >
+                {confirmTarget.action} 확정
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
