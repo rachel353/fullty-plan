@@ -45,8 +45,9 @@ export default function LoungePage() {
             { label: "전체", href: "/lounge", active: true },
             { label: "리뷰", href: "/lounge/reviews", active: false },
             { label: "정보글", href: "/lounge/articles", active: false },
-            { label: "케어 가이드", href: "/lounge/articles?tag=케어", active: false },
-            { label: "셀러 스토리", href: "/lounge/articles?tag=셀러+스토리", active: false },
+            { label: "제품자랑", href: "/lounge/articles?tag=제품자랑", active: false },
+            { label: "인테리어", href: "/lounge/articles?tag=인테리어", active: false },
+            { label: "일상", href: "/lounge/articles?tag=일상", active: false },
           ].map((tab) => (
             <Link
               key={tab.label}

@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { articles } from "@/lib/lounge";
 
-const TAGS = ["전체", "가구", "수납", "케어", "조명", "인테리어"];
+const TAGS = ["전체", "제품자랑", "인테리어", "일상"];
 
 export default function AllArticlesPage() {
   return (

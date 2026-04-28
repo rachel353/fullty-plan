@@ -7,16 +7,11 @@ import { Button } from "@/components/ui/Button";
 import { FileUpload } from "@/components/ui/FileUpload";
 import { cn } from "@/lib/utils";
 
-const TAGS = ["가구", "수납", "케어", "조명", "인테리어", "셀러 스토리"];
-const CATEGORIES = [
-  { id: "article", label: "정보글", desc: "가구 관련 지식 · 비교 · 구매 가이드" },
-  { id: "care", label: "케어 가이드", desc: "소재별 관리법 · 유지보수 팁" },
-  { id: "seller", label: "셀러 스토리", desc: "셀러의 컬렉션 · 큐레이션 이야기" },
-];
+const TAGS = ["제품자랑", "인테리어", "일상"];
 
 export default function WriteArticlePage() {
   const router = useRouter();
-  const [category, setCategory] = useState("article");
+  const [category, setCategory] = useState("제품자랑");
   const [title, setTitle] = useState("");
   const [tag, setTag] = useState("");
   const [body, setBody] = useState("");
@@ -61,20 +56,19 @@ export default function WriteArticlePage() {
         {/* Category */}
         <div>
           <label className="text-xs text-muted-foreground mb-2 block">카테고리</label>
-          <div className="grid grid-cols-3 gap-2">
-            {CATEGORIES.map((c) => (
+          <div className="flex gap-2">
+            {TAGS.map((t) => (
               <button
-                key={c.id}
-                onClick={() => setCategory(c.id)}
+                key={t}
+                onClick={() => setCategory(t)}
                 className={cn(
-                  "border p-3 text-left transition-colors",
-                  category === c.id
-                    ? "border-sage-ink bg-sage-soft/40"
-                    : "border-border hover:bg-muted/40"
+                  "flex-1 h-10 text-xs font-medium border transition-colors",
+                  category === t
+                    ? "border-foreground bg-foreground text-background"
+                    : "border-border hover:bg-muted"
                 )}
               >
-                <div className="text-sm font-medium text-sage-ink">{c.label}</div>
-                <div className="text-[10px] text-muted-foreground mt-0.5 leading-snug">{c.desc}</div>
+                {t}
               </button>
             ))}
           </div>

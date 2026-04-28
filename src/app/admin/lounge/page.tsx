@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 type Tab = "리뷰" | "정보글";
 
 const REVIEW_TAGS = ["전체", "별점 5", "별점 4 이하", "신고됨"];
-const ARTICLE_TAGS = ["전체", "가구", "수납", "라이프스타일", "관리법"];
+const ARTICLE_TAGS = ["전체", "제품자랑", "인테리어", "일상"];
 
 function DeleteModal({
   label,
