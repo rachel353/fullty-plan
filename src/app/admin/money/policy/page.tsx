@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Pencil, X, Check, Plus } from "lucide-react";
+import { Pencil, X, Check, Plus, Coins } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
@@ -13,9 +13,9 @@ type Rule = {
   trigger: string;
   desc: string;
   type: RewardType;
-  amount: number;        // 정액: 원, 정률: %
-  cap: number | null;    // 정률일 때 최대 적립 한도 (원), null = 무제한
-  expireDays: number;    // 유효기간 (일)
+  amount: number;
+  cap: number | null;
+  expireDays: number;
   enabled: boolean;
 };
 
@@ -107,40 +107,67 @@ function formatAmount(rule: Rule) {
   return `${rule.amount}%${rule.cap ? ` (최대 ${rule.cap.toLocaleString()}원)` : ""}`;
 }
 
-type EditDraft = Omit<Rule, "id">;
+type Draft = Omit<Rule, "id">;
 
-function EditModal({
-  rule,
+const EMPTY_DRAFT: Draft = {
+  trigger: "",
+  desc: "",
+  type: "정액",
+  amount: 0,
+  cap: null,
+  expireDays: 90,
+  enabled: true,
+};
+
+function RuleModal({
+  title,
+  initial,
   onSave,
   onClose,
 }: {
-  rule: Rule;
-  onSave: (draft: EditDraft) => void;
+  title: string;
+  initial: Draft;
+  onSave: (draft: Draft) => void;
   onClose: () => void;
 }) {
-  const [draft, setDraft] = useState<EditDraft>({
-    trigger: rule.trigger,
-    desc: rule.desc,
-    type: rule.type,
-    amount: rule.amount,
-    cap: rule.cap,
-    expireDays: rule.expireDays,
-    enabled: rule.enabled,
-  });
-
-  const set = <K extends keyof EditDraft>(k: K, v: EditDraft[K]) =>
+  const [draft, setDraft] = useState<Draft>(initial);
+  const set = <K extends keyof Draft>(k: K, v: Draft[K]) =>
     setDraft((prev) => ({ ...prev, [k]: v }));
+
+  const canSave = draft.trigger.trim() && draft.amount > 0;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
       <div className="relative bg-background border border-border w-full max-w-sm p-6 space-y-5 z-10">
         <div className="flex items-center justify-between">
-          <h3 className="text-base font-semibold">적립 조건 수정</h3>
+          <h3 className="text-base font-semibold">{title}</h3>
           <button onClick={onClose}><X size={15} className="text-muted-foreground" /></button>
         </div>
 
         <div className="space-y-4">
+          {/* 조건명 */}
+          <div className="space-y-1.5">
+            <label className="text-[11px] text-muted-foreground">조건명 <span className="text-red-400">*</span></label>
+            <input
+              value={draft.trigger}
+              onChange={(e) => set("trigger", e.target.value)}
+              placeholder="예) 생일, 등급 업 달성"
+              className="w-full h-10 px-3 text-sm border border-border bg-background outline-none focus:border-sage-ink"
+            />
+          </div>
+
+          {/* 설명 */}
+          <div className="space-y-1.5">
+            <label className="text-[11px] text-muted-foreground">설명 (내부 메모)</label>
+            <input
+              value={draft.desc}
+              onChange={(e) => set("desc", e.target.value)}
+              placeholder="지급 조건에 대한 간단한 설명"
+              className="w-full h-10 px-3 text-sm border border-border bg-background outline-none focus:border-sage-ink"
+            />
+          </div>
+
           {/* 지급 유형 */}
           <div className="space-y-1.5">
             <label className="text-[11px] text-muted-foreground">지급 유형</label>
@@ -166,11 +193,13 @@ function EditModal({
           <div className="space-y-1.5">
             <label className="text-[11px] text-muted-foreground">
               {draft.type === "정액" ? "지급 금액 (원)" : "적립률 (%)"}
+              <span className="text-red-400 ml-1">*</span>
             </label>
             <input
               type="number"
-              value={draft.amount}
+              value={draft.amount || ""}
               onChange={(e) => set("amount", Number(e.target.value))}
+              placeholder="0"
               className="w-full h-10 px-3 text-sm border border-border bg-background outline-none focus:border-sage-ink"
             />
           </div>
@@ -193,7 +222,7 @@ function EditModal({
 
           {/* 유효기간 */}
           <div className="space-y-1.5">
-            <label className="text-[11px] text-muted-foreground">유효기간 (일)</label>
+            <label className="text-[11px] text-muted-foreground">유효기간</label>
             <div className="flex gap-2">
               {[90, 180, 365].map((d) => (
                 <button
@@ -218,21 +247,11 @@ function EditModal({
               />
             </div>
           </div>
-
-          {/* 설명 */}
-          <div className="space-y-1.5">
-            <label className="text-[11px] text-muted-foreground">설명 (내부 메모)</label>
-            <input
-              value={draft.desc}
-              onChange={(e) => set("desc", e.target.value)}
-              className="w-full h-10 px-3 text-sm border border-border bg-background outline-none focus:border-sage-ink"
-            />
-          </div>
         </div>
 
         <div className="flex gap-2 pt-1">
           <Button variant="outline" className="flex-1" onClick={onClose}>취소</Button>
-          <Button className="flex-1" onClick={() => onSave(draft)}>
+          <Button className="flex-1" disabled={!canSave} onClick={() => onSave(draft)}>
             <Check size={13} className="mr-1" /> 저장
           </Button>
         </div>
@@ -241,22 +260,26 @@ function EditModal({
   );
 }
 
+let nextId = 9;
+
 export default function MoneyPolicyPage() {
   const [rules, setRules] = useState<Rule[]>(INITIAL_RULES);
   const [editing, setEditing] = useState<Rule | null>(null);
+  const [creating, setCreating] = useState(false);
   const [saved, setSaved] = useState(false);
 
   function toggleEnabled(id: string) {
-    setRules((prev) =>
-      prev.map((r) => (r.id === id ? { ...r, enabled: !r.enabled } : r))
-    );
+    setRules((prev) => prev.map((r) => (r.id === id ? { ...r, enabled: !r.enabled } : r)));
   }
 
-  function saveEdit(draft: EditDraft) {
-    setRules((prev) =>
-      prev.map((r) => (r.id === editing!.id ? { ...r, ...draft } : r))
-    );
+  function saveEdit(draft: Draft) {
+    setRules((prev) => prev.map((r) => (r.id === editing!.id ? { ...r, ...draft } : r)));
     setEditing(null);
+  }
+
+  function saveCreate(draft: Draft) {
+    setRules((prev) => [...prev, { ...draft, id: `r${String(nextId++).padStart(2, "0")}` }]);
+    setCreating(false);
   }
 
   function handleSaveAll() {
@@ -275,96 +298,130 @@ export default function MoneyPolicyPage() {
             조건별 자동 지급 규칙을 설정합니다. 활성화된 조건만 실제 지급됩니다.
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           {saved && (
             <span className="text-[11px] text-sage-deep flex items-center gap-1">
               <Check size={11} /> 저장됨
             </span>
           )}
+          <Button variant="outline" onClick={() => setCreating(true)}>
+            <Plus size={13} className="mr-1" /> 조건 추가
+          </Button>
           <Button onClick={handleSaveAll}>전체 저장</Button>
         </div>
       </div>
 
       {/* 요약 */}
-      <div className="grid grid-cols-3 gap-3">
-        <div className="border border-border p-4">
-          <div className="text-[11px] text-muted-foreground">전체 조건</div>
-          <div className="text-lg font-bold mt-1">{rules.length}개</div>
+      {rules.length > 0 && (
+        <div className="grid grid-cols-3 gap-3">
+          <div className="border border-border p-4">
+            <div className="text-[11px] text-muted-foreground">전체 조건</div>
+            <div className="text-lg font-bold mt-1">{rules.length}개</div>
+          </div>
+          <div className="border border-border p-4">
+            <div className="text-[11px] text-muted-foreground">활성화</div>
+            <div className="text-lg font-bold mt-1 text-sage-ink">{activeCount}개</div>
+          </div>
+          <div className="border border-border p-4">
+            <div className="text-[11px] text-muted-foreground">비활성화</div>
+            <div className="text-lg font-bold mt-1 text-muted-foreground">{rules.length - activeCount}개</div>
+          </div>
         </div>
-        <div className="border border-border p-4">
-          <div className="text-[11px] text-muted-foreground">활성화</div>
-          <div className="text-lg font-bold mt-1 text-sage-ink">{activeCount}개</div>
-        </div>
-        <div className="border border-border p-4">
-          <div className="text-[11px] text-muted-foreground">비활성화</div>
-          <div className="text-lg font-bold mt-1 text-muted-foreground">{rules.length - activeCount}개</div>
-        </div>
-      </div>
+      )}
 
-      {/* 규칙 목록 */}
-      <div className="border border-border divide-y divide-border">
-        {rules.map((rule) => (
-          <div
-            key={rule.id}
-            className={cn(
-              "px-5 py-4 flex items-center gap-4 transition-colors",
-              !rule.enabled && "opacity-50"
-            )}
-          >
-            {/* 토글 */}
-            <button
-              onClick={() => toggleEnabled(rule.id)}
+      {/* 빈 상태 */}
+      {rules.length === 0 ? (
+        <div className="border border-dashed border-border py-20 flex flex-col items-center gap-4 text-center">
+          <div className="w-12 h-12 border border-border flex items-center justify-center">
+            <Coins size={20} className="text-muted-foreground" />
+          </div>
+          <div>
+            <div className="text-sm font-medium">등록된 적립 조건이 없습니다</div>
+            <div className="text-[11px] text-muted-foreground mt-1">
+              조건을 추가하면 해당 이벤트 발생 시 풀티머니가 자동 지급됩니다.
+            </div>
+          </div>
+          <Button onClick={() => setCreating(true)}>
+            <Plus size={13} className="mr-1" /> 첫 번째 조건 추가
+          </Button>
+        </div>
+      ) : (
+        <div className="border border-border divide-y divide-border">
+          {rules.map((rule) => (
+            <div
+              key={rule.id}
               className={cn(
-                "w-10 h-6 relative flex-shrink-0 transition-colors",
-                rule.enabled ? "bg-foreground" : "bg-muted border border-border"
+                "px-5 py-4 flex items-center gap-4 transition-colors",
+                !rule.enabled && "opacity-50"
               )}
             >
-              <span
+              <button
+                onClick={() => toggleEnabled(rule.id)}
                 className={cn(
-                  "absolute top-0.5 w-5 h-5 bg-background transition-all",
-                  rule.enabled ? "left-5" : "left-0.5 border border-border"
+                  "w-10 h-6 relative flex-shrink-0 transition-colors",
+                  rule.enabled ? "bg-foreground" : "bg-muted border border-border"
                 )}
-              />
-            </button>
+              >
+                <span
+                  className={cn(
+                    "absolute top-0.5 w-5 h-5 bg-background transition-all",
+                    rule.enabled ? "left-5" : "left-0.5 border border-border"
+                  )}
+                />
+              </button>
 
-            {/* 조건명 + 설명 */}
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-semibold">{rule.trigger}</span>
-                <Badge variant={rule.enabled ? "sage" : "muted"}>
-                  {rule.enabled ? "활성" : "비활성"}
-                </Badge>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-semibold">{rule.trigger}</span>
+                  <Badge variant={rule.enabled ? "sage" : "muted"}>
+                    {rule.enabled ? "활성" : "비활성"}
+                  </Badge>
+                </div>
+                <div className="text-[11px] text-muted-foreground mt-0.5">{rule.desc}</div>
               </div>
-              <div className="text-[11px] text-muted-foreground mt-0.5">{rule.desc}</div>
-            </div>
 
-            {/* 지급 조건 */}
-            <div className="text-right flex-shrink-0 space-y-0.5">
-              <div className="text-sm font-semibold">{formatAmount(rule)}</div>
-              <div className="text-[10px] text-muted-foreground">
-                {rule.type} · 유효 {rule.expireDays === 365 ? "1년" : `${rule.expireDays}일`}
+              <div className="text-right flex-shrink-0 space-y-0.5">
+                <div className="text-sm font-semibold">{formatAmount(rule)}</div>
+                <div className="text-[10px] text-muted-foreground">
+                  {rule.type} · 유효 {rule.expireDays === 365 ? "1년" : `${rule.expireDays}일`}
+                </div>
               </div>
+
+              <button
+                onClick={() => setEditing(rule)}
+                className="w-8 h-8 flex items-center justify-center border border-border hover:bg-muted transition-colors flex-shrink-0"
+              >
+                <Pencil size={12} className="text-muted-foreground" />
+              </button>
             </div>
+          ))}
+        </div>
+      )}
 
-            {/* 수정 버튼 */}
-            <button
-              onClick={() => setEditing(rule)}
-              className="w-8 h-8 flex items-center justify-center border border-border hover:bg-muted transition-colors flex-shrink-0"
-            >
-              <Pencil size={12} className="text-muted-foreground" />
-            </button>
-          </div>
-        ))}
-      </div>
-
-      <div className="border border-border/50 bg-muted/30 px-4 py-3 text-[11px] text-muted-foreground leading-relaxed">
-        · 정률 적립은 실결제 금액(배송비 제외) 기준으로 계산됩니다.<br />
-        · 지급된 풀티머니는 유효기간 내 사용하지 않으면 자동 소멸됩니다.<br />
-        · 전체 저장 버튼을 눌러야 변경사항이 실제 정책에 반영됩니다.
-      </div>
+      {rules.length > 0 && (
+        <div className="border border-border/50 bg-muted/30 px-4 py-3 text-[11px] text-muted-foreground leading-relaxed">
+          · 정률 적립은 실결제 금액(배송비 제외) 기준으로 계산됩니다.<br />
+          · 지급된 풀티머니는 유효기간 내 사용하지 않으면 자동 소멸됩니다.<br />
+          · 전체 저장 버튼을 눌러야 변경사항이 실제 정책에 반영됩니다.
+        </div>
+      )}
 
       {editing && (
-        <EditModal rule={editing} onSave={saveEdit} onClose={() => setEditing(null)} />
+        <RuleModal
+          title="적립 조건 수정"
+          initial={{ trigger: editing.trigger, desc: editing.desc, type: editing.type, amount: editing.amount, cap: editing.cap, expireDays: editing.expireDays, enabled: editing.enabled }}
+          onSave={saveEdit}
+          onClose={() => setEditing(null)}
+        />
+      )}
+
+      {creating && (
+        <RuleModal
+          title="적립 조건 추가"
+          initial={EMPTY_DRAFT}
+          onSave={saveCreate}
+          onClose={() => setCreating(false)}
+        />
       )}
     </div>
   );
