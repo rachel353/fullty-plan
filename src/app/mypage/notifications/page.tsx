@@ -33,13 +33,16 @@ const groups = [
     ],
   },
   {
+    title: "라운지",
+    items: [
+      { id: "nl1", label: "좋아요 알림", desc: "내가 작성한 리뷰·정보글에 좋아요가 달리면 알림." },
+      { id: "nl2", label: "댓글 알림", desc: "내 게시글에 댓글이 등록되면 알림." },
+    ],
+  },
+  {
     title: "가구 자산화",
     items: [
-      {
-        id: "n8",
-        label: "지금 판매/렌탈 추천 알림",
-        desc: "보유 가구 시세 변동 시 수익화 시점 추천.",
-      },
+      { id: "n8", label: "시세 변동 알림", desc: "보유 가구 시세가 크게 변동하면 알림." },
     ],
   },
 ];
@@ -55,6 +58,8 @@ export default function NotificationsPage() {
     n6: true,
     n7: true,
     nq1: true,
+    nl1: true,
+    nl2: true,
     n8: false,
   });
 
