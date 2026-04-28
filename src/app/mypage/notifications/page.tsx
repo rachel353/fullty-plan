@@ -30,7 +30,6 @@ const groups = [
     title: "Q&A",
     items: [
       { id: "nq1", label: "Q&A 답변 알림", desc: "내가 남긴 Q&A에 셀러 또는 운영팀이 답변하면 알림." },
-      { id: "nq2", label: "비공개 Q&A 알림", desc: "비공개로 문의한 Q&A 답변도 알림톡으로 수신." },
     ],
   },
   {
@@ -56,7 +55,6 @@ export default function NotificationsPage() {
     n6: true,
     n7: true,
     nq1: true,
-    nq2: true,
     n8: false,
   });
 
