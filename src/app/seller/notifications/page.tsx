@@ -31,6 +31,7 @@ const groups = [
     items: [
       { id: "s9", label: "렌탈 회수 일정 알림", desc: "렌탈 종료 3일 전 회수 일정 안내." },
       { id: "s10", label: "렌탈 연장·구매 전환 알림", desc: "구매자가 연장 또는 구매 전환을 신청하면 알림." },
+      { id: "s13", label: "자동 판매 전환 알림", desc: "렌탈 종료 후 상품이 자동으로 판매 전환되면 알림. 판매 상태를 확인해 주세요." },
     ],
   },
 ];
@@ -39,7 +40,7 @@ const DEFAULTS: Record<string, boolean> = {
   s1: true, s2: true,
   s3: true, s4: true, s5: true,
   s6: true, s7: true, s8: true,
-  s9: true, s10: true,
+  s9: true, s10: true, s13: true,
 
 };
 
