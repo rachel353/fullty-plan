@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Pencil, X, Check, Plus, Coins } from "lucide-react";
+import Link from "next/link";
+import { Pencil, X, Check, Plus, Coins, ChevronLeft } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
@@ -293,6 +294,9 @@ export default function MoneyPolicyPage() {
     <div className="space-y-6">
       <div className="border-b border-border pb-4 flex items-end justify-between">
         <div>
+          <Link href="/admin/money" className="flex items-center gap-1 text-xs text-muted-foreground hover:text-sage-ink mb-3 transition-colors">
+            <ChevronLeft size={13} /> 풀티머니 관리
+          </Link>
           <h2 className="text-xl font-bold">풀티머니 적립 정책</h2>
           <p className="text-sm text-muted-foreground mt-1">
             조건별 자동 지급 규칙을 설정합니다. 활성화된 조건만 실제 지급됩니다.
