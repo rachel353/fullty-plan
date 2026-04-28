@@ -33,13 +33,6 @@ const groups = [
       { id: "s10", label: "렌탈 연장·구매 전환 알림", desc: "구매자가 연장 또는 구매 전환을 신청하면 알림." },
     ],
   },
-  {
-    title: "운영 공지",
-    items: [
-      { id: "s11", label: "풀티 운영 공지 알림", desc: "수수료·정책·시스템 점검 등 중요 공지사항." },
-      { id: "s12", label: "프로모션 참여 안내", desc: "기획전·할인 이벤트 셀러 참여 모집 안내." },
-    ],
-  },
 ];
 
 const DEFAULTS: Record<string, boolean> = {
@@ -47,7 +40,7 @@ const DEFAULTS: Record<string, boolean> = {
   s3: true, s4: true, s5: true,
   s6: true, s7: true, s8: true,
   s9: true, s10: true,
-  s11: true, s12: false,
+
 };
 
 export default function SellerNotificationsPage() {
@@ -105,9 +98,6 @@ export default function SellerNotificationsPage() {
         ))}
       </div>
 
-      <div className="border border-border p-4 text-[11px] text-muted-foreground leading-relaxed">
-        운영 공지 알림은 중요도가 높아 일부 항목은 수신 거부가 제한될 수 있습니다.
-      </div>
     </div>
   );
 }
