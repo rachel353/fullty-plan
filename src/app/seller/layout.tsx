@@ -24,6 +24,12 @@ const sections: SidebarSection[] = [
       { href: "/seller/account", label: "계좌 관리" },
     ],
   },
+  {
+    title: "설정",
+    items: [
+      { href: "/seller/notifications", label: "알림 설정" },
+    ],
+  },
 ];
 
 export default function SellerLayout({ children }: { children: React.ReactNode }) {
