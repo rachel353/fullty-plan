@@ -213,7 +213,7 @@ function EditModal({
                 type="number"
                 value={![90, 180, 365].includes(draft.expireDays) ? draft.expireDays : ""}
                 onChange={(e) => set("expireDays", Number(e.target.value))}
-                placeholder="직접"
+                placeholder="일"
                 className="w-20 h-9 px-2 text-xs border border-border bg-background outline-none focus:border-sage-ink text-center"
               />
             </div>
