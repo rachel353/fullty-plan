@@ -63,6 +63,7 @@ const pendingSellers = [
   { id: "sl001", name: "오브제 스튜디오", type: "사업자", applied: "2026-04-08", status: "심사 대기" as "심사 대기" | "승인" | "반려" },
   { id: "sl002", name: "노르딕홈 2호", type: "사업자", applied: "2026-04-07", status: "심사 대기" as "심사 대기" | "승인" | "반려" },
   { id: "sl004", name: "이태리에디션B", type: "사업자", applied: "2026-04-03", status: "반려" as "심사 대기" | "승인" | "반려" },
+  { id: "sl009", name: "더코너 리빙", type: "개인", applied: "2026-04-25", status: "승인" as "심사 대기" | "승인" | "반려" },
 ];
 
 type Tab = "목록" | "심사";
