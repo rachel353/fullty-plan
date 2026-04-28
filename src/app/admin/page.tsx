@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
-import { ImageBox } from "@/components/ImageBox";
+import { TransactionChart } from "@/components/admin/TransactionChart";
 
 export default function AdminDashboard() {
   return (
@@ -18,7 +18,7 @@ export default function AdminDashboard() {
             <CardTitle>거래량 추이</CardTitle>
           </CardHeader>
           <CardContent>
-            <ImageBox ratio="wide" label="GMV / 카테고리별 거래 그래프" />
+            <TransactionChart />
           </CardContent>
         </Card>
 
