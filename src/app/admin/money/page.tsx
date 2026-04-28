@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { Settings } from "lucide-react";
 
 const balances = [
   { id: "m001", name: "김풀티", email: "kimfullty@gmail.com", balance: 124500 },
@@ -18,11 +19,18 @@ const history = [
 export default function AdminMoneyPage() {
   return (
     <div className="space-y-8">
-      <div className="border-b border-border pb-4">
-        <h2 className="text-xl font-bold">풀티머니 관리</h2>
-        <p className="text-sm text-muted-foreground mt-1">
-          회원별 잔액 · 적립/사용 이력 · 관리자 수동 조정 · 프로모션 지급
-        </p>
+      <div className="border-b border-border pb-4 flex items-end justify-between">
+        <div>
+          <h2 className="text-xl font-bold">풀티머니 관리</h2>
+          <p className="text-sm text-muted-foreground mt-1">
+            회원별 잔액 · 적립/사용 이력 · 관리자 수동 조정 · 프로모션 지급
+          </p>
+        </div>
+        <Link href="/admin/money/policy">
+          <Button variant="outline" size="sm" className="flex items-center gap-1.5">
+            <Settings size={12} /> 적립 정책 설정
+          </Button>
+        </Link>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
