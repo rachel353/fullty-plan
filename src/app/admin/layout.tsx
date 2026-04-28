@@ -30,6 +30,7 @@ const sections: SidebarSection[] = [
       { href: "/admin/money", label: "풀티머니 관리" },
       { href: "/admin/money/policy", label: "풀티머니 적립 정책" },
       { href: "/admin/coupons", label: "쿠폰 관리" },
+      { href: "/admin/lounge", label: "리빙 라운지 관리" },
       { href: "/admin/reports", label: "신고 관리" },
     ],
   },
