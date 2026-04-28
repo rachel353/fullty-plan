@@ -53,6 +53,13 @@ const SELLER_DATA = [
     address: "서울특별시 마포구 합정동",
     docSubmitted: true,
     approvedAt: "2026-04-06",
+    sales: {
+      products: 4,
+      gmvTotal: 2840000,
+      gmvMonth: 680000,
+      activeRentals: 1,
+      pendingSettlement: 320000,
+    },
   },
   {
     id: "sl004",
@@ -224,6 +231,23 @@ export default function SellerDetailPage() {
         </div>
       )}
 
+      {/* 매출 정보 — 승인된 셀러만 */}
+      {currentStatus === "승인" && sellerData.sales && (
+        <section className="space-y-3">
+          <div className="text-[10px] text-muted-foreground tracking-widest uppercase">매출 정보</div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <SalesStat label="등록 상품" value={`${sellerData.sales.products}개`} />
+            <SalesStat label="누적 GMV" value={`${sellerData.sales.gmvTotal.toLocaleString()}원`} />
+            <SalesStat label="이번 달 GMV" value={`${sellerData.sales.gmvMonth.toLocaleString()}원`} />
+            <SalesStat label="활성 렌탈" value={`${sellerData.sales.activeRentals}건`} />
+          </div>
+          <div className="border border-border px-4 py-3 flex items-center justify-between text-sm">
+            <span className="text-muted-foreground text-[11px]">정산 예정 금액</span>
+            <span className="font-semibold">{sellerData.sales.pendingSettlement.toLocaleString()}원</span>
+          </div>
+        </section>
+      )}
+
       {/* 신청자 정보 */}
       <section className="space-y-3">
         <div className="text-[10px] text-muted-foreground tracking-widest uppercase">신청자 정보</div>
@@ -304,6 +328,15 @@ export default function SellerDetailPage() {
           onClose={() => setRejectOpen(false)}
         />
       )}
+    </div>
+  );
+}
+
+function SalesStat({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="border border-border p-4">
+      <div className="text-[11px] text-muted-foreground">{label}</div>
+      <div className="text-base font-bold mt-1.5">{value}</div>
     </div>
   );
 }
