@@ -94,29 +94,6 @@ export function ProductForm({ mode }: { mode: ProductFormMode }) {
         </div>
       </Section>
 
-      {/* 상태 등급 */}
-      <Section title="상태 등급">
-        <div className="grid grid-cols-5 gap-2">
-          {GRADES.map((g) => (
-            <button
-              key={g}
-              onClick={() => setGrade(g)}
-              className={cn(
-                "h-12 border text-sm font-semibold transition-colors",
-                grade === g
-                  ? "border-foreground bg-foreground text-background"
-                  : "border-border hover:bg-muted"
-              )}
-            >
-              {g}
-            </button>
-          ))}
-        </div>
-        <p className="text-[11px] text-muted-foreground mt-2">
-          등급 선택 시 권장 판매가 가이드가 표시됩니다.
-        </p>
-      </Section>
-
       {/* 최저가 크롤링 */}
       <Section title="신품 최저가 조회">
         <div className="border border-border p-4 space-y-4">
@@ -203,6 +180,29 @@ export function ProductForm({ mode }: { mode: ProductFormMode }) {
             </>
           )}
         </div>
+      </Section>
+
+      {/* 상태 등급 */}
+      <Section title="상태 등급">
+        <div className="grid grid-cols-5 gap-2">
+          {GRADES.map((g) => (
+            <button
+              key={g}
+              onClick={() => setGrade(g)}
+              className={cn(
+                "h-12 border text-sm font-semibold transition-colors",
+                grade === g
+                  ? "border-foreground bg-foreground text-background"
+                  : "border-border hover:bg-muted"
+              )}
+            >
+              {g}
+            </button>
+          ))}
+        </div>
+        <p className="text-[11px] text-muted-foreground mt-2">
+          등급 선택 시 권장 판매가 가이드가 표시됩니다.
+        </p>
       </Section>
 
       {/* 가격 */}
