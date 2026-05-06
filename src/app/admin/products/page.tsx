@@ -219,11 +219,16 @@ export default function AdminProductsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="border-b border-border pb-4">
-        <h2 className="text-xl font-bold">상품 관리</h2>
-        <p className="text-sm text-muted-foreground mt-1">
-          셀러 등록 상품의 사전 검수 / 승인 / 반려 관리
-        </p>
+      <div className="border-b border-border pb-4 flex items-end justify-between">
+        <div>
+          <h2 className="text-xl font-bold">상품 관리</h2>
+          <p className="text-sm text-muted-foreground mt-1">
+            셀러 등록 상품의 사전 검수 / 승인 / 반려 관리
+          </p>
+        </div>
+        <Link href="/admin/products/new">
+          <Button size="sm">+ 상품 직접 등록</Button>
+        </Link>
       </div>
 
       {/* 탭 */}
