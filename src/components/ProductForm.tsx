@@ -12,11 +12,17 @@ type Grade = typeof GRADES[number];
 const CARRIERS = ["CJ대한통운", "롯데택배", "한진택배", "우체국택배"];
 const SHIP_DAYS = ["1일", "2일", "3일", "7일 이내"];
 
-const CRAWL_MOCK: Record<string, { naver: string; coupang: string; brand: string; brandRaw: number }> = {
-  default: { naver: "1,340,000원", coupang: "1,380,000원", brand: "1,580,000원", brandRaw: 1580000 },
+type CrawlSource = { label: string; raw: number; formatted: string };
+
+const CRAWL_MOCK: Record<string, CrawlSource[]> = {
+  default: [
+    { label: "네이버쇼핑", raw: 1340000, formatted: "1,340,000원" },
+    { label: "쿠팡",       raw: 1380000, formatted: "1,380,000원" },
+    { label: "브랜드 공식", raw: 1580000, formatted: "1,580,000원" },
+  ],
 };
 
-function getCrawlData(brand: string, model: string) {
+function getCrawlSources(brand: string, model: string): CrawlSource[] {
   const key = `${brand}_${model}`.toLowerCase();
   return CRAWL_MOCK[key] ?? CRAWL_MOCK.default;
 }
@@ -38,7 +44,8 @@ export function ProductForm({ mode }: { mode: ProductFormMode }) {
   const [carrier, setCarrier] = useState("CJ대한통운");
   const [shipDay, setShipDay] = useState("2일");
   const [crawlState, setCrawlState] = useState<CrawlState>("idle");
-  const [crawlData, setCrawlData] = useState<{ naver: string; coupang: string; brand: string; brandRaw: number } | null>(null);
+  const [crawlSources, setCrawlSources] = useState<CrawlSource[]>([]);
+  const [selectedSource, setSelectedSource] = useState<CrawlSource | null>(null);
   const [price, setPrice] = useState("");
 
   const isBusiness = mode === "seller-business" || mode === "admin";
@@ -48,17 +55,17 @@ export function ProductForm({ mode }: { mode: ProductFormMode }) {
   function handleCrawl() {
     if (!canCrawl) return;
     setCrawlState("loading");
-    setCrawlData(null);
+    setCrawlSources([]);
+    setSelectedSource(null);
     setPrice("");
     setTimeout(() => {
-      setCrawlData(getCrawlData(brand, model));
+      setCrawlSources(getCrawlSources(brand, model));
       setCrawlState("done");
     }, 1600);
   }
 
   const priceNum = parsePrice(price);
-  const maxPrice = crawlData?.brandRaw ?? null;
-  const priceOverLimit = maxPrice !== null && priceNum > 0 && priceNum > maxPrice;
+  const priceOverLimit = selectedSource !== null && priceNum > 0 && priceNum > selectedSource.raw;
   const settlement = priceNum > 0 ? Math.floor(priceNum * 0.85) : null;
 
   return (
@@ -150,18 +157,50 @@ export function ProductForm({ mode }: { mode: ProductFormMode }) {
             </div>
           )}
 
-          {crawlState === "done" && crawlData && (
-            <div className="grid grid-cols-3 gap-3">
-              <CrawlStat label="네이버쇼핑" value={crawlData.naver} />
-              <CrawlStat label="쿠팡" value={crawlData.coupang} />
-              <CrawlStat label="브랜드 공식" value={crawlData.brand} />
-            </div>
-          )}
-
-          {crawlState === "done" && (
-            <p className="text-[11px] text-muted-foreground">
-              신품 최저가 기준으로 적정 판매가를 설정해 주세요. SS·S등급은 신품 최저가 초과 등록이 제한됩니다.
-            </p>
+          {crawlState === "done" && crawlSources.length > 0 && (
+            <>
+              <p className="text-[11px] text-muted-foreground -mb-1">
+                판매가 상한선으로 사용할 기준을 선택하세요.
+              </p>
+              <div className="grid grid-cols-3 gap-3">
+                {crawlSources.map((src) => {
+                  const isSelected = selectedSource?.label === src.label;
+                  return (
+                    <button
+                      key={src.label}
+                      type="button"
+                      onClick={() => setSelectedSource(src)}
+                      className={cn(
+                        "border p-3 text-left transition-colors relative",
+                        isSelected
+                          ? "border-sage-ink bg-sage-soft/20"
+                          : "border-border hover:bg-muted/40"
+                      )}
+                    >
+                      {isSelected && (
+                        <span className="absolute top-2 right-2 w-4 h-4 bg-sage-ink flex items-center justify-center">
+                          <Check size={10} className="text-background" />
+                        </span>
+                      )}
+                      <div className="text-[10px] text-muted-foreground mb-1">{src.label}</div>
+                      <div className={cn("text-sm font-semibold", isSelected ? "text-sage-ink" : "text-foreground")}>
+                        {src.formatted}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+              {selectedSource && (
+                <p className="text-[11px] text-sage-ink">
+                  판매가 상한선: {selectedSource.label} 기준 {selectedSource.formatted}
+                </p>
+              )}
+              {!selectedSource && (
+                <p className="text-[11px] text-amber-500">
+                  기준을 선택해야 판매가를 입력할 수 있습니다.
+                </p>
+              )}
+            </>
           )}
         </div>
       </Section>
@@ -174,19 +213,21 @@ export function ProductForm({ mode }: { mode: ProductFormMode }) {
             <label className="text-xs text-muted-foreground mb-1.5 block">판매가</label>
             <div className={cn(
               "flex items-center border bg-background h-11",
-              priceOverLimit ? "border-red-400" : "border-border"
+              priceOverLimit ? "border-red-400" : "border-border",
+              crawlState === "done" && !selectedSource ? "opacity-40 pointer-events-none" : ""
             )}>
               <input
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
                 placeholder="1,280,000"
-                className="flex-1 h-full px-3 text-sm bg-transparent outline-none"
+                disabled={crawlState === "done" && !selectedSource}
+                className="flex-1 h-full px-3 text-sm bg-transparent outline-none disabled:cursor-not-allowed"
               />
               <span className="text-xs text-muted-foreground px-3">원</span>
             </div>
-            {priceOverLimit && (
+            {priceOverLimit && selectedSource && (
               <p className="text-[11px] text-red-500 mt-1">
-                신품 최저가({crawlData!.brand})를 초과할 수 없습니다.
+                선택한 기준({selectedSource.label} {selectedSource.formatted})을 초과할 수 없습니다.
               </p>
             )}
           </div>
@@ -201,7 +242,7 @@ export function ProductForm({ mode }: { mode: ProductFormMode }) {
           <div className="grid grid-cols-3 gap-3 text-xs">
             <Stat
               label="신품 최저가"
-              value={crawlState === "done" && crawlData ? crawlData.brand : "—"}
+              value={selectedSource ? selectedSource.formatted : "—"}
             />
             <Stat label={`권장가 (${grade}등급)`} value="1,260,000원" />
             <Stat
