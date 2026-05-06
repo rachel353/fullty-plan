@@ -12,14 +12,18 @@ type Grade = typeof GRADES[number];
 const CARRIERS = ["CJ대한통운", "롯데택배", "한진택배", "우체국택배"];
 const SHIP_DAYS = ["1일", "2일", "3일", "7일 이내"];
 
-// 브랜드+모델 기준 최저가 mock
-const CRAWL_MOCK: Record<string, { naver: string; coupang: string; brand: string }> = {
-  default: { naver: "1,340,000원", coupang: "1,380,000원", brand: "1,580,000원" },
+const CRAWL_MOCK: Record<string, { naver: string; coupang: string; brand: string; brandRaw: number }> = {
+  default: { naver: "1,340,000원", coupang: "1,380,000원", brand: "1,580,000원", brandRaw: 1580000 },
 };
 
 function getCrawlData(brand: string, model: string) {
   const key = `${brand}_${model}`.toLowerCase();
   return CRAWL_MOCK[key] ?? CRAWL_MOCK.default;
+}
+
+function parsePrice(val: string) {
+  const n = Number(val.replace(/,/g, ""));
+  return isNaN(n) ? 0 : n;
 }
 
 type CrawlState = "idle" | "loading" | "done";
@@ -34,7 +38,8 @@ export function ProductForm({ mode }: { mode: ProductFormMode }) {
   const [carrier, setCarrier] = useState("CJ대한통운");
   const [shipDay, setShipDay] = useState("2일");
   const [crawlState, setCrawlState] = useState<CrawlState>("idle");
-  const [crawlData, setCrawlData] = useState<{ naver: string; coupang: string; brand: string } | null>(null);
+  const [crawlData, setCrawlData] = useState<{ naver: string; coupang: string; brand: string; brandRaw: number } | null>(null);
+  const [price, setPrice] = useState("");
 
   const isBusiness = mode === "seller-business" || mode === "admin";
   const isAdmin = mode === "admin";
@@ -44,11 +49,17 @@ export function ProductForm({ mode }: { mode: ProductFormMode }) {
     if (!canCrawl) return;
     setCrawlState("loading");
     setCrawlData(null);
+    setPrice("");
     setTimeout(() => {
       setCrawlData(getCrawlData(brand, model));
       setCrawlState("done");
     }, 1600);
   }
+
+  const priceNum = parsePrice(price);
+  const maxPrice = crawlData?.brandRaw ?? null;
+  const priceOverLimit = maxPrice !== null && priceNum > 0 && priceNum > maxPrice;
+  const settlement = priceNum > 0 ? Math.floor(priceNum * 0.85) : null;
 
   return (
     <div className="space-y-8">
@@ -159,7 +170,26 @@ export function ProductForm({ mode }: { mode: ProductFormMode }) {
       <Section title="가격">
         <div className="grid grid-cols-2 gap-3">
           <SimpleField label="공급가" placeholder="900,000" suffix="원" />
-          <SimpleField label="판매가" placeholder="1,280,000" suffix="원" />
+          <div>
+            <label className="text-xs text-muted-foreground mb-1.5 block">판매가</label>
+            <div className={cn(
+              "flex items-center border bg-background h-11",
+              priceOverLimit ? "border-red-400" : "border-border"
+            )}>
+              <input
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+                placeholder="1,280,000"
+                className="flex-1 h-full px-3 text-sm bg-transparent outline-none"
+              />
+              <span className="text-xs text-muted-foreground px-3">원</span>
+            </div>
+            {priceOverLimit && (
+              <p className="text-[11px] text-red-500 mt-1">
+                신품 최저가({crawlData!.brand})를 초과할 수 없습니다.
+              </p>
+            )}
+          </div>
           <SimpleField
             label={isBusiness ? "배송비 (직접 배송)" : "배송비 (풀티 → 구매자)"}
             placeholder="35,000"
@@ -174,7 +204,11 @@ export function ProductForm({ mode }: { mode: ProductFormMode }) {
               value={crawlState === "done" && crawlData ? crawlData.brand : "—"}
             />
             <Stat label={`권장가 (${grade}등급)`} value="1,260,000원" />
-            <Stat label="실 정산액 (수수료 15%)" value="1,088,000원" highlight />
+            <Stat
+              label="실 정산액 (수수료 15%)"
+              value={settlement ? `${settlement.toLocaleString()}원` : "—"}
+              highlight
+            />
           </div>
           {crawlState !== "done" && (
             <p className="text-[11px] text-muted-foreground mt-3">
@@ -309,7 +343,7 @@ export function ProductForm({ mode }: { mode: ProductFormMode }) {
         )}
         <div className="flex gap-2">
           <Button variant="outline">임시저장</Button>
-          <Button>{isAdmin ? "즉시 등록" : isBusiness ? "바로 등록" : "등록 요청"}</Button>
+          <Button disabled={priceOverLimit}>{isAdmin ? "즉시 등록" : isBusiness ? "바로 등록" : "등록 요청"}</Button>
         </div>
       </div>
     </div>
