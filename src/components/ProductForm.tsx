@@ -72,6 +72,7 @@ export function ProductForm({ mode }: { mode: ProductFormMode }) {
   }
 
   const priceNum = parsePrice(price);
+  const vat = priceNum > 0 ? Math.floor(priceNum * 0.1) : 0;
   const priceOverLimit = selectedSource !== null && priceNum > 0 && priceNum > selectedSource.raw;
   const settlement = priceNum > 0 ? Math.floor(priceNum * 0.85) : null;
 
@@ -235,9 +236,9 @@ export function ProductForm({ mode }: { mode: ProductFormMode }) {
               />
               <span className="text-xs text-muted-foreground px-3">원</span>
             </div>
-            {priceOverLimit && selectedSource && (
+            {priceOverLimit && (
               <p className="text-[11px] text-red-500 mt-1">
-                선택한 기준({selectedSource.label} {selectedSource.formatted})을 초과할 수 없습니다.
+                선택한 기준({selectedSource!.label} {selectedSource!.formatted})을 초과할 수 없습니다.
               </p>
             )}
           </div>
@@ -246,7 +247,20 @@ export function ProductForm({ mode }: { mode: ProductFormMode }) {
             placeholder="35,000"
             suffix="원"
           />
-          <SimpleField label="VAT" placeholder="0" suffix="원" />
+          <div>
+            <label className="text-xs text-muted-foreground mb-1.5 block">
+              VAT <span className="text-[10px] text-sage-ink">(판매가의 10% 자동 계산)</span>
+            </label>
+            <div className="flex items-center border border-border bg-muted/30 h-11">
+              <input
+                readOnly
+                value={vat > 0 ? vat.toLocaleString() : ""}
+                placeholder="판매가 입력 시 자동 계산"
+                className="flex-1 h-full px-3 text-sm bg-transparent text-muted-foreground"
+              />
+              <span className="text-xs text-muted-foreground px-3">원</span>
+            </div>
+          </div>
         </div>
         <div className="border border-border p-4 mt-4 bg-muted/40">
           <div className="grid grid-cols-3 gap-3 text-xs">
