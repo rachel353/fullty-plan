@@ -6,8 +6,15 @@ import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { cn } from "@/lib/utils";
 
-const GRADES = ["SS", "S", "A+", "A", "B"] as const;
-type Grade = typeof GRADES[number];
+const GRADES = [
+  { value: "SS", desc: "새상품" },
+  { value: "S",  desc: "미사용 전시급 또는 팩토리 톨러런스" },
+  { value: "A+", desc: "사용이력이 있는 민트급 상품" },
+  { value: "A",  desc: "사용감 있는 양호한 중고 상품" },
+  { value: "B",  desc: "사용감이 뚜렷한 중고 상품" },
+  { value: "V",  desc: "오리지널 빈티지" },
+] as const;
+type Grade = typeof GRADES[number]["value"];
 
 const CARRIERS = ["CJ대한통운", "롯데택배", "한진택배", "우체국택배"];
 const SHIP_DAYS = ["1일", "2일", "3일", "7일 이내"];
@@ -184,25 +191,28 @@ export function ProductForm({ mode }: { mode: ProductFormMode }) {
 
       {/* 상태 등급 */}
       <Section title="상태 등급">
-        <div className="grid grid-cols-5 gap-2">
+        <div className="grid grid-cols-6 gap-2">
           {GRADES.map((g) => (
             <button
-              key={g}
-              onClick={() => setGrade(g)}
+              key={g.value}
+              onClick={() => setGrade(g.value)}
               className={cn(
-                "h-12 border text-sm font-semibold transition-colors",
-                grade === g
+                "border p-3 text-left transition-colors",
+                grade === g.value
                   ? "border-foreground bg-foreground text-background"
                   : "border-border hover:bg-muted"
               )}
             >
-              {g}
+              <div className="text-sm font-bold">{g.value}</div>
+              <div className={cn(
+                "text-[10px] mt-1 leading-snug",
+                grade === g.value ? "text-background/70" : "text-muted-foreground"
+              )}>
+                {g.desc}
+              </div>
             </button>
           ))}
         </div>
-        <p className="text-[11px] text-muted-foreground mt-2">
-          등급 선택 시 권장 판매가 가이드가 표시됩니다.
-        </p>
       </Section>
 
       {/* 가격 */}
