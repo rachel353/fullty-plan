@@ -53,7 +53,9 @@ export function ProductForm({ mode }: { mode: ProductFormMode }) {
   const [crawlState, setCrawlState] = useState<CrawlState>("idle");
   const [crawlSources, setCrawlSources] = useState<CrawlSource[]>([]);
   const [selectedSource, setSelectedSource] = useState<CrawlSource | null>(null);
+  const [supplyPrice, setSupplyPrice] = useState("");
   const [price, setPrice] = useState("");
+  const [shipping, setShipping] = useState("");
 
   const isBusiness = mode === "seller-business" || mode === "admin";
   const isAdmin = mode === "admin";
@@ -71,9 +73,12 @@ export function ProductForm({ mode }: { mode: ProductFormMode }) {
     }, 1600);
   }
 
-  const priceNum = parsePrice(price);
-  const vat = priceNum > 0 ? Math.floor(priceNum * 0.1) : 0;
-  const priceOverLimit = selectedSource !== null && priceNum > 0 && priceNum > selectedSource.raw;
+  const supplyNum  = parsePrice(supplyPrice);
+  const priceNum   = parsePrice(price);
+  const shippingNum = parsePrice(shipping);
+  const vat        = priceNum > 0 ? Math.floor(priceNum * 0.1) : 0;
+  const totalNum   = supplyNum + priceNum + vat + shippingNum;
+  const overLimit  = selectedSource !== null && totalNum > 0 && totalNum > selectedSource.raw;
   const settlement = priceNum > 0 ? Math.floor(priceNum * 0.85) : null;
 
   return (
@@ -219,34 +224,29 @@ export function ProductForm({ mode }: { mode: ProductFormMode }) {
       {/* 가격 */}
       <Section title="가격">
         <div className="grid grid-cols-2 gap-3">
-          <SimpleField label="공급가" placeholder="900,000" suffix="원" />
-          <div>
-            <label className="text-xs text-muted-foreground mb-1.5 block">판매가</label>
-            <div className={cn(
-              "flex items-center border bg-background h-11",
-              priceOverLimit ? "border-red-400" : "border-border",
-              crawlState === "done" && !selectedSource ? "opacity-40 pointer-events-none" : ""
-            )}>
-              <input
-                value={price}
-                onChange={(e) => setPrice(e.target.value)}
-                placeholder="1,280,000"
-                disabled={crawlState === "done" && !selectedSource}
-                className="flex-1 h-full px-3 text-sm bg-transparent outline-none disabled:cursor-not-allowed"
-              />
-              <span className="text-xs text-muted-foreground px-3">원</span>
-            </div>
-            {priceOverLimit && (
-              <p className="text-[11px] text-red-500 mt-1">
-                선택한 기준({selectedSource!.label} {selectedSource!.formatted})을 초과할 수 없습니다.
-              </p>
-            )}
-          </div>
-          <SimpleField
-            label={isBusiness ? "배송비 (직접 배송)" : "배송비 (풀티 → 구매자)"}
-            placeholder="35,000"
-            suffix="원"
+          {/* 공급가 */}
+          <PriceField
+            label="공급가"
+            value={supplyPrice}
+            onChange={setSupplyPrice}
+            placeholder="900,000"
           />
+          {/* 판매가 */}
+          <PriceField
+            label="판매가"
+            value={price}
+            onChange={setPrice}
+            placeholder="1,280,000"
+            disabled={crawlState === "done" && !selectedSource}
+          />
+          {/* 배송비 */}
+          <PriceField
+            label={isBusiness ? "배송비 (직접 배송)" : "배송비 (풀티 → 구매자)"}
+            value={shipping}
+            onChange={setShipping}
+            placeholder="35,000"
+          />
+          {/* VAT */}
           <div>
             <label className="text-xs text-muted-foreground mb-1.5 block">
               VAT <span className="text-[10px] text-sage-ink">(판매가의 10% 자동 계산)</span>
@@ -262,10 +262,26 @@ export function ProductForm({ mode }: { mode: ProductFormMode }) {
             </div>
           </div>
         </div>
-        <div className="border border-border p-4 mt-4 bg-muted/40">
-          <div className="grid grid-cols-3 gap-3 text-xs">
+
+        {/* 합산 + 에러 */}
+        <div className={cn(
+          "border p-4 mt-4",
+          overLimit ? "border-red-300 bg-red-50" : "border-border bg-muted/40"
+        )}>
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-xs text-muted-foreground">공급가 + 판매가 + VAT + 배송비</span>
+            <span className={cn("text-sm font-bold", overLimit ? "text-red-500" : "text-foreground")}>
+              {totalNum > 0 ? `${totalNum.toLocaleString()}원` : "—"}
+            </span>
+          </div>
+          {overLimit && selectedSource && (
+            <p className="text-[11px] text-red-500 mb-3">
+              합산 금액이 선택한 기준({selectedSource.label} {selectedSource.formatted})을 초과합니다.
+            </p>
+          )}
+          <div className="grid grid-cols-3 gap-3 text-xs pt-3 border-t border-border">
             <Stat
-              label="신품 최저가"
+              label="신품 최저가 기준"
               value={selectedSource ? selectedSource.formatted : "—"}
             />
             <Stat label={`권장가 (${grade}등급)`} value="1,260,000원" />
@@ -275,11 +291,6 @@ export function ProductForm({ mode }: { mode: ProductFormMode }) {
               highlight
             />
           </div>
-          {crawlState !== "done" && (
-            <p className="text-[11px] text-muted-foreground mt-3">
-              위 최저가 조회를 먼저 진행하면 신품 최저가가 자동으로 표시됩니다.
-            </p>
-          )}
         </div>
       </Section>
 
@@ -408,7 +419,7 @@ export function ProductForm({ mode }: { mode: ProductFormMode }) {
         )}
         <div className="flex gap-2">
           <Button variant="outline">임시저장</Button>
-          <Button disabled={priceOverLimit}>{isAdmin ? "즉시 등록" : isBusiness ? "바로 등록" : "등록 요청"}</Button>
+          <Button disabled={overLimit}>{isAdmin ? "즉시 등록" : isBusiness ? "바로 등록" : "등록 요청"}</Button>
         </div>
       </div>
     </div>
@@ -431,6 +442,26 @@ function Field({ label, required, children }: { label: string; required?: boolea
         {label}{required && <span className="text-red-400 ml-0.5">*</span>}
       </label>
       {children}
+    </div>
+  );
+}
+
+function PriceField({ label, value, onChange, placeholder, disabled }: {
+  label: string; value: string; onChange: (v: string) => void; placeholder: string; disabled?: boolean;
+}) {
+  return (
+    <div>
+      <label className="text-xs text-muted-foreground mb-1.5 block">{label}</label>
+      <div className={cn("flex items-center border bg-background h-11", disabled ? "opacity-40" : "border-border")}>
+        <input
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={placeholder}
+          disabled={disabled}
+          className="flex-1 h-full px-3 text-sm bg-transparent outline-none focus:border-sage-ink disabled:cursor-not-allowed"
+        />
+        <span className="text-xs text-muted-foreground px-3">원</span>
+      </div>
     </div>
   );
 }
