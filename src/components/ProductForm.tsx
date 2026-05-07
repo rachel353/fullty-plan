@@ -110,19 +110,32 @@ export function ProductForm({ mode }: { mode: ProductFormMode }) {
       {/* 최저가 크롤링 */}
       <Section title="신품 최저가 조회">
         <div className="border border-border p-4 space-y-4">
-          <div className="flex items-center gap-3">
-            <div className="flex-1 text-sm text-muted-foreground">
-              {!canCrawl
-                ? "브랜드와 모델명을 입력하면 신품 최저가를 조회할 수 있습니다."
-                : crawlState === "done"
-                ? <span className="flex items-center gap-1.5 text-sage-ink"><Check size={13} /> {brand} {model} 최저가 조회 완료</span>
-                : `${brand} ${model} 최저가를 조회합니다.`}
+          <div className="grid grid-cols-2 gap-2">
+            <div>
+              <div className="text-[10px] text-muted-foreground mb-1">브랜드</div>
+              <div className={cn(
+                "h-9 px-3 flex items-center text-sm border",
+                brand ? "border-border bg-muted/30 text-foreground" : "border-dashed border-border text-muted-foreground"
+              )}>
+                {brand || "브랜드를 먼저 입력하세요"}
+              </div>
             </div>
+            <div>
+              <div className="text-[10px] text-muted-foreground mb-1">모델명</div>
+              <div className={cn(
+                "h-9 px-3 flex items-center text-sm border",
+                model ? "border-border bg-muted/30 text-foreground" : "border-dashed border-border text-muted-foreground"
+              )}>
+                {model || "모델명을 먼저 입력하세요"}
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center justify-end">
             <button
               onClick={handleCrawl}
               disabled={!canCrawl || crawlState === "loading"}
               className={cn(
-                "flex items-center gap-1.5 px-4 h-9 border text-xs font-medium transition-colors flex-shrink-0",
+                "flex items-center gap-1.5 px-4 h-9 border text-xs font-medium transition-colors",
                 canCrawl
                   ? "border-sage-ink text-sage-ink hover:bg-sage-soft/30"
                   : "border-border text-muted-foreground cursor-not-allowed"
@@ -130,6 +143,8 @@ export function ProductForm({ mode }: { mode: ProductFormMode }) {
             >
               {crawlState === "loading" ? (
                 <><RefreshCw size={12} className="animate-spin" /> 조회 중…</>
+              ) : crawlState === "done" ? (
+                <><RefreshCw size={12} /> 재조회</>
               ) : (
                 <><Search size={12} /> 최저가 크롤링</>
               )}
