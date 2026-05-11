@@ -76,14 +76,17 @@ export default function SellerProductsPage() {
                     <th className="px-4 py-3">렌탈</th>
                     <th className="px-4 py-3">상태</th>
                     {isBusiness && <th className="px-4 py-3">배송</th>}
-                    <th className="px-4 py-3 text-right">관리</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
                   {paged.map((p) => {
                     const status = isBusiness && p.status === "검수중" ? "판매중" : p.status;
                     return (
-                      <tr key={p.id}>
+                      <tr
+                        key={p.id}
+                        onClick={() => window.location.href = `/seller/products/${p.id}`}
+                        className="cursor-pointer hover:bg-muted/40 transition-colors"
+                      >
                         <td className="px-4 py-3">
                           <div className="text-[11px] text-muted-foreground">{p.brand}</div>
                           <div className="font-medium">{p.name}</div>
@@ -110,11 +113,6 @@ export default function SellerProductsPage() {
                             <span className="text-[11px] text-muted-foreground">직배송</span>
                           </td>
                         )}
-                        <td className="px-4 py-3 text-right">
-                          <Link href={`/seller/products/${p.id}`}>
-                            <Button size="sm" variant="ghost">상세</Button>
-                          </Link>
-                        </td>
                       </tr>
                     );
                   })}
