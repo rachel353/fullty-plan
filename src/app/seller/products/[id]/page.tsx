@@ -3,31 +3,24 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, Pencil, TrendingUp, Eye, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
+import { ImageBox } from "@/components/ImageBox";
 import { cn } from "@/lib/utils";
 import { products } from "@/lib/mock";
-import { useSellerType } from "@/lib/seller-context";
+import { formatPrice } from "@/lib/utils";
 
-const GRADES = ["SS", "S", "A+", "A", "B"] as const;
-type Grade = typeof GRADES[number];
-const CARRIERS = ["CJ대한통운", "롯데택배", "한진택배", "우체국택배"];
-const SHIP_DAYS = ["1일", "2일", "3일", "7일 이내"];
+const STATUS_MOCK: Record<string, { label: string; variant: "default" | "sage" | "muted" | "outline" }> = {
+  "판매중": { label: "판매중", variant: "sage" },
+  "렌탈중": { label: "렌탈중", variant: "default" },
+  "품절": { label: "품절", variant: "muted" },
+};
 
-export default function EditSellerProductPage() {
+export default function SellerProductDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const { sellerType } = useSellerType();
-  const isBusiness = sellerType === "사업자";
   const product = products.find((p) => p.id === id);
-
-  const [grade, setGrade] = useState<Grade>((product?.grade as Grade) ?? "S");
-  const [rentalOn, setRentalOn] = useState(
-    product?.availability === "rent" || product?.availability === "both"
-  );
-  const [carrier, setCarrier] = useState("CJ대한통운");
-  const [shipDay, setShipDay] = useState("2일");
-  const [saved, setSaved] = useState(false);
+  const [paused, setPaused] = useState(false);
 
   if (!product) {
     return (
@@ -38,180 +31,92 @@ export default function EditSellerProductPage() {
     );
   }
 
-  function handleSave() {
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
-  }
+  const statusKey = paused ? "품절" : (product.status ?? "판매중");
+  const statusInfo = STATUS_MOCK[statusKey] ?? { label: statusKey, variant: "outline" as const };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 max-w-2xl">
+      {/* 헤더 */}
       <div className="border-b border-border pb-4">
         <Link href="/seller/products" className="flex items-center gap-1 text-xs text-muted-foreground hover:text-sage-ink mb-3 transition-colors">
           <ChevronLeft size={13} /> 상품 관리
         </Link>
         <div className="flex items-start justify-between">
           <div>
-            <h2 className="text-xl font-bold">상품 수정</h2>
-            <p className="text-sm text-muted-foreground mt-1">
-              {isBusiness ? "수정 즉시 반영됩니다." : "수정 후 재검수가 필요할 수 있습니다."}
-            </p>
+            <div className="text-[11px] text-muted-foreground">{product.brand}</div>
+            <h2 className="text-xl font-bold mt-0.5">{product.name}</h2>
+            {product.option && <p className="text-sm text-muted-foreground mt-0.5">{product.option}</p>}
           </div>
-          <Badge variant={isBusiness ? "default" : "outline"}>
-            {isBusiness ? "사업자 셀러" : "개인 셀러"}
-          </Badge>
+          <div className="flex items-center gap-2">
+            <Badge variant={statusInfo.variant}>{statusInfo.label}</Badge>
+            <Link href={`/seller/products/${id}/edit`}>
+              <Button size="sm" variant="outline" className="flex items-center gap-1.5">
+                <Pencil size={12} /> 수정
+              </Button>
+            </Link>
+          </div>
         </div>
       </div>
 
-      {saved && (
-        <div className="border border-sage-deep/30 bg-sage-soft/10 px-5 py-3 text-sm font-medium">
-          저장되었습니다.
-        </div>
-      )}
+      {/* 사진 */}
+      <div className="grid grid-cols-5 gap-2">
+        <ImageBox className="col-span-2 aspect-square" ratio="square" />
+        {[1, 2, 3].map((i) => (
+          <ImageBox key={i} className="aspect-square" ratio="square" />
+        ))}
+      </div>
+
+      {/* 통계 */}
+      <div className="grid grid-cols-3 gap-3">
+        <Stat icon={<Eye size={14} />} label="조회수" value="1,284" />
+        <Stat icon={<MessageSquare size={14} />} label="Q&A" value="3건" />
+        <Stat icon={<TrendingUp size={14} />} label="찜" value="48" />
+      </div>
 
       {/* 기본 정보 */}
       <Section title="기본 정보">
-        <div className="grid grid-cols-2 gap-3">
-          <Field label="브랜드" defaultValue={product.brand} />
-          <Field label="모델명" defaultValue={product.name} />
-          <Field label="옵션 / 사이즈" defaultValue={product.option ?? ""} />
-          <Field label="카테고리" defaultValue={product.category ?? ""} />
+        <div className="border border-border divide-y divide-border text-sm">
+          <Row label="브랜드" value={product.brand} />
+          <Row label="모델명" value={product.name} />
+          <Row label="옵션 / 사이즈" value={product.option ?? "—"} />
+          <Row label="카테고리" value={product.category ?? "—"} />
+          <Row label="등급" value={<Badge variant="default">{product.grade}</Badge>} />
         </div>
-      </Section>
-
-      {/* 상태 등급 */}
-      <Section title="상태 등급">
-        <div className="grid grid-cols-5 gap-2">
-          {GRADES.map((g) => (
-            <button
-              key={g}
-              onClick={() => setGrade(g)}
-              className={cn(
-                "h-12 border text-sm font-semibold transition-colors",
-                grade === g
-                  ? "border-foreground bg-foreground text-background"
-                  : "border-border hover:bg-muted"
-              )}
-            >
-              {g}
-            </button>
-          ))}
-        </div>
-        <p className="text-[11px] text-muted-foreground mt-2">등급 변경 시 재검수가 요청될 수 있습니다.</p>
       </Section>
 
       {/* 가격 */}
       <Section title="가격">
-        <div className="grid grid-cols-2 gap-3">
-          <Field label="공급가" defaultValue={String(Math.round(product.price * 0.7))} suffix="원" />
-          <Field label="판매가" defaultValue={String(product.price)} suffix="원" />
-          <Field
-            label={isBusiness ? "배송비 (직접 배송)" : "배송비 (풀티 → 구매자)"}
-            defaultValue="35000"
-            suffix="원"
-          />
-          <Field label="VAT" defaultValue="0" suffix="원" />
-        </div>
-        <div className="border border-border p-4 mt-4 bg-muted/40">
-          <div className="grid grid-cols-3 gap-3 text-xs">
-            <Stat label="신품 최저가" value="1,580,000원" />
-            <Stat label={`권장가 (${grade}등급)`} value="1,260,000원" />
-            <Stat label="실 정산액 (수수료 15%)" value={`${Math.round(product.price * 0.85).toLocaleString()}원`} highlight />
-          </div>
+        <div className="border border-border divide-y divide-border text-sm">
+          <Row label="판매가" value={<span className="font-semibold">{formatPrice(product.price)}</span>} />
+          <Row label="배송비" value="35,000원" />
+          <Row label="VAT" value={`${Math.round(product.price * 0.1).toLocaleString()}원`} />
+          <Row label="실 정산액 (수수료 15%)" value={<span className="font-semibold text-sage-ink">{Math.round(product.price * 0.85).toLocaleString()}원</span>} />
         </div>
       </Section>
 
-      {/* 배송 설정 — 사업자 전용 */}
-      {isBusiness && (
-        <Section title="직접 배송 설정">
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="text-xs text-muted-foreground mb-1.5 block">사용 택배사</label>
-                <div className="flex flex-wrap gap-2">
-                  {CARRIERS.map((c) => (
-                    <button
-                      key={c}
-                      onClick={() => setCarrier(c)}
-                      className={cn(
-                        "px-3 h-9 border text-xs transition-colors",
-                        carrier === c ? "border-sage-ink bg-sage-ink text-background" : "border-border hover:bg-muted"
-                      )}
-                    >
-                      {c}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <label className="text-xs text-muted-foreground mb-1.5 block">출고 소요일</label>
-                <div className="flex flex-wrap gap-2">
-                  {SHIP_DAYS.map((d) => (
-                    <button
-                      key={d}
-                      onClick={() => setShipDay(d)}
-                      className={cn(
-                        "px-3 h-9 border text-xs transition-colors",
-                        shipDay === d ? "border-sage-ink bg-sage-ink text-background" : "border-border hover:bg-muted"
-                      )}
-                    >
-                      {d}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-            <Field label="반품 배송비" defaultValue="5000" suffix="원" />
+      {/* 렌탈 */}
+      {(product.availability === "rent" || product.availability === "both") && (
+        <Section title="렌탈 공급">
+          <div className="border border-border divide-y divide-border text-sm">
+            <Row label="렌탈 공급" value={<Badge variant="sage">ON</Badge>} />
+            <Row label="최소 렌탈 일수" value="7일" />
+            <Row label="최대 렌탈 일수" value="90일" />
           </div>
         </Section>
       )}
 
-      {/* 렌탈 공급 */}
-      <Section title="렌탈 공급">
-        <div className="border border-border p-4">
-          <label className="flex items-center justify-between mb-4">
-            <div>
-              <div className="text-sm font-medium">렌탈 공급</div>
-              <div className="text-[11px] text-muted-foreground mt-0.5">ON 시 사용자가 렌탈로 시작할 수 있습니다.</div>
-            </div>
-            <button
-              onClick={() => setRentalOn(!rentalOn)}
-              className={cn("w-10 h-6 relative transition-colors", rentalOn ? "bg-sage-ink" : "bg-border")}
-            >
-              <span className={cn("absolute top-0.5 w-5 h-5 bg-background transition-all", rentalOn ? "left-5" : "left-0.5")} />
-            </button>
-          </label>
-          {rentalOn && (
-            <div className="space-y-3">
-              <div className="grid grid-cols-2 gap-3">
-                <Field label="최소 렌탈 일수" defaultValue="7" suffix="일" />
-                <Field label="최대 렌탈 일수" defaultValue="90" suffix="일" />
-              </div>
-            </div>
-          )}
-        </div>
-      </Section>
-
-      {/* 상품 사진 */}
-      <Section title="상품 사진">
-        <div className="grid grid-cols-5 gap-2">
-          <div className="border border-dashed border-border aspect-square flex items-center justify-center text-xs text-muted-foreground">
-            + 추가
-          </div>
-          {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="border border-border aspect-square bg-muted/30" />
-          ))}
-        </div>
-      </Section>
-
-      {/* 하단 */}
+      {/* 하단 액션 */}
       <div className="border-t border-border pt-6 flex items-center justify-between">
-        <Link href="/seller/products">
-          <Button variant="outline">취소</Button>
+        <Button
+          variant="outline"
+          className={cn(paused ? "text-sage-ink border-sage-ink" : "text-muted-foreground")}
+          onClick={() => setPaused(!paused)}
+        >
+          {paused ? "판매 재개" : "판매 일시중지"}
+        </Button>
+        <Link href={`/seller/products/${id}/edit`}>
+          <Button>수정하기</Button>
         </Link>
-        <div className="flex gap-2">
-          <Button variant="outline">임시저장</Button>
-          <Button onClick={handleSave}>저장</Button>
-        </div>
       </div>
     </div>
   );
@@ -226,28 +131,23 @@ function Section({ title, children }: { title: string; children: React.ReactNode
   );
 }
 
-function Field({ label, defaultValue, suffix }: { label: string; defaultValue?: string; suffix?: string }) {
-  const [value, setValue] = useState(defaultValue ?? "");
+function Row({ label, value }: { label: string; value: React.ReactNode }) {
   return (
-    <div>
-      <label className="text-xs text-muted-foreground mb-1.5 block">{label}</label>
-      <div className="flex items-center border border-border bg-background h-11 focus-within:border-sage-ink">
-        <input
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-          className="flex-1 h-full px-3 text-sm bg-transparent outline-none"
-        />
-        {suffix && <span className="text-xs text-muted-foreground px-3">{suffix}</span>}
-      </div>
+    <div className="px-4 py-3 flex items-center justify-between gap-4">
+      <span className="text-muted-foreground text-[11px] w-32 flex-shrink-0">{label}</span>
+      <span className="font-medium text-right">{value}</span>
     </div>
   );
 }
 
-function Stat({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) {
+function Stat({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (
-    <div>
-      <div className="text-muted-foreground">{label}</div>
-      <div className={highlight ? "text-base font-bold mt-1" : "text-sm font-medium mt-1"}>{value}</div>
+    <div className="border border-border p-4 flex items-center gap-3">
+      <div className="text-muted-foreground">{icon}</div>
+      <div>
+        <div className="text-[11px] text-muted-foreground">{label}</div>
+        <div className="text-sm font-semibold mt-0.5">{value}</div>
+      </div>
     </div>
   );
 }
