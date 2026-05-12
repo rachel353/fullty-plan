@@ -54,7 +54,6 @@ export function ProductForm({ mode }: { mode: ProductFormMode }) {
   const [crawlSources, setCrawlSources] = useState<CrawlSource[]>([]);
   const [selectedSource, setSelectedSource] = useState<CrawlSource | null>(null);
   const [supplyPrice, setSupplyPrice] = useState("");
-  const [price, setPrice] = useState("");
   const [shipping, setShipping] = useState("");
 
   const isBusiness = mode === "seller-business" || mode === "admin";
@@ -66,20 +65,19 @@ export function ProductForm({ mode }: { mode: ProductFormMode }) {
     setCrawlState("loading");
     setCrawlSources([]);
     setSelectedSource(null);
-    setPrice("");
     setTimeout(() => {
       setCrawlSources(getCrawlSources(brand, model));
       setCrawlState("done");
     }, 1600);
   }
 
-  const supplyNum  = parsePrice(supplyPrice);
-  const priceNum   = parsePrice(price);
+  const supplyNum   = parsePrice(supplyPrice);
+  const vat         = supplyNum > 0 ? Math.floor(supplyNum * 0.1) : 0;
+  const salePrice   = supplyNum + vat;                          // 판매가 = 공급가 + VAT (소비자가)
   const shippingNum = parsePrice(shipping);
-  const vat        = priceNum > 0 ? Math.floor(priceNum * 0.1) : 0;
-  const totalNum   = supplyNum + priceNum + vat + shippingNum;
-  const overLimit  = selectedSource !== null && totalNum > 0 && totalNum > selectedSource.raw;
-  const settlement = priceNum > 0 ? Math.floor(priceNum * 0.85) : null;
+  const totalNum    = salePrice + shippingNum;                  // 최종 합산 = 판매가 + 배송비
+  const overLimit   = selectedSource !== null && totalNum > 0 && totalNum > selectedSource.raw;
+  const settlement  = salePrice > 0 ? Math.floor(salePrice * 0.85) : null;
 
   return (
     <div className="space-y-8">
@@ -224,68 +222,71 @@ export function ProductForm({ mode }: { mode: ProductFormMode }) {
 
       {/* 가격 */}
       <Section title="가격">
-        <div className="grid grid-cols-2 gap-3">
-          {/* 공급가 */}
-          <PriceField
-            label="공급가"
-            value={supplyPrice}
-            onChange={setSupplyPrice}
-            placeholder="900,000"
-          />
-          {/* 판매가 */}
-          <PriceField
-            label="판매가"
-            value={price}
-            onChange={setPrice}
-            placeholder="1,280,000"
-            disabled={crawlState === "done" && !selectedSource}
-          />
-          {/* 배송비 */}
+        {/* 공급가 입력 */}
+        <PriceField
+          label="공급가"
+          value={supplyPrice}
+          onChange={setSupplyPrice}
+          placeholder="1,000,000"
+        />
+
+        {/* 공급가 + VAT = 판매가 공식 */}
+        <div className="border border-border mt-3">
+          <div className="grid grid-cols-[1fr_auto_1fr_auto_1fr] items-center text-sm">
+            <div className="px-4 py-3">
+              <div className="text-[10px] text-muted-foreground mb-1">공급가</div>
+              <div className="font-medium">
+                {supplyNum > 0 ? `${supplyNum.toLocaleString()}원` : "—"}
+              </div>
+            </div>
+            <div className="text-muted-foreground px-2 text-base font-light">+</div>
+            <div className="px-4 py-3 bg-muted/30">
+              <div className="text-[10px] text-muted-foreground mb-1">VAT (10%)</div>
+              <div className="font-medium text-muted-foreground">
+                {vat > 0 ? `${vat.toLocaleString()}원` : "—"}
+              </div>
+            </div>
+            <div className="text-muted-foreground px-2 text-base font-light">=</div>
+            <div className="px-4 py-3 bg-sage-soft/20">
+              <div className="text-[10px] text-sage-ink mb-1 font-medium">판매가 (소비자가)</div>
+              <div className="font-bold text-sage-ink">
+                {salePrice > 0 ? `${salePrice.toLocaleString()}원` : "—"}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* 배송비 */}
+        <div className="mt-3">
           <PriceField
             label={isBusiness ? "배송비 (직접 배송)" : "배송비 (풀티 → 구매자)"}
             value={shipping}
             onChange={setShipping}
             placeholder="35,000"
           />
-          {/* VAT */}
-          <div>
-            <label className="text-xs text-muted-foreground mb-1.5 block">
-              VAT <span className="text-[10px] text-sage-ink">(판매가의 10% 자동 계산)</span>
-            </label>
-            <div className="flex items-center border border-border bg-muted/30 h-11">
-              <input
-                readOnly
-                value={vat > 0 ? vat.toLocaleString() : ""}
-                placeholder="판매가 입력 시 자동 계산"
-                className="flex-1 h-full px-3 text-sm bg-transparent text-muted-foreground"
-              />
-              <span className="text-xs text-muted-foreground px-3">원</span>
-            </div>
-          </div>
         </div>
 
-        {/* 합산 + 에러 */}
+        {/* 최종 합산 + 에러 */}
         <div className={cn(
           "border p-4 mt-4",
           overLimit ? "border-red-300 bg-red-50" : "border-border bg-muted/40"
         )}>
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs text-muted-foreground">공급가 + 판매가 + VAT + 배송비</span>
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs text-muted-foreground">최종 합산 (판매가 + 배송비)</span>
             <span className={cn("text-sm font-bold", overLimit ? "text-red-500" : "text-foreground")}>
               {totalNum > 0 ? `${totalNum.toLocaleString()}원` : "—"}
             </span>
           </div>
           {overLimit && selectedSource && (
             <p className="text-[11px] text-red-500 mb-3">
-              합산 금액이 선택한 기준({selectedSource.label} {selectedSource.formatted})을 초과합니다.
+              최종 합산이 선택한 기준({selectedSource.label} {selectedSource.formatted})을 초과합니다.
             </p>
           )}
-          <div className="grid grid-cols-3 gap-3 text-xs pt-3 border-t border-border">
+          <div className="grid grid-cols-2 gap-3 text-xs pt-3 border-t border-border">
             <Stat
               label="신품 최저가 기준"
               value={selectedSource ? selectedSource.formatted : "—"}
             />
-            <Stat label={`권장가 (${grade}등급)`} value="1,260,000원" />
             <Stat
               label="실 정산액 (수수료 15%)"
               value={settlement ? `${settlement.toLocaleString()}원` : "—"}
