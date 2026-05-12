@@ -31,6 +31,15 @@ const CRAWL_MOCK: Record<string, number> = {
   default: 1340000,
 };
 
+function calcRental(salePrice: number, days: number): number {
+  if (days <= 0 || salePrice <= 0) return 0;
+  if (days <= 7)  return Math.floor(salePrice * 0.1);
+  if (days <= 14) return Math.floor(salePrice * 0.0075 * days);
+  if (days <= 30) return Math.floor(salePrice * 0.00609 * days);
+  if (days <= 60) return Math.floor(salePrice * 0.0046 * days);
+  return Math.floor(salePrice * 0.00307 * days);
+}
+
 function getNaverPrice(brand: string, model: string): number {
   const key = `${brand}_${model}`.toLowerCase();
   return CRAWL_MOCK[key] ?? CRAWL_MOCK.default;
@@ -391,16 +400,39 @@ export function ProductForm({ mode }: { mode: ProductFormMode }) {
             </button>
           </label>
           {rentalOn && (
-            <div className="space-y-3">
+            <div className="space-y-4">
               <div className="grid grid-cols-2 gap-3">
                 <SimpleField label="최소 렌탈 일수" placeholder="7" suffix="일" />
                 <SimpleField label="최대 렌탈 일수" placeholder="90" suffix="일" />
               </div>
-              <div className="grid grid-cols-3 gap-3 text-xs">
-                <Stat label="7일 예상 렌탈료" value="128,000원" />
-                <Stat label="30일 예상 렌탈료" value="234,000원" />
-                <Stat label="예상 수익 (월)" value="198,900원" highlight />
-              </div>
+              {salePrice > 0 ? (
+                <div className="space-y-2">
+                  <div className="text-[10px] text-muted-foreground tracking-widest uppercase">예상 렌탈료 (판매가 기준)</div>
+                  <div className="grid grid-cols-4 gap-2 text-xs">
+                    {[
+                      { label: "7일", days: 7 },
+                      { label: "14일", days: 14 },
+                      { label: "30일", days: 30 },
+                      { label: "60일", days: 60 },
+                    ].map(({ label, days }) => (
+                      <div key={days} className="border border-border p-2.5">
+                        <div className="text-muted-foreground mb-1">{label}</div>
+                        <div className="font-semibold">{calcRental(salePrice, days).toLocaleString()}원</div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="border border-border p-3 bg-muted/30 flex items-center justify-between text-xs">
+                    <span className="text-muted-foreground">30일 기준 예상 정산액 (수수료 15%)</span>
+                    <span className="font-bold text-sage-ink">
+                      {Math.floor(calcRental(salePrice, 30) * 0.85).toLocaleString()}원
+                    </span>
+                  </div>
+                </div>
+              ) : (
+                <p className="text-[11px] text-muted-foreground">
+                  공급가를 입력하면 예상 렌탈료가 표시됩니다.
+                </p>
+              )}
             </div>
           )}
         </div>
