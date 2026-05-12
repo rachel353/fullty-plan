@@ -60,6 +60,9 @@ export function ProductForm({ mode }: { mode: ProductFormMode }) {
   const [grade, setGrade] = useState<Grade>("S");
   const [isVintage, setIsVintage] = useState(false);
   const [rentalOn, setRentalOn] = useState(false);
+  const [rentalPeriods, setRentalPeriods] = useState<number[]>([7, 30]);
+  const [rentalConvert, setRentalConvert] = useState(true);
+  const [rentalExtend, setRentalExtend] = useState(true);
   const [carrier, setCarrier] = useState("CJ대한통운");
   const [shipDay, setShipDay] = useState("2일");
   const [crawlState, setCrawlState] = useState<CrawlState>("idle");
@@ -400,38 +403,78 @@ export function ProductForm({ mode }: { mode: ProductFormMode }) {
             </button>
           </label>
           {rentalOn && (
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-3">
-                <SimpleField label="최소 렌탈 일수" placeholder="7" suffix="일" />
-                <SimpleField label="최대 렌탈 일수" placeholder="90" suffix="일" />
+            <div className="space-y-5 pt-1">
+
+              {/* 제공 기간 */}
+              <div>
+                <div className="text-xs text-muted-foreground mb-2">제공 렌탈 기간 <span className="text-[10px]">(복수 선택)</span></div>
+                <div className="flex gap-2 flex-wrap">
+                  {[7, 14, 30, 60, 90].map((d) => {
+                    const on = rentalPeriods.includes(d);
+                    return (
+                      <button
+                        key={d}
+                        type="button"
+                        onClick={() =>
+                          setRentalPeriods((prev) =>
+                            on ? prev.filter((x) => x !== d) : [...prev, d].sort((a, b) => a - b)
+                          )
+                        }
+                        className={cn(
+                          "px-4 h-9 text-xs font-medium border transition-colors",
+                          on ? "border-foreground bg-foreground text-background" : "border-border hover:bg-muted"
+                        )}
+                      >
+                        {d}일
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
-              {salePrice > 0 ? (
+
+              {/* 옵션 토글 */}
+              <div className="space-y-3">
+                <RentalToggle
+                  label="구매 전환 허용"
+                  desc="렌탈 기간 중 구매 전환을 허용합니다."
+                  value={rentalConvert}
+                  onChange={setRentalConvert}
+                />
+                <RentalToggle
+                  label="기간 연장 허용"
+                  desc="렌탈 종료 전 구매자가 기간 연장을 신청할 수 있습니다."
+                  value={rentalExtend}
+                  onChange={setRentalExtend}
+                />
+              </div>
+
+              {/* 예상 렌탈료 */}
+              {salePrice > 0 && rentalPeriods.length > 0 ? (
                 <div className="space-y-2">
                   <div className="text-[10px] text-muted-foreground tracking-widest uppercase">예상 렌탈료 (판매가 기준)</div>
-                  <div className="grid grid-cols-4 gap-2 text-xs">
-                    {[
-                      { label: "7일", days: 7 },
-                      { label: "14일", days: 14 },
-                      { label: "30일", days: 30 },
-                      { label: "60일", days: 60 },
-                    ].map(({ label, days }) => (
+                  <div className={cn("grid gap-2 text-xs", rentalPeriods.length <= 3 ? "grid-cols-3" : "grid-cols-4")}>
+                    {rentalPeriods.map((days) => (
                       <div key={days} className="border border-border p-2.5">
-                        <div className="text-muted-foreground mb-1">{label}</div>
+                        <div className="text-muted-foreground mb-1">{days}일</div>
                         <div className="font-semibold">{calcRental(salePrice, days).toLocaleString()}원</div>
                       </div>
                     ))}
                   </div>
                   <div className="border border-border p-3 bg-muted/30 flex items-center justify-between text-xs">
-                    <span className="text-muted-foreground">30일 기준 예상 정산액 (수수료 15%)</span>
+                    <span className="text-muted-foreground">
+                      {rentalPeriods.includes(30) ? "30일" : `${rentalPeriods[rentalPeriods.length - 1]}일`} 기준 예상 정산액 (수수료 15%)
+                    </span>
                     <span className="font-bold text-sage-ink">
-                      {Math.floor(calcRental(salePrice, 30) * 0.85).toLocaleString()}원
+                      {Math.floor(
+                        calcRental(salePrice, rentalPeriods.includes(30) ? 30 : rentalPeriods[rentalPeriods.length - 1]) * 0.85
+                      ).toLocaleString()}원
                     </span>
                   </div>
                 </div>
+              ) : salePrice === 0 ? (
+                <p className="text-[11px] text-muted-foreground">공급가를 입력하면 예상 렌탈료가 표시됩니다.</p>
               ) : (
-                <p className="text-[11px] text-muted-foreground">
-                  공급가를 입력하면 예상 렌탈료가 표시됩니다.
-                </p>
+                <p className="text-[11px] text-muted-foreground">제공 기간을 하나 이상 선택해 주세요.</p>
               )}
             </div>
           )}
@@ -484,6 +527,26 @@ function Field({ label, required, children }: { label: string; required?: boolea
         {label}{required && <span className="text-red-400 ml-0.5">*</span>}
       </label>
       {children}
+    </div>
+  );
+}
+
+function RentalToggle({ label, desc, value, onChange }: {
+  label: string; desc: string; value: boolean; onChange: (v: boolean) => void;
+}) {
+  return (
+    <div className="flex items-center justify-between border border-border px-4 py-3">
+      <div>
+        <div className="text-sm font-medium">{label}</div>
+        <div className="text-[11px] text-muted-foreground mt-0.5">{desc}</div>
+      </div>
+      <button
+        type="button"
+        onClick={() => onChange(!value)}
+        className={cn("w-10 h-6 relative flex-shrink-0 transition-colors", value ? "bg-sage-ink" : "bg-border")}
+      >
+        <span className={cn("absolute top-0.5 w-5 h-5 bg-background transition-all", value ? "left-5" : "left-0.5")} />
+      </button>
     </div>
   );
 }
