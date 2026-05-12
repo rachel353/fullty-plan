@@ -7,14 +7,22 @@ import { Badge } from "@/components/ui/Badge";
 import { cn } from "@/lib/utils";
 
 const GRADES = [
-  { value: "SS", desc: "새상품" },
-  { value: "S",  desc: "미사용 전시급 또는 팩토리 톨러런스" },
-  { value: "A+", desc: "사용이력이 있는 민트급 상품" },
-  { value: "A",  desc: "사용감 있는 양호한 중고 상품" },
-  { value: "B",  desc: "사용감이 뚜렷한 중고 상품" },
+  { value: "SS", desc: "새상품",                         ratio: 0.95 },
+  { value: "S",  desc: "미사용 전시급 또는 팩토리 톨러런스", ratio: 0.85 },
+  { value: "A+", desc: "사용이력이 있는 민트급 상품",       ratio: 0.75 },
+  { value: "A",  desc: "사용감 있는 양호한 중고 상품",      ratio: 0.65 },
+  { value: "B",  desc: "사용감이 뚜렷한 중고 상품",        ratio: 0.55 },
   { value: "V",  desc: "오리지널 빈티지" },
 ] as const;
 type Grade = typeof GRADES[number]["value"];
+
+// 판매가 = 공급가 × 1.1  →  공급가 = 판매가 / 1.1
+// 판매가 = naver × ratio  →  공급가 = floor(naver × ratio / 1.1)
+function autoSupplyPrice(naverPrice: number, grade: Grade): string {
+  const g = GRADES.find((x) => x.value === grade);
+  if (!g || !("ratio" in g)) return "";
+  return Math.floor(naverPrice * g.ratio / 1.1).toLocaleString();
+}
 
 const CARRIERS = ["CJ대한통운", "롯데택배", "한진택배", "우체국택배"];
 const SHIP_DAYS = ["1일", "2일", "3일", "7일 이내"];
@@ -161,7 +169,10 @@ export function ProductForm({ mode }: { mode: ProductFormMode }) {
           {GRADES.filter((g) => g.value !== "V").map((g) => (
             <button
               key={g.value}
-              onClick={() => setGrade(g.value)}
+              onClick={() => {
+                setGrade(g.value);
+                if (minPriceNum > 0) setSupplyPrice(autoSupplyPrice(minPriceNum, g.value));
+              }}
               className={cn(
                 "border p-3 text-left transition-colors",
                 grade === g.value
@@ -209,12 +220,23 @@ export function ProductForm({ mode }: { mode: ProductFormMode }) {
       {/* 가격 */}
       <Section title="가격">
         {/* 공급가 입력 */}
-        <PriceField
-          label="공급가"
-          value={supplyPrice}
-          onChange={setSupplyPrice}
-          placeholder="1,000,000"
-        />
+        <div>
+          <div className="flex items-center justify-between mb-1.5">
+            <label className="text-xs text-muted-foreground">공급가</label>
+            {minPriceNum > 0 && supplyPrice && (
+              <span className="text-[10px] text-sage-ink">등급 선택 시 자동 계산 · 직접 수정 가능</span>
+            )}
+          </div>
+          <div className="flex items-center border border-border bg-background h-11 focus-within:border-sage-ink">
+            <input
+              value={supplyPrice}
+              onChange={(e) => setSupplyPrice(e.target.value)}
+              placeholder={minPriceNum > 0 ? "등급을 선택하면 자동 계산됩니다" : "1,000,000"}
+              className="flex-1 h-full px-3 text-sm bg-transparent outline-none"
+            />
+            <span className="text-xs text-muted-foreground px-3">원</span>
+          </div>
+        </div>
 
         {/* 공급가 + VAT = 판매가 공식 */}
         <div className="border border-border mt-3">
@@ -339,11 +361,11 @@ export function ProductForm({ mode }: { mode: ProductFormMode }) {
 
       {/* 배송 — 개인 셀러 */}
       {mode === "seller-individual" && (
-        <Section title="풀티 검수센터 배송 안내">
+        <Section title="풀티 배송 안내">
           <div className="border border-border p-4 bg-muted/20 space-y-2 text-sm">
-            <div className="font-medium">풀티 검수센터</div>
+            <div className="font-medium">풀티</div>
             <div className="text-sm text-muted-foreground">서울특별시 성동구 왕십리로 130, B동 3층</div>
-            <div className="text-sm text-muted-foreground">수령인: 풀티 검수팀 · 02-1234-5678</div>
+            <div className="text-sm text-muted-foreground">수령인: 풀티 · 02-1234-5678</div>
             <div className="mt-3 pt-3 border-t border-border text-[11px] text-muted-foreground space-y-1">
               <div>· 상품 박스 외면에 <strong className="text-sage-ink">등록 신청 번호</strong>를 반드시 기재해주세요.</div>
               <div>· 예상 검수 기간: 수령 후 3~5 영업일</div>
