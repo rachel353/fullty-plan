@@ -41,6 +41,7 @@ export function ProductForm({ mode }: { mode: ProductFormMode }) {
   const [brand, setBrand] = useState("");
   const [model, setModel] = useState("");
   const [grade, setGrade] = useState<Grade>("S");
+  const [isVintage, setIsVintage] = useState(false);
   const [rentalOn, setRentalOn] = useState(false);
   const [carrier, setCarrier] = useState("CJ대한통운");
   const [shipDay, setShipDay] = useState("2일");
@@ -67,9 +68,8 @@ export function ProductForm({ mode }: { mode: ProductFormMode }) {
   const vat         = supplyNum > 0 ? Math.floor(supplyNum * 0.1) : 0;
   const salePrice   = supplyNum + vat;
   const shippingNum = parsePrice(shipping);
-  const totalNum    = salePrice + shippingNum;
   const minPriceNum = parsePrice(minPrice);
-  const overLimit   = minPriceNum > 0 && totalNum > 0 && totalNum > minPriceNum;
+  const overLimit   = minPriceNum > 0 && salePrice > 0 && salePrice > minPriceNum;
   const settlement  = salePrice > 0 ? Math.floor(salePrice * 0.85) : null;
 
   return (
@@ -146,7 +146,7 @@ export function ProductForm({ mode }: { mode: ProductFormMode }) {
               </div>
               {crawlState === "done" && (
                 <p className="text-[11px] text-muted-foreground mt-1">
-                  공급가 + VAT + 배송비 합산이 이 금액을 초과하면 등록이 제한됩니다.
+                  공급가 + VAT(판매가)가 이 금액을 초과하면 등록이 제한됩니다.
                 </p>
               )}
             </div>
@@ -156,8 +156,9 @@ export function ProductForm({ mode }: { mode: ProductFormMode }) {
 
       {/* 상태 등급 */}
       <Section title="상태 등급">
-        <div className="grid grid-cols-6 gap-2">
-          {GRADES.map((g) => (
+        {/* SS ~ B : 단일 선택 */}
+        <div className="grid grid-cols-5 gap-2">
+          {GRADES.filter((g) => g.value !== "V").map((g) => (
             <button
               key={g.value}
               onClick={() => setGrade(g.value)}
@@ -169,15 +170,40 @@ export function ProductForm({ mode }: { mode: ProductFormMode }) {
               )}
             >
               <div className="text-sm font-bold">{g.value}</div>
-              <div className={cn(
-                "text-[10px] mt-1 leading-snug",
-                grade === g.value ? "text-background/70" : "text-muted-foreground"
-              )}>
+              <div className={cn("text-[10px] mt-1 leading-snug", grade === g.value ? "text-background/70" : "text-muted-foreground")}>
                 {g.desc}
               </div>
             </button>
           ))}
         </div>
+        {/* V : 중복 선택 가능 */}
+        <div className="mt-2">
+          <button
+            onClick={() => setIsVintage(!isVintage)}
+            className={cn(
+              "w-full border p-3 text-left transition-colors flex items-center gap-3",
+              isVintage ? "border-sage-deep bg-sage-soft/20" : "border-border hover:bg-muted"
+            )}
+          >
+            <div className={cn(
+              "w-4 h-4 border-2 flex items-center justify-center flex-shrink-0 transition-colors",
+              isVintage ? "border-sage-deep bg-sage-deep" : "border-border"
+            )}>
+              {isVintage && <span className="text-background text-[10px] font-bold leading-none">✓</span>}
+            </div>
+            <div>
+              <span className={cn("text-sm font-bold mr-2", isVintage ? "text-sage-deep" : "")}>V</span>
+              <span className={cn("text-[10px]", isVintage ? "text-sage-deep/80" : "text-muted-foreground")}>
+                오리지널 빈티지 — SS~B 등급과 동시 선택 가능
+              </span>
+            </div>
+          </button>
+        </div>
+        {isVintage && (
+          <p className="text-[11px] text-sage-deep mt-1.5">
+            선택된 등급: {grade} · V
+          </p>
+        )}
       </Section>
 
       {/* 가격 */}
@@ -232,14 +258,14 @@ export function ProductForm({ mode }: { mode: ProductFormMode }) {
           overLimit ? "border-red-300 bg-red-50" : "border-border bg-muted/40"
         )}>
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs text-muted-foreground">최종 합산 (판매가 + 배송비)</span>
+            <span className="text-xs text-muted-foreground">판매가 (공급가 + VAT)</span>
             <span className={cn("text-sm font-bold", overLimit ? "text-red-500" : "text-foreground")}>
-              {totalNum > 0 ? `${totalNum.toLocaleString()}원` : "—"}
+              {salePrice > 0 ? `${salePrice.toLocaleString()}원` : "—"}
             </span>
           </div>
           {overLimit && (
             <p className="text-[11px] text-red-500 mb-3">
-              최종 합산이 네이버 신품 최저가({minPriceNum.toLocaleString()}원)를 초과합니다.
+              판매가({salePrice.toLocaleString()}원)가 네이버 신품 최저가({minPriceNum.toLocaleString()}원)를 초과합니다.
             </p>
           )}
           <div className="grid grid-cols-2 gap-3 text-xs pt-3 border-t border-border">
