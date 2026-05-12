@@ -61,8 +61,6 @@ export function ProductForm({ mode }: { mode: ProductFormMode }) {
   const [isVintage, setIsVintage] = useState(false);
   const [rentalOn, setRentalOn] = useState(false);
   const [rentalPeriods, setRentalPeriods] = useState<number[]>([7, 30]);
-  const [rentalConvert, setRentalConvert] = useState(true);
-  const [rentalExtend, setRentalExtend] = useState(true);
   const [carrier, setCarrier] = useState("CJ대한통운");
   const [shipDay, setShipDay] = useState("2일");
   const [crawlState, setCrawlState] = useState<CrawlState>("idle");
@@ -432,22 +430,6 @@ export function ProductForm({ mode }: { mode: ProductFormMode }) {
                 </div>
               </div>
 
-              {/* 옵션 토글 */}
-              <div className="space-y-3">
-                <RentalToggle
-                  label="구매 전환 허용"
-                  desc="렌탈 기간 중 구매 전환을 허용합니다."
-                  value={rentalConvert}
-                  onChange={setRentalConvert}
-                />
-                <RentalToggle
-                  label="기간 연장 허용"
-                  desc="렌탈 종료 전 구매자가 기간 연장을 신청할 수 있습니다."
-                  value={rentalExtend}
-                  onChange={setRentalExtend}
-                />
-              </div>
-
               {/* 예상 렌탈료 */}
               {salePrice > 0 && rentalPeriods.length > 0 ? (
                 <div className="space-y-2">
@@ -531,25 +513,6 @@ function Field({ label, required, children }: { label: string; required?: boolea
   );
 }
 
-function RentalToggle({ label, desc, value, onChange }: {
-  label: string; desc: string; value: boolean; onChange: (v: boolean) => void;
-}) {
-  return (
-    <div className="flex items-center justify-between border border-border px-4 py-3">
-      <div>
-        <div className="text-sm font-medium">{label}</div>
-        <div className="text-[11px] text-muted-foreground mt-0.5">{desc}</div>
-      </div>
-      <button
-        type="button"
-        onClick={() => onChange(!value)}
-        className={cn("w-10 h-6 relative flex-shrink-0 transition-colors", value ? "bg-sage-ink" : "bg-border")}
-      >
-        <span className={cn("absolute top-0.5 w-5 h-5 bg-background transition-all", value ? "left-5" : "left-0.5")} />
-      </button>
-    </div>
-  );
-}
 
 function PriceField({ label, value, onChange, placeholder, disabled }: {
   label: string; value: string; onChange: (v: string) => void; placeholder: string; disabled?: boolean;
