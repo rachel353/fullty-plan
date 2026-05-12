@@ -19,17 +19,11 @@ type Grade = typeof GRADES[number]["value"];
 const CARRIERS = ["CJ대한통운", "롯데택배", "한진택배", "우체국택배"];
 const SHIP_DAYS = ["1일", "2일", "3일", "7일 이내"];
 
-type CrawlSource = { label: string; raw: number; formatted: string };
-
-const CRAWL_MOCK: Record<string, CrawlSource[]> = {
-  default: [
-    { label: "네이버쇼핑", raw: 1340000, formatted: "1,340,000원" },
-    { label: "쿠팡",       raw: 1380000, formatted: "1,380,000원" },
-    { label: "브랜드 공식", raw: 1580000, formatted: "1,580,000원" },
-  ],
+const CRAWL_MOCK: Record<string, number> = {
+  default: 1340000,
 };
 
-function getCrawlSources(brand: string, model: string): CrawlSource[] {
+function getNaverPrice(brand: string, model: string): number {
   const key = `${brand}_${model}`.toLowerCase();
   return CRAWL_MOCK[key] ?? CRAWL_MOCK.default;
 }
@@ -51,8 +45,7 @@ export function ProductForm({ mode }: { mode: ProductFormMode }) {
   const [carrier, setCarrier] = useState("CJ대한통운");
   const [shipDay, setShipDay] = useState("2일");
   const [crawlState, setCrawlState] = useState<CrawlState>("idle");
-  const [crawlSources, setCrawlSources] = useState<CrawlSource[]>([]);
-  const [selectedSource, setSelectedSource] = useState<CrawlSource | null>(null);
+  const [minPrice, setMinPrice] = useState("");   // 네이버 최저가 (수정 가능)
   const [supplyPrice, setSupplyPrice] = useState("");
   const [shipping, setShipping] = useState("");
 
@@ -63,20 +56,20 @@ export function ProductForm({ mode }: { mode: ProductFormMode }) {
   function handleCrawl() {
     if (!canCrawl) return;
     setCrawlState("loading");
-    setCrawlSources([]);
-    setSelectedSource(null);
     setTimeout(() => {
-      setCrawlSources(getCrawlSources(brand, model));
+      const price = getNaverPrice(brand, model);
+      setMinPrice(price.toLocaleString());
       setCrawlState("done");
     }, 1600);
   }
 
   const supplyNum   = parsePrice(supplyPrice);
   const vat         = supplyNum > 0 ? Math.floor(supplyNum * 0.1) : 0;
-  const salePrice   = supplyNum + vat;                          // 판매가 = 공급가 + VAT (소비자가)
+  const salePrice   = supplyNum + vat;
   const shippingNum = parsePrice(shipping);
-  const totalNum    = salePrice + shippingNum;                  // 최종 합산 = 판매가 + 배송비
-  const overLimit   = selectedSource !== null && totalNum > 0 && totalNum > selectedSource.raw;
+  const totalNum    = salePrice + shippingNum;
+  const minPriceNum = parsePrice(minPrice);
+  const overLimit   = minPriceNum > 0 && totalNum > 0 && totalNum > minPriceNum;
   const settlement  = salePrice > 0 ? Math.floor(salePrice * 0.85) : null;
 
   return (
@@ -108,88 +101,55 @@ export function ProductForm({ mode }: { mode: ProductFormMode }) {
       {/* 최저가 크롤링 */}
       <Section title="신품 최저가 조회">
         <div className="border border-border p-4 space-y-4">
+          {/* 안내 문구 + 크롤링 버튼 */}
           <div className="flex items-center gap-3">
-            <div className="flex-1 text-sm text-muted-foreground">
+            <p className="flex-1 text-sm text-muted-foreground">
               {crawlState === "done"
                 ? <span className="flex items-center gap-1.5 text-sage-ink"><Check size={13} /> {brand} {model} 최저가 조회 완료</span>
-                : `${brand || "브랜드"}와 ${model || "모델명"}을 입력하면 신품 최저가를 조회할 수 있습니다.`
-              }
-            </div>
+                : `${brand || "브랜드"}와 ${model || "모델명"}을 입력하면 신품 최저가를 조회할 수 있습니다.`}
+            </p>
             <button
               onClick={handleCrawl}
               disabled={!canCrawl || crawlState === "loading"}
               className={cn(
                 "flex items-center gap-1.5 px-4 h-9 border text-xs font-medium transition-colors flex-shrink-0",
-                canCrawl
-                  ? "border-sage-ink text-sage-ink hover:bg-sage-soft/30"
-                  : "border-border text-muted-foreground cursor-not-allowed"
+                canCrawl ? "border-sage-ink text-sage-ink hover:bg-sage-soft/30" : "border-border text-muted-foreground cursor-not-allowed"
               )}
             >
-              {crawlState === "loading" ? (
-                <><RefreshCw size={12} className="animate-spin" /> 조회 중…</>
-              ) : crawlState === "done" ? (
-                <><RefreshCw size={12} /> 재조회</>
-              ) : (
-                <><Search size={12} /> 최저가 크롤링</>
-              )}
+              {crawlState === "loading"
+                ? <><RefreshCw size={12} className="animate-spin" /> 조회 중…</>
+                : crawlState === "done"
+                ? <><RefreshCw size={12} /> 재조회</>
+                : <><Search size={12} /> 최저가 크롤링</>}
             </button>
           </div>
 
-          {crawlState === "loading" && (
-            <div className="grid grid-cols-3 gap-3">
-              {["네이버쇼핑", "쿠팡", "브랜드 공식"].map((src) => (
-                <div key={src} className="space-y-1.5">
-                  <div className="text-[10px] text-muted-foreground">{src}</div>
-                  <div className="h-5 bg-muted animate-pulse rounded" />
-                </div>
-              ))}
-            </div>
-          )}
-
-          {crawlState === "done" && crawlSources.length > 0 && (
-            <>
-              <p className="text-[11px] text-muted-foreground -mb-1">
-                판매가 상한선으로 사용할 기준을 선택하세요.
-              </p>
-              <div className="grid grid-cols-3 gap-3">
-                {crawlSources.map((src) => {
-                  const isSelected = selectedSource?.label === src.label;
-                  return (
-                    <button
-                      key={src.label}
-                      type="button"
-                      onClick={() => setSelectedSource(src)}
-                      className={cn(
-                        "border p-3 text-left transition-colors relative",
-                        isSelected
-                          ? "border-sage-ink bg-sage-soft/20"
-                          : "border-border hover:bg-muted/40"
-                      )}
-                    >
-                      {isSelected && (
-                        <span className="absolute top-2 right-2 w-4 h-4 bg-sage-ink flex items-center justify-center">
-                          <Check size={10} className="text-background" />
-                        </span>
-                      )}
-                      <div className="text-[10px] text-muted-foreground mb-1">{src.label}</div>
-                      <div className={cn("text-sm font-semibold", isSelected ? "text-sage-ink" : "text-foreground")}>
-                        {src.formatted}
-                      </div>
-                    </button>
-                  );
-                })}
+          {/* 결과 입력란 */}
+          {crawlState !== "idle" && (
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="text-[11px] text-muted-foreground">
+                  네이버쇼핑 신품 최저가
+                  <span className="ml-1.5 text-[10px] text-sage-ink">(직접 수정 가능)</span>
+                </label>
               </div>
-              {selectedSource && (
-                <p className="text-[11px] text-sage-ink">
-                  판매가 상한선: {selectedSource.label} 기준 {selectedSource.formatted}
+              <div className="flex items-center border border-border bg-background h-11 focus-within:border-sage-ink">
+                {crawlState === "loading"
+                  ? <div className="flex-1 h-5 mx-3 bg-muted animate-pulse" />
+                  : <input
+                      value={minPrice}
+                      onChange={(e) => setMinPrice(e.target.value)}
+                      className="flex-1 h-full px-3 text-sm bg-transparent outline-none font-medium"
+                    />
+                }
+                <span className="text-xs text-muted-foreground px-3">원</span>
+              </div>
+              {crawlState === "done" && (
+                <p className="text-[11px] text-muted-foreground mt-1">
+                  공급가 + VAT + 배송비 합산이 이 금액을 초과하면 등록이 제한됩니다.
                 </p>
               )}
-              {!selectedSource && (
-                <p className="text-[11px] text-amber-500">
-                  기준을 선택해야 판매가를 입력할 수 있습니다.
-                </p>
-              )}
-            </>
+            </div>
           )}
         </div>
       </Section>
@@ -277,15 +237,15 @@ export function ProductForm({ mode }: { mode: ProductFormMode }) {
               {totalNum > 0 ? `${totalNum.toLocaleString()}원` : "—"}
             </span>
           </div>
-          {overLimit && selectedSource && (
+          {overLimit && (
             <p className="text-[11px] text-red-500 mb-3">
-              최종 합산이 선택한 기준({selectedSource.label} {selectedSource.formatted})을 초과합니다.
+              최종 합산이 네이버 신품 최저가({minPriceNum.toLocaleString()}원)를 초과합니다.
             </p>
           )}
           <div className="grid grid-cols-2 gap-3 text-xs pt-3 border-t border-border">
             <Stat
-              label="신품 최저가 기준"
-              value={selectedSource ? selectedSource.formatted : "—"}
+              label="네이버 신품 최저가"
+              value={minPriceNum > 0 ? `${minPriceNum.toLocaleString()}원` : "—"}
             />
             <Stat
               label="실 정산액 (수수료 15%)"
