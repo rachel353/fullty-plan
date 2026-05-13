@@ -468,7 +468,7 @@ function ProductTable({
         </tbody>
       </table>
     </div>
-    {totalPages > 1 && (
+    {(
       <div className="flex items-center justify-between text-xs text-muted-foreground">
         <span>{products.length}개 중 {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, products.length)}개</span>
         <div className="flex items-center gap-1">
