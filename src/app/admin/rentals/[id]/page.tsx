@@ -124,23 +124,93 @@ function ReturnModal({ onConfirm, onClose }: { onConfirm: () => void; onClose: (
   );
 }
 
-function CompleteReturnModal({ onConfirm, onClose }: { onConfirm: () => void; onClose: () => void }) {
+const INSPECT_GRADES = [
+  { value: "SS", desc: "새상품" },
+  { value: "S",  desc: "미사용 전시급" },
+  { value: "A+", desc: "민트급" },
+  { value: "A",  desc: "양호한 중고" },
+  { value: "B",  desc: "사용감 뚜렷" },
+  { value: "V",  desc: "오리지널 빈티지" },
+] as const;
+
+function CompleteReturnModal({ onConfirm, onClose }: { onConfirm: (grade: string, memo: string) => void; onClose: () => void }) {
+  const [step, setStep] = useState<"confirm" | "inspect">("confirm");
+  const [grade, setGrade] = useState("");
+  const [memo, setMemo] = useState("");
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
       <div className="relative bg-background border border-border w-full max-w-sm p-6 space-y-5 z-10">
         <div className="flex items-center justify-between">
-          <h3 className="text-base font-semibold">회수 완료 처리</h3>
+          <h3 className="text-base font-semibold">
+            {step === "confirm" ? "회수 완료 확인" : "회수 후 검수"}
+          </h3>
           <button onClick={onClose}><X size={16} className="text-muted-foreground" /></button>
         </div>
-        <p className="text-sm text-muted-foreground leading-relaxed">
-          상품 회수가 완료되었음을 확인합니다.<br />
-          렌탈이 종료되고 상품은 판매 상태로 전환됩니다.
-        </p>
-        <div className="flex gap-2 pt-1">
-          <Button variant="outline" className="flex-1" onClick={onClose}>취소</Button>
-          <Button className="flex-1" onClick={onConfirm}>회수 완료</Button>
+
+        {/* 스텝 인디케이터 */}
+        <div className="flex items-center gap-2 text-[11px]">
+          <span className={cn("px-2 py-0.5 border", step === "confirm" ? "border-foreground bg-foreground text-background" : "border-sage-ink text-sage-ink")}>1 회수 확인</span>
+          <span className="text-muted-foreground">→</span>
+          <span className={cn("px-2 py-0.5 border", step === "inspect" ? "border-foreground bg-foreground text-background" : "border-border text-muted-foreground")}>2 검수 · 등급</span>
         </div>
+
+        {step === "confirm" && (
+          <>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              상품이 실물로 회수되었음을 확인하세요.<br />
+              다음 단계에서 검수 등급을 결정합니다.
+            </p>
+            <div className="flex gap-2">
+              <Button variant="outline" className="flex-1" onClick={onClose}>취소</Button>
+              <Button className="flex-1" onClick={() => setStep("inspect")}>회수 확인 →</Button>
+            </div>
+          </>
+        )}
+
+        {step === "inspect" && (
+          <>
+            <div className="space-y-3">
+              <div className="text-[11px] text-muted-foreground">검수 후 등급을 선택하세요.</div>
+              <div className="grid grid-cols-3 gap-2">
+                {INSPECT_GRADES.map((g) => (
+                  <button
+                    key={g.value}
+                    onClick={() => setGrade(g.value)}
+                    className={cn(
+                      "border p-2.5 text-left transition-colors",
+                      grade === g.value
+                        ? "border-foreground bg-foreground text-background"
+                        : "border-border hover:bg-muted"
+                    )}
+                  >
+                    <div className="text-sm font-bold">{g.value}</div>
+                    <div className={cn("text-[9px] mt-0.5 leading-snug", grade === g.value ? "text-background/70" : "text-muted-foreground")}>
+                      {g.desc}
+                    </div>
+                  </button>
+                ))}
+              </div>
+              <div>
+                <label className="text-[11px] text-muted-foreground block mb-1">검수 메모 (선택)</label>
+                <textarea
+                  value={memo}
+                  onChange={(e) => setMemo(e.target.value)}
+                  placeholder="상태 특이사항, 손상 부위 등"
+                  rows={2}
+                  className="w-full px-3 py-2 text-sm border border-border bg-background outline-none focus:border-sage-ink resize-none"
+                />
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <Button variant="outline" className="flex-1" onClick={() => setStep("confirm")}>← 이전</Button>
+              <Button className="flex-1" disabled={!grade} onClick={() => onConfirm(grade, memo)}>
+                등급 확정 · 완료
+              </Button>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
@@ -176,6 +246,7 @@ export default function RentalDetailPage() {
   const [returnOpen, setReturnOpen] = useState(false);
   const [completeOpen, setCompleteOpen] = useState(false);
   const [purchaseOpen, setPurchaseOpen] = useState(false);
+  const [inspectResult, setInspectResult] = useState<{ grade: string; memo: string } | null>(null);
 
   if (!rental) {
     return (
@@ -220,14 +291,17 @@ export default function RentalDetailPage() {
       </div>
 
       {/* 완료 배너 */}
-      {currentStatus === "회수 완료" && (
+      {currentStatus === "회수 완료" && inspectResult && (
         <div className="border border-sage-deep/30 bg-sage-soft/10 px-5 py-4 flex items-center gap-3">
           <div className="w-6 h-6 bg-sage-deep flex items-center justify-center flex-shrink-0">
             <Check size={12} className="text-background" />
           </div>
-          <div>
-            <div className="text-sm font-semibold">회수 완료</div>
-            <div className="text-[11px] text-muted-foreground mt-0.5">상품이 정상 회수되었습니다. 판매 상태로 전환됩니다.</div>
+          <div className="flex-1">
+            <div className="text-sm font-semibold">회수 완료 · 검수 등급 {inspectResult.grade}</div>
+            <div className="text-[11px] text-muted-foreground mt-0.5">
+              상품이 <span className="font-medium text-sage-ink">{inspectResult.grade}등급</span>으로 재등록됩니다.
+              {inspectResult.memo && <span className="ml-1">· {inspectResult.memo}</span>}
+            </div>
           </div>
         </div>
       )}
@@ -338,7 +412,7 @@ export default function RentalDetailPage() {
 
       {extendOpen && <ExtendModal onConfirm={() => { setExtendOpen(false); setStatus(nextExtendStatus(currentStatus)); }} onClose={() => setExtendOpen(false)} />}
       {returnOpen && <ReturnModal onConfirm={() => { setReturnOpen(false); setStatus("회수 대기"); }} onClose={() => setReturnOpen(false)} />}
-      {completeOpen && <CompleteReturnModal onConfirm={() => { setCompleteOpen(false); setStatus("회수 완료"); }} onClose={() => setCompleteOpen(false)} />}
+      {completeOpen && <CompleteReturnModal onConfirm={(grade, memo) => { setCompleteOpen(false); setStatus("회수 완료"); setInspectResult({ grade, memo }); }} onClose={() => setCompleteOpen(false)} />}
       {purchaseOpen && <PurchaseModal onConfirm={() => { setPurchaseOpen(false); setStatus("구매 전환"); }} onClose={() => setPurchaseOpen(false)} />}
     </div>
   );
