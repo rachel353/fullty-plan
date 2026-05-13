@@ -398,6 +398,8 @@ function SectionHeader({ label }: { label: string }) {
   return <div className="text-[10px] text-muted-foreground tracking-widest uppercase pt-2">{label}</div>;
 }
 
+const PAGE_SIZE = 10;
+
 function ProductTable({
   products,
   processed,
@@ -409,8 +411,13 @@ function ProductTable({
   columns: string[];
   renderAction: (p: AdminProduct) => React.ReactNode;
 }) {
+  const [page, setPage] = useState(1);
+  const totalPages = Math.ceil(products.length / PAGE_SIZE);
+  const paged = products.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
   if (products.length === 0) return null;
   return (
+    <div className="space-y-3">
     <div className="border border-border">
       <table className="w-full text-sm">
         <thead className="border-b border-border bg-muted">
@@ -421,7 +428,7 @@ function ProductTable({
           </tr>
         </thead>
         <tbody className="divide-y divide-border">
-          {products.map((p) => (
+          {paged.map((p) => (
             <tr key={p.id} className="hover:bg-muted/30 transition-colors">
               <td className="px-4 py-3 text-[11px] text-muted-foreground">{p.id}</td>
 
@@ -460,6 +467,40 @@ function ProductTable({
           ))}
         </tbody>
       </table>
+    </div>
+    {totalPages > 1 && (
+      <div className="flex items-center justify-between text-xs text-muted-foreground">
+        <span>{products.length}개 중 {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, products.length)}개</span>
+        <div className="flex items-center gap-1">
+          <button
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            disabled={page === 1}
+            className="px-3 h-8 border border-border hover:bg-muted disabled:opacity-40 transition-colors"
+          >
+            이전
+          </button>
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((n) => (
+            <button
+              key={n}
+              onClick={() => setPage(n)}
+              className={cn(
+                "w-8 h-8 border text-xs transition-colors",
+                n === page ? "border-foreground bg-foreground text-background" : "border-border hover:bg-muted"
+              )}
+            >
+              {n}
+            </button>
+          ))}
+          <button
+            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+            disabled={page === totalPages}
+            className="px-3 h-8 border border-border hover:bg-muted disabled:opacity-40 transition-colors"
+          >
+            다음
+          </button>
+        </div>
+      </div>
+    )}
     </div>
   );
 }

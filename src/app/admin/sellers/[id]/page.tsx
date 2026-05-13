@@ -259,7 +259,9 @@ export default function SellerDetailPage() {
   const sellerData = SELLER_DATA.find((s) => s.id === id);
   const [approveOpen, setApproveOpen] = useState(false);
   const [rejectOpen, setRejectOpen] = useState(false);
+  const [suspendOpen, setSuspendOpen] = useState(false);
   const [status, setStatus] = useState<SellerStatus | null>(null);
+  const [suspended, setSuspended] = useState(false);
   const [rejectReason, setRejectReason] = useState("");
 
   if (!sellerData) {
@@ -397,9 +399,56 @@ export default function SellerDetailPage() {
         </div>
       )}
 
+      {/* 정지 / 재개 — 승인된 셀러만 */}
+      {currentStatus === "승인" && (
+        <div className="border border-border px-5 py-5 space-y-3">
+          <div className="text-[10px] text-muted-foreground tracking-widest uppercase">셀러 계정 관리</div>
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="text-sm font-medium">{suspended ? "계정 정지 중" : "계정 활성"}</div>
+              <div className="text-[11px] text-muted-foreground mt-0.5">
+                {suspended ? "현재 상품 노출 및 거래가 중단된 상태입니다." : "정지 시 상품 노출 및 거래가 즉시 중단됩니다."}
+              </div>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              className={suspended ? "text-sage-ink border-sage-ink" : "text-red-500 border-red-200 hover:bg-red-50"}
+              onClick={() => setSuspendOpen(true)}
+            >
+              {suspended ? "정지 해제" : "계정 정지"}
+            </Button>
+          </div>
+        </div>
+      )}
+
       <div className="border-t border-border pt-6 flex justify-end">
         <Link href="/admin/sellers"><Button variant="outline">목록으로</Button></Link>
       </div>
+
+      {suspendOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/40" onClick={() => setSuspendOpen(false)} />
+          <div className="relative bg-background border border-border w-full max-w-sm p-6 space-y-5 z-10">
+            <h3 className="text-base font-semibold">{suspended ? "정지 해제" : "계정 정지"}</h3>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              <span className="font-semibold text-foreground">{sellerData.name}</span>
+              {suspended
+                ? "의 정지를 해제합니다. 상품 노출 및 거래가 재개됩니다."
+                : "의 계정을 정지합니다. 상품 노출 및 거래가 즉시 중단됩니다."}
+            </p>
+            <div className="flex gap-2">
+              <Button variant="outline" className="flex-1" onClick={() => setSuspendOpen(false)}>취소</Button>
+              <Button
+                className={`flex-1 ${!suspended ? "bg-red-500 hover:bg-red-600" : ""}`}
+                onClick={() => { setSuspended(!suspended); setSuspendOpen(false); }}
+              >
+                {suspended ? "해제 확정" : "정지 확정"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {approveOpen && (
         <ApproveModal
