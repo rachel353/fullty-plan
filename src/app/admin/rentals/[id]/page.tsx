@@ -136,6 +136,7 @@ const INSPECT_GRADES = [
 function CompleteReturnModal({ onConfirm, onClose }: { onConfirm: (grade: string, memo: string) => void; onClose: () => void }) {
   const [step, setStep] = useState<"confirm" | "inspect">("confirm");
   const [grade, setGrade] = useState("");
+  const [isVintage, setIsVintage] = useState(false);
   const [memo, setMemo] = useState("");
 
   return (
@@ -173,25 +174,43 @@ function CompleteReturnModal({ onConfirm, onClose }: { onConfirm: (grade: string
           <>
             <div className="space-y-3">
               <div className="text-[11px] text-muted-foreground">검수 후 등급을 선택하세요.</div>
-              <div className="grid grid-cols-3 gap-2">
-                {INSPECT_GRADES.map((g) => (
+              {/* SS~B 단일 선택 */}
+              <div className="grid grid-cols-5 gap-1.5">
+                {INSPECT_GRADES.filter((g) => g.value !== "V").map((g) => (
                   <button
                     key={g.value}
                     onClick={() => setGrade(g.value)}
                     className={cn(
-                      "border p-2.5 text-left transition-colors",
+                      "border p-2 text-left transition-colors",
                       grade === g.value
                         ? "border-foreground bg-foreground text-background"
                         : "border-border hover:bg-muted"
                     )}
                   >
-                    <div className="text-sm font-bold">{g.value}</div>
+                    <div className="text-xs font-bold">{g.value}</div>
                     <div className={cn("text-[9px] mt-0.5 leading-snug", grade === g.value ? "text-background/70" : "text-muted-foreground")}>
                       {g.desc}
                     </div>
                   </button>
                 ))}
               </div>
+              {/* V 중복 선택 */}
+              <button
+                onClick={() => setIsVintage(!isVintage)}
+                className={cn(
+                  "w-full border p-2.5 text-left flex items-center gap-2 transition-colors",
+                  isVintage ? "border-sage-deep bg-sage-soft/20" : "border-border hover:bg-muted"
+                )}
+              >
+                <div className={cn("w-3.5 h-3.5 border-2 flex items-center justify-center flex-shrink-0", isVintage ? "border-sage-deep bg-sage-deep" : "border-border")}>
+                  {isVintage && <span className="text-background text-[9px] font-bold leading-none">✓</span>}
+                </div>
+                <span className={cn("text-xs font-bold mr-1", isVintage ? "text-sage-deep" : "")}>V</span>
+                <span className={cn("text-[10px]", isVintage ? "text-sage-deep/80" : "text-muted-foreground")}>오리지널 빈티지 · SS~B와 동시 선택 가능</span>
+              </button>
+              {isVintage && grade && (
+                <p className="text-[11px] text-sage-deep">선택된 등급: {grade} · V</p>
+              )}
               <div>
                 <label className="text-[11px] text-muted-foreground block mb-1">검수 메모 (선택)</label>
                 <textarea
@@ -205,7 +224,7 @@ function CompleteReturnModal({ onConfirm, onClose }: { onConfirm: (grade: string
             </div>
             <div className="flex gap-2">
               <Button variant="outline" className="flex-1" onClick={() => setStep("confirm")}>← 이전</Button>
-              <Button className="flex-1" disabled={!grade} onClick={() => onConfirm(grade, memo)}>
+              <Button className="flex-1" disabled={!grade} onClick={() => onConfirm(isVintage ? `${grade} · V` : grade, memo)}>
                 등급 확정 · 완료
               </Button>
             </div>
