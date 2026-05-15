@@ -1,8 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, X } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
@@ -26,6 +27,8 @@ export default function GetProposalDetailPage() {
   }
 
   const overBudget = proposal.price > req.budget;
+  const [rejectOpen, setRejectOpen] = useState(false);
+  const [rejected, setRejected] = useState(false);
 
   return (
     <div className="space-y-8">
@@ -158,18 +161,56 @@ export default function GetProposalDetailPage() {
         </section>
       )}
 
+      {/* 거절 완료 배너 */}
+      {rejected && (
+        <div className="border border-border px-5 py-4 bg-muted/30 text-sm text-muted-foreground">
+          이 제안을 거절했습니다. GET 요청은 계속 유지됩니다.
+        </div>
+      )}
+
       {/* 하단 CTA */}
       <div className="border-t border-border pt-6 flex items-center justify-between">
         <Link href="/mypage/get"><Button variant="outline">목록으로</Button></Link>
-        {!proposal.tracking && (
+        {!proposal.tracking && !rejected && (
           <div className="flex gap-2">
-            <Button variant="outline">거절</Button>
+            <Button variant="outline" onClick={() => setRejectOpen(true)}>거절</Button>
             <Link href={`/mypage/get/proposals/${proposal.id}/pay`}>
               <Button>결제하기 · {proposal.price.toLocaleString()}원</Button>
             </Link>
           </div>
         )}
       </div>
+
+      {/* 거절 모달 */}
+      {rejectOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/40" onClick={() => setRejectOpen(false)} />
+          <div className="relative bg-background border border-border w-full max-w-sm p-6 space-y-5 z-10">
+            <div className="flex items-center justify-between">
+              <h3 className="text-base font-semibold">제안 거절</h3>
+              <button onClick={() => setRejectOpen(false)}><X size={15} className="text-muted-foreground" /></button>
+            </div>
+            <div className="border border-border px-4 py-3 bg-muted/10 text-sm">
+              <div className="text-[11px] text-muted-foreground mb-0.5">{proposal.productBrand}</div>
+              <div className="font-medium">{proposal.productName}</div>
+              <div className="text-[11px] text-muted-foreground mt-1">{proposal.price.toLocaleString()}원</div>
+            </div>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              이 제안을 거절합니다.<br />
+              GET 요청은 유지되며 다른 셀러 제안을 받을 수 있습니다.
+            </p>
+            <div className="flex gap-2">
+              <Button variant="outline" className="flex-1" onClick={() => setRejectOpen(false)}>취소</Button>
+              <Button
+                className="flex-1"
+                onClick={() => { setRejected(true); setRejectOpen(false); }}
+              >
+                거절 확정
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
