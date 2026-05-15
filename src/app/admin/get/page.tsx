@@ -45,7 +45,14 @@ export default function AdminGetPage() {
                 <td className="px-4 py-3">{g.proposalCount}건</td>
                 <td className="px-4 py-3 text-muted-foreground">{g.createdAt}</td>
                 <td className="px-4 py-3">
-                  <Badge variant={g.status === "거래 완료" ? "muted" : g.status === "셀러 제안" ? "default" : "outline"}>
+                  <Badge variant={
+                    g.status === "거래 완료" ? "muted" :
+                    g.status === "결제 대기" ? "sage" :
+                    g.status === "검수 완료" ? "default" :
+                    g.status === "풀티 검수 중" ? "default" :
+                    g.status === "셀러 제안" ? "outline" :
+                    "outline"
+                  }>
                     {g.status}
                   </Badge>
                 </td>

@@ -218,7 +218,7 @@ export type GetRequest = {
   model: string;
   option: string;
   budget: number;
-  status: "대기중" | "셀러 제안" | "거래 완료";
+  status: "대기중" | "셀러 제안" | "풀티 검수 중" | "검수 완료" | "결제 대기" | "거래 완료";
   proposalCount: number;
   createdAt: string;
 };
@@ -250,7 +250,7 @@ export const getRequests: GetRequest[] = [
     model: "Stool 60",
     option: "Birch / 3-Legged",
     budget: 450000,
-    status: "셀러 제안",
+    status: "풀티 검수 중",
     proposalCount: 1,
     createdAt: "2026-04-07",
   },
@@ -260,9 +260,29 @@ export const getRequests: GetRequest[] = [
     model: "PH 5 Pendant",
     option: "Modern White",
     budget: 720000,
-    status: "거래 완료",
+    status: "검수 완료",
     proposalCount: 2,
     createdAt: "2026-03-28",
+  },
+  {
+    id: "g005",
+    brand: "Fritz Hansen",
+    model: "Series 7 Chair",
+    option: "Black / Chrome",
+    budget: 520000,
+    status: "결제 대기",
+    proposalCount: 1,
+    createdAt: "2026-03-25",
+  },
+  {
+    id: "g006",
+    brand: "Cassina",
+    model: "LC2 Armchair",
+    option: "White / Chrome",
+    budget: 2800000,
+    status: "거래 완료",
+    proposalCount: 2,
+    createdAt: "2026-03-20",
   },
 ];
 
