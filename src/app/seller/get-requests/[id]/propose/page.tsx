@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { cn } from "@/lib/utils";
 import { getRequests, products } from "@/lib/mock";
+import { useSellerType } from "@/lib/seller-context";
 
 const PERIODS = ["6개월 미만", "6개월~1년", "1~2년", "2~3년", "3년 이상"];
 
@@ -15,6 +16,8 @@ export default function ProposePage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
 
+  const { sellerType } = useSellerType();
+  const isBusiness = sellerType === "사업자";
   const req = getRequests.find((r) => r.id === id);
 
   const [selectedProduct, setSelectedProduct] = useState<string>("");
@@ -39,14 +42,32 @@ export default function ProposePage() {
 
   if (submitted) {
     return (
-      <div className="py-20 flex flex-col items-center gap-4 text-center">
+      <div className="py-20 flex flex-col items-center gap-4 text-center max-w-sm mx-auto">
         <div className="w-12 h-12 border border-sage-deep flex items-center justify-center">
           <span className="text-sage-deep text-xl">✓</span>
         </div>
         <div className="text-base font-semibold">제안이 등록되었습니다</div>
-        <p className="text-sm text-muted-foreground">
-          풀티 검수 후 사용자에게 전달됩니다. 평균 1~2 영업일 소요됩니다.
-        </p>
+        {isBusiness ? (
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            사용자에게 바로 전달됩니다.<br />수락 시 알림으로 안내드립니다.
+          </p>
+        ) : (
+          <div className="w-full space-y-3 text-left">
+            <p className="text-sm text-muted-foreground leading-relaxed text-center">
+              검수를 위해 상품을 풀티로 발송해 주세요.<br />
+              검수 통과 후 사용자에게 전달됩니다.
+            </p>
+            <div className="border border-border p-4 bg-muted/20 text-sm space-y-1">
+              <div className="text-[10px] text-muted-foreground tracking-widest uppercase mb-2">풀티 발송지</div>
+              <div className="font-medium">풀티</div>
+              <div className="text-muted-foreground text-[12px]">서울특별시 성동구 왕십리로 130, B동 3층</div>
+              <div className="text-muted-foreground text-[12px]">수령인: 풀티 · 02-1234-5678</div>
+              <div className="text-[11px] text-muted-foreground mt-2 pt-2 border-t border-border">
+                · 박스 외면에 <span className="font-semibold text-sage-ink">제안 번호</span>를 반드시 기재해 주세요.
+              </div>
+            </div>
+          </div>
+        )}
         <div className="flex gap-2 mt-2">
           <Link href="/seller/get-requests">
             <Button variant="outline">GET 요청 목록</Button>
@@ -258,7 +279,9 @@ export default function ProposePage() {
 
       {/* 하단 */}
       <div className="border-t border-border pt-6 flex items-center justify-between">
-        <Badge variant="muted">풀티 검수 후 구매자에게 전달됩니다</Badge>
+        <Badge variant="muted">
+          {isBusiness ? "구매자에게 바로 전달됩니다" : "풀티 검수 후 구매자에게 전달됩니다"}
+        </Badge>
         <div className="flex gap-2">
           <Link href="/seller/get-requests">
             <Button variant="outline">취소</Button>

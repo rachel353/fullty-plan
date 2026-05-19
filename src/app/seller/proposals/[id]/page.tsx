@@ -11,7 +11,8 @@ import { proposals } from "@/lib/mock";
 import type { ProposalStatus } from "@/lib/mock";
 import { useSellerType } from "@/lib/seller-context";
 
-const STATUS_STEPS: ProposalStatus[] = ["발송 대기", "풀티 검수 중", "사용자 확인 대기", "사용자 수락"];
+const STEPS_INDIVIDUAL: ProposalStatus[] = ["발송 대기", "풀티 검수 중", "사용자 확인 대기", "사용자 수락"];
+const STEPS_BUSINESS: ProposalStatus[] = ["사용자 확인 대기", "사용자 수락"];
 const CARRIERS = ["CJ대한통운", "롯데택배", "한진택배", "우체국택배"];
 
 const badgeVariant = (status: ProposalStatus) => {
@@ -20,7 +21,8 @@ const badgeVariant = (status: ProposalStatus) => {
   return "outline";
 };
 
-function StatusTimeline({ status }: { status: ProposalStatus }) {
+function StatusTimeline({ status, isBusiness }: { status: ProposalStatus; isBusiness: boolean }) {
+  const STATUS_STEPS = isBusiness ? STEPS_BUSINESS : STEPS_INDIVIDUAL;
   const isRejected = status === "거절됨";
   const currentIdx = isRejected ? -1 : STATUS_STEPS.indexOf(status);
 
@@ -342,7 +344,7 @@ export default function ProposalDetailPage() {
       </div>
 
       <StatusBanner status={proposal.status} proposal={proposal} isBusiness={isBusiness} />
-      <StatusTimeline status={proposal.status} />
+      <StatusTimeline status={proposal.status} isBusiness={isBusiness} />
 
       <section>
         <div className="text-[10px] text-muted-foreground tracking-widest uppercase mb-3">대상 GET 요청</div>
