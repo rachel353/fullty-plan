@@ -448,7 +448,7 @@ export const assets: Asset[] = [
   },
 ];
 
-export type ProposalStatus = "풀티 검수 중" | "사용자 확인 대기" | "사용자 수락" | "거절됨";
+export type ProposalStatus = "발송 대기" | "풀티 검수 중" | "사용자 확인 대기" | "사용자 수락" | "거절됨";
 
 export type DeliveryStatus = "배송 준비 중" | "배송 중" | "배송 완료";
 
@@ -486,6 +486,7 @@ export type Proposal = {
 };
 
 export const proposals: Proposal[] = [
+  { id: "pp000", getRequestId: "g001", target: "Herman Miller Aeron Remastered", brand: "Herman Miller", model: "Aeron Remastered", option: "Size B / Graphite", budget: 1500000, productName: "Aeron Chair", productBrand: "Herman Miller", productGrade: "A+", usagePeriod: "2~3년", price: 1200000, note: "상태 양호. 구성품 포함.", status: "발송 대기", sentAt: "2026-04-10" },
   { id: "pp001", getRequestId: "g001", target: "Herman Miller Aeron Remastered", brand: "Herman Miller", model: "Aeron Remastered", option: "Size C / Carbon", budget: 1500000, productName: "Aeron Chair", productBrand: "Herman Miller", productGrade: "S", usagePeriod: "1~2년", price: 1380000, note: "직접 구매 후 1년 반 사용. 등판 교체 이력 있음. 구성품 모두 포함.", status: "풀티 검수 중", sentAt: "2026-04-08" },
   { id: "pp002", getRequestId: "g002", target: "Vitra Panton Chair", brand: "Vitra", model: "Panton Chair", option: "Glacier Blue", budget: 380000, productName: "Panton Chair", productBrand: "Vitra", productGrade: "A+", usagePeriod: "2~3년", price: 360000, note: "", status: "사용자 확인 대기", sentAt: "2026-04-06" },
   { id: "pp003", getRequestId: "g003", target: "Artek Stool 60", brand: "Artek", model: "Stool 60", option: "Birch / 3-Legged", budget: 450000, productName: "Stool 60", productBrand: "Artek", productGrade: "A", usagePeriod: "6개월~1년", price: 420000, note: "깨끗하게 사용. 실내 전용.", status: "사용자 수락", sentAt: "2026-04-04" },

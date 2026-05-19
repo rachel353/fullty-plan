@@ -11,7 +11,8 @@ import { proposals } from "@/lib/mock";
 import type { ProposalStatus } from "@/lib/mock";
 import { useSellerType } from "@/lib/seller-context";
 
-const STATUS_STEPS: ProposalStatus[] = ["풀티 검수 중", "사용자 확인 대기", "사용자 수락"];
+const STATUS_STEPS: ProposalStatus[] = ["발송 대기", "풀티 검수 중", "사용자 확인 대기", "사용자 수락"];
+const CARRIERS = ["CJ대한통운", "롯데택배", "한진택배", "우체국택배"];
 
 const badgeVariant = (status: ProposalStatus) => {
   if (status === "사용자 수락") return "default";
@@ -168,12 +169,97 @@ function AcceptedBanner({
   );
 }
 
+function ShippingBanner({ proposalId }: { proposalId: string }) {
+  const [carrier, setCarrier] = useState(CARRIERS[0]);
+  const [trackingNo, setTrackingNo] = useState("");
+  const [registered, setRegistered] = useState(false);
+
+  if (registered) {
+    return (
+      <div className="border border-sage-deep/30 bg-sage-soft/10 px-5 py-4 flex items-center gap-3">
+        <div className="w-6 h-6 bg-sage-deep flex items-center justify-center flex-shrink-0">
+          <Check size={12} className="text-background" />
+        </div>
+        <div>
+          <div className="text-sm font-semibold">운송장 등록 완료</div>
+          <div className="text-[11px] text-muted-foreground mt-0.5">
+            {carrier} · {trackingNo} — 풀티 도착 후 검수가 시작됩니다.
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="border border-border px-5 py-5 space-y-5">
+      <div className="flex items-start gap-3">
+        <div className="w-7 h-7 border-2 border-amber-400 flex items-center justify-center flex-shrink-0 text-amber-500 text-xs font-bold">!</div>
+        <div>
+          <div className="text-sm font-semibold">상품을 풀티로 발송해 주세요</div>
+          <div className="text-[11px] text-muted-foreground mt-0.5 leading-relaxed">
+            제안이 등록되었습니다. 검수를 위해 아래 주소로 상품을 발송하고 운송장을 등록해 주세요.
+          </div>
+        </div>
+      </div>
+
+      {/* 발송 주소 */}
+      <div className="border border-border p-4 bg-muted/20 text-sm space-y-1">
+        <div className="text-[10px] text-muted-foreground tracking-widest uppercase mb-2">풀티 발송지</div>
+        <div className="font-medium">풀티</div>
+        <div className="text-muted-foreground">서울특별시 성동구 왕십리로 130, B동 3층</div>
+        <div className="text-muted-foreground">수령인: 풀티 · 02-1234-5678</div>
+        <div className="text-[11px] text-muted-foreground mt-2 pt-2 border-t border-border">
+          · 박스 외면에 <span className="font-semibold text-sage-ink">제안 번호 {proposalId}</span>를 반드시 기재해 주세요.
+        </div>
+      </div>
+
+      {/* 운송장 등록 */}
+      <div className="space-y-3">
+        <div className="text-xs font-medium text-muted-foreground">운송장 등록</div>
+        <div className="flex flex-wrap gap-2">
+          {CARRIERS.map((c) => (
+            <button
+              key={c}
+              onClick={() => setCarrier(c)}
+              className={cn(
+                "px-3 h-9 border text-xs transition-colors",
+                carrier === c ? "border-sage-ink bg-sage-ink text-background" : "border-border hover:bg-muted"
+              )}
+            >
+              {c}
+            </button>
+          ))}
+        </div>
+        <div className="flex gap-2">
+          <input
+            value={trackingNo}
+            onChange={(e) => setTrackingNo(e.target.value)}
+            placeholder="운송장 번호 입력"
+            className="flex-1 h-11 px-3 text-sm border border-border bg-background outline-none focus:border-sage-ink"
+          />
+          <Button
+            disabled={!trackingNo.trim()}
+            onClick={() => setRegistered(true)}
+            className="flex-shrink-0"
+          >
+            등록
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function StatusBanner({ status, proposal, isBusiness }: {
   status: ProposalStatus;
   proposal: ReturnType<typeof proposals.find>;
   isBusiness: boolean;
 }) {
   if (!proposal) return null;
+
+  if (status === "발송 대기") {
+    return <ShippingBanner proposalId={proposal.id} />;
+  }
 
   if (status === "사용자 확인 대기") {
     return (
