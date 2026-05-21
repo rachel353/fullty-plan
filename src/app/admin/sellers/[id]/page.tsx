@@ -57,8 +57,13 @@ const SELLER_DATA = [
       products: 4,
       gmvTotal: 2840000,
       gmvMonth: 680000,
+      txCount: 11,
+      avgTxPrice: 258000,
       activeRentals: 1,
       pendingSettlement: 320000,
+      settledTotal: 2520000,
+      cancelRate: 0,
+      monthly: [320000, 410000, 580000, 680000],
     },
   },
   {
@@ -92,11 +97,10 @@ const SELLER_DATA = [
     docSubmitted: true,
     approvedAt: "2026-01-15",
     sales: {
-      products: 12,
-      gmvTotal: 18200000,
-      gmvMonth: 4100000,
-      activeRentals: 3,
-      pendingSettlement: 1820000,
+      products: 12, gmvTotal: 18200000, gmvMonth: 4100000,
+      txCount: 74, avgTxPrice: 245000, activeRentals: 3,
+      pendingSettlement: 1820000, settledTotal: 16380000, cancelRate: 2.7,
+      monthly: [2800000, 3100000, 3600000, 4100000],
     },
   },
   {
@@ -114,11 +118,10 @@ const SELLER_DATA = [
     docSubmitted: true,
     approvedAt: "2026-02-08",
     sales: {
-      products: 7,
-      gmvTotal: 6540000,
-      gmvMonth: 1230000,
-      activeRentals: 2,
-      pendingSettlement: 540000,
+      products: 7, gmvTotal: 6540000, gmvMonth: 1230000,
+      txCount: 28, avgTxPrice: 233000, activeRentals: 2,
+      pendingSettlement: 540000, settledTotal: 6000000, cancelRate: 0,
+      monthly: [1100000, 1400000, 1810000, 1230000],
     },
   },
   {
@@ -136,11 +139,10 @@ const SELLER_DATA = [
     docSubmitted: true,
     approvedAt: "2025-11-20",
     sales: {
-      products: 9,
-      gmvTotal: 32100000,
-      gmvMonth: 7800000,
-      activeRentals: 4,
-      pendingSettlement: 3210000,
+      products: 9, gmvTotal: 32100000, gmvMonth: 7800000,
+      txCount: 112, avgTxPrice: 286000, activeRentals: 4,
+      pendingSettlement: 3210000, settledTotal: 28890000, cancelRate: 1.8,
+      monthly: [5200000, 6400000, 6900000, 7800000],
     },
   },
   {
@@ -158,11 +160,10 @@ const SELLER_DATA = [
     docSubmitted: true,
     approvedAt: "2026-03-25",
     sales: {
-      products: 5,
-      gmvTotal: 4820000,
-      gmvMonth: 960000,
-      activeRentals: 1,
-      pendingSettlement: 482000,
+      products: 5, gmvTotal: 4820000, gmvMonth: 960000,
+      txCount: 19, avgTxPrice: 253000, activeRentals: 1,
+      pendingSettlement: 482000, settledTotal: 4338000, cancelRate: 0,
+      monthly: [0, 1200000, 2660000, 960000],
     },
   },
 ];
@@ -323,17 +324,46 @@ export default function SellerDetailPage() {
 
       {/* 매출 정보 — 승인된 셀러만 */}
       {currentStatus === "승인" && sellerData.sales && (
-        <section className="space-y-3">
+        <section className="space-y-4">
           <div className="text-[10px] text-muted-foreground tracking-widest uppercase">매출 정보</div>
+
+          {/* 핵심 스탯 */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <SalesStat label="등록 상품" value={`${sellerData.sales.products}개`} />
-            <SalesStat label="누적 GMV" value={`${sellerData.sales.gmvTotal.toLocaleString()}원`} />
-            <SalesStat label="이번 달 GMV" value={`${sellerData.sales.gmvMonth.toLocaleString()}원`} />
+            <SalesStat label="거래 건수" value={`${sellerData.sales.txCount}건`} />
+            <SalesStat label="평균 거래가" value={`${sellerData.sales.avgTxPrice.toLocaleString()}원`} />
             <SalesStat label="활성 렌탈" value={`${sellerData.sales.activeRentals}건`} />
           </div>
-          <div className="border border-border px-4 py-3 flex items-center justify-between text-sm">
-            <span className="text-muted-foreground text-[11px]">정산 예정 금액</span>
-            <span className="font-semibold">{sellerData.sales.pendingSettlement.toLocaleString()}원</span>
+
+          {/* GMV */}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="border border-border p-4">
+              <div className="text-[11px] text-muted-foreground mb-1">누적 GMV</div>
+              <div className="text-lg font-bold">{sellerData.sales.gmvTotal.toLocaleString()}원</div>
+              <div className="text-[11px] text-muted-foreground mt-0.5">이번 달 {sellerData.sales.gmvMonth.toLocaleString()}원</div>
+            </div>
+            <div className="border border-border p-4">
+              <div className="text-[11px] text-muted-foreground mb-2">최근 4개월 GMV 추이</div>
+              <MiniBarChart data={sellerData.sales.monthly} />
+            </div>
+          </div>
+
+          {/* 정산 */}
+          <div className="border border-border divide-y divide-border text-sm">
+            <div className="px-4 py-3 flex items-center justify-between">
+              <span className="text-[11px] text-muted-foreground">정산 완료 누계</span>
+              <span className="font-semibold">{sellerData.sales.settledTotal.toLocaleString()}원</span>
+            </div>
+            <div className="px-4 py-3 flex items-center justify-between">
+              <span className="text-[11px] text-muted-foreground">정산 예정</span>
+              <span className="font-semibold text-sage-ink">{sellerData.sales.pendingSettlement.toLocaleString()}원</span>
+            </div>
+            <div className="px-4 py-3 flex items-center justify-between">
+              <span className="text-[11px] text-muted-foreground">반품 / 취소율</span>
+              <span className={cn("font-semibold", sellerData.sales.cancelRate > 2 ? "text-amber-600" : "")}>
+                {sellerData.sales.cancelRate}%
+              </span>
+            </div>
           </div>
         </section>
       )}
@@ -474,6 +504,24 @@ function SalesStat({ label, value }: { label: string; value: string }) {
     <div className="border border-border p-4">
       <div className="text-[11px] text-muted-foreground">{label}</div>
       <div className="text-base font-bold mt-1.5">{value}</div>
+    </div>
+  );
+}
+
+function MiniBarChart({ data }: { data: number[] }) {
+  const max = Math.max(...data, 1);
+  const labels = ["1월", "2월", "3월", "4월"];
+  return (
+    <div className="flex items-end gap-1.5 h-12">
+      {data.map((v, i) => (
+        <div key={i} className="flex-1 flex flex-col items-center gap-1">
+          <div
+            className="w-full bg-sage-soft border border-sage-ink/20"
+            style={{ height: `${Math.max((v / max) * 40, v > 0 ? 4 : 0)}px` }}
+          />
+          <span className="text-[9px] text-muted-foreground">{labels[i]}</span>
+        </div>
+      ))}
     </div>
   );
 }
