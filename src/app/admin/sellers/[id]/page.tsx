@@ -460,20 +460,33 @@ export default function SellerDetailPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div className="absolute inset-0 bg-black/40" onClick={() => setSuspendOpen(false)} />
           <div className="relative bg-background border border-border w-full max-w-sm p-6 space-y-5 z-10">
-            <h3 className="text-base font-semibold">{suspended ? "정지 해제" : "계정 정지"}</h3>
+            <div className="flex items-center justify-between">
+              <h3 className="text-base font-semibold">{suspended ? "정지 해제" : "이용 정지"}</h3>
+              <button onClick={() => setSuspendOpen(false)}><X size={16} className="text-muted-foreground" /></button>
+            </div>
             <p className="text-sm text-muted-foreground leading-relaxed">
               <span className="font-semibold text-foreground">{sellerData.name}</span>
               {suspended
-                ? "의 정지를 해제합니다. 상품 노출 및 거래가 재개됩니다."
-                : "의 계정을 정지합니다. 상품 노출 및 거래가 즉시 중단됩니다."}
+                ? " 셀러의 정지를 해제합니다. 상품 노출 및 거래가 재개됩니다."
+                : " 셀러를 이용 정지 처리합니다.\n정지 시 상품 노출 및 거래가 중단되며 알림이 발송됩니다."}
             </p>
-            <div className="flex gap-2">
+            {!suspended && (
+              <select className="w-full h-10 border border-border px-3 text-sm bg-background">
+                <option>사유 선택</option>
+                <option>허위 정보 등록</option>
+                <option>거래 사기 의심</option>
+                <option>운영 정책 위반</option>
+                <option>반복 규정 위반</option>
+                <option>기타</option>
+              </select>
+            )}
+            <div className="flex gap-2 pt-1">
               <Button variant="outline" className="flex-1" onClick={() => setSuspendOpen(false)}>취소</Button>
               <Button
                 className={`flex-1 ${!suspended ? "bg-red-500 hover:bg-red-600" : ""}`}
                 onClick={() => { setSuspended(!suspended); setSuspendOpen(false); }}
               >
-                {suspended ? "해제 확정" : "정지 확정"}
+                {suspended ? "정지 해제" : "이용 정지"}
               </Button>
             </div>
           </div>
