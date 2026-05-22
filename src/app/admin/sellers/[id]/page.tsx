@@ -329,8 +329,8 @@ export default function SellerDetailPage() {
 
           {/* 핵심 스탯 */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <SalesStat label="등록 상품" value={`${sellerData.sales.products}개`} />
-            <SalesStat label="거래 건수" value={`${sellerData.sales.txCount}건`} />
+            <SalesStat label="등록 상품" value={`${sellerData.sales.products}개`} href={`/admin/sellers/${sellerData.id}/products`} />
+            <SalesStat label="거래 건수" value={`${sellerData.sales.txCount}건`} href={`/admin/sellers/${sellerData.id}/transactions`} />
             <SalesStat label="평균 거래가" value={`${sellerData.sales.avgTxPrice.toLocaleString()}원`} />
             <SalesStat label="활성 렌탈" value={`${sellerData.sales.activeRentals}건`} />
           </div>
@@ -512,13 +512,17 @@ export default function SellerDetailPage() {
   );
 }
 
-function SalesStat({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="border border-border p-4">
+function SalesStat({ label, value, href }: { label: string; value: string; href?: string }) {
+  const inner = (
+    <div className={cn("border border-border p-4", href && "hover:bg-muted/40 transition-colors cursor-pointer")}>
       <div className="text-[11px] text-muted-foreground">{label}</div>
-      <div className="text-base font-bold mt-1.5">{value}</div>
+      <div className="flex items-center justify-between mt-1.5">
+        <div className="text-base font-bold">{value}</div>
+        {href && <span className="text-[10px] text-sage-ink">상세 →</span>}
+      </div>
     </div>
   );
+  return href ? <Link href={href}>{inner}</Link> : inner;
 }
 
 function MiniBarChart({ data }: { data: number[] }) {
