@@ -14,6 +14,7 @@ const sections: SidebarSection[] = [
     items: [
       { href: "/admin/products", label: "상품 관리" },
       { href: "/admin/assets", label: "자산화 상품 관리" },
+      { href: "/admin/orders", label: "주문 / 배송 / 취소" },
       { href: "/admin/rentals", label: "렌탈 관리" },
     ],
   },
@@ -27,7 +28,6 @@ const sections: SidebarSection[] = [
   {
     title: "운영",
     items: [
-      { href: "/admin/orders", label: "주문 / 배송 / 취소" },
       { href: "/admin/inquiries", label: "1:1 문의" },
       { href: "/admin/settlements", label: "정산 관리" },
       { href: "/admin/money", label: "풀티머니 관리" },
