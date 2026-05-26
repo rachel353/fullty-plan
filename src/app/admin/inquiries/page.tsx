@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
 import { cn } from "@/lib/utils";
-import { MOCK_INQUIRIES } from "@/app/mypage/inquiries/page";
+import { MOCK_INQUIRIES } from "@/lib/inquiries";
 
 const TABS = ["전체", "답변 대기", "답변 완료"] as const;
 type Tab = typeof TABS[number];

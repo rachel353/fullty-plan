@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
-import { MOCK_INQUIRIES, Inquiry } from "@/app/mypage/inquiries/page";
+import { MOCK_INQUIRIES, Inquiry } from "@/lib/inquiries";
 
 export default function AdminInquiryDetailPage() {
   const { id } = useParams<{ id: string }>();

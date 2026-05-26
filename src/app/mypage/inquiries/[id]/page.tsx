@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
-import { MOCK_INQUIRIES } from "../page";
+import { MOCK_INQUIRIES } from "@/lib/inquiries";
 
 export default function InquiryDetailPage() {
   const { id } = useParams<{ id: string }>();
