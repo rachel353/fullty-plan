@@ -18,6 +18,7 @@ export default function AdminAssetsPage() {
   const [page, setPage] = useState(1);
 
   const filtered = assets.filter((a) => {
+    if (a.status === "판매 전환") return false;
     const matchTab = tab === "전체" || a.status === tab;
     const matchQuery = !query || a.brand.includes(query) || a.name.includes(query) || a.owner.includes(query);
     return matchTab && matchQuery;
