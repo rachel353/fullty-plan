@@ -2,8 +2,10 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { X } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
-import { assets } from "@/lib/mock";
+import { Button } from "@/components/ui/Button";
+import { assets as initialAssets, Asset } from "@/lib/mock";
 import { formatPrice } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 
@@ -13,11 +15,14 @@ type Tab = typeof TABS[number];
 const PAGE_SIZE = 10;
 
 export default function AdminAssetsPage() {
+  const [assetList, setAssetList] = useState<Asset[]>(initialAssets);
   const [tab, setTab] = useState<Tab>("전체");
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
+  const [editTarget, setEditTarget] = useState<Asset | null>(null);
+  const [priceInput, setPriceInput] = useState("");
 
-  const filtered = assets.filter((a) => {
+  const filtered = assetList.filter((a) => {
     const matchTab = tab === "전체" || a.status === tab;
     const matchQuery = !query || a.brand.includes(query) || a.name.includes(query) || a.owner.includes(query);
     return matchTab && matchQuery;
@@ -26,12 +31,29 @@ export default function AdminAssetsPage() {
   const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
   const paged = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
-  const reviewCount = assets.filter((a) => a.status === "검토 필요").length;
-  const totalValue = assets.reduce((s, a) => s + a.currentValue, 0);
+  const reviewCount = assetList.filter((a) => a.status === "검토 필요").length;
+  const totalValue = assetList.reduce((s, a) => s + a.currentValue, 0);
 
   function handleTabChange(t: Tab) {
     setTab(t);
     setPage(1);
+  }
+
+  function openEdit(a: Asset) {
+    setEditTarget(a);
+    setPriceInput(a.currentValue > 0 ? String(a.currentValue) : "");
+  }
+
+  function confirmPrice() {
+    if (!editTarget) return;
+    const value = parseInt(priceInput.replace(/,/g, ""), 10);
+    if (!value || value <= 0) return;
+    setAssetList((prev) =>
+      prev.map((a) =>
+        a.id === editTarget.id ? { ...a, currentValue: value, status: "정상" } : a
+      )
+    );
+    setEditTarget(null);
   }
 
   return (
@@ -45,7 +67,7 @@ export default function AdminAssetsPage() {
 
       {/* 요약 스탯 */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-        <Stat label="전체 자산 수" value={`${assets.length}개`} />
+        <Stat label="전체 자산 수" value={`${assetList.length}개`} />
         <Stat label="총 자산 가치" value={`${(totalValue / 10000).toFixed(0)}만원`} />
         <Stat label="검토 필요" value={`${reviewCount}개`} accent={reviewCount > 0} />
       </div>
@@ -96,12 +118,13 @@ export default function AdminAssetsPage() {
                 <th className="px-4 py-3">등록일</th>
                 <th className="px-4 py-3 text-right">현재 가치</th>
                 <th className="px-4 py-3">상태</th>
+                <th className="px-4 py-3 text-right">관리</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
               {paged.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-4 py-12 text-center text-[11px] text-muted-foreground">
+                  <td colSpan={8} className="px-4 py-12 text-center text-[11px] text-muted-foreground">
                     해당 항목이 없습니다.
                   </td>
                 </tr>
@@ -121,7 +144,9 @@ export default function AdminAssetsPage() {
                     <Badge variant="default">{a.grade}</Badge>
                   </td>
                   <td className="px-4 py-3 text-muted-foreground text-[11px]">{a.acquiredAt}</td>
-                  <td className="px-4 py-3 text-right font-medium">{formatPrice(a.currentValue)}</td>
+                  <td className="px-4 py-3 text-right font-medium">
+                    {a.currentValue > 0 ? formatPrice(a.currentValue) : <span className="text-muted-foreground text-[11px]">미입력</span>}
+                  </td>
                   <td className="px-4 py-3">
                     <Badge variant={
                       a.status === "검토 필요" ? "default" :
@@ -129,6 +154,13 @@ export default function AdminAssetsPage() {
                     }>
                       {a.status}
                     </Badge>
+                  </td>
+                  <td className="px-4 py-3 text-right">
+                    {a.status === "검토 필요" && (
+                      <Button size="sm" variant="ghost" onClick={() => openEdit(a)}>
+                        가격 입력
+                      </Button>
+                    )}
                   </td>
                 </tr>
               ))}
@@ -169,6 +201,56 @@ export default function AdminAssetsPage() {
           </div>
         </div>
       </div>
+
+      {/* 가격 입력 모달 */}
+      {editTarget && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+          <div className="bg-background border border-border w-full max-w-sm p-6 space-y-5">
+            <div className="flex items-center justify-between">
+              <h3 className="font-bold text-base">자산 가치 입력</h3>
+              <button onClick={() => setEditTarget(null)} className="text-muted-foreground hover:text-foreground">
+                <X size={16} />
+              </button>
+            </div>
+
+            <div className="space-y-1">
+              <div className="text-[11px] text-muted-foreground">{editTarget.brand}</div>
+              <div className="font-medium">{editTarget.name}</div>
+              <div className="flex items-center gap-1.5 mt-1">
+                <Badge variant="default">{editTarget.grade}</Badge>
+                <span className="text-[11px] text-muted-foreground">{editTarget.owner}</span>
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-xs text-muted-foreground">현재 자산 가치</label>
+              <div className="flex items-center gap-2">
+                <input
+                  type="number"
+                  value={priceInput}
+                  onChange={(e) => setPriceInput(e.target.value)}
+                  placeholder="0"
+                  className="flex-1 h-9 px-3 text-sm border border-border bg-background outline-none focus:border-sage-ink"
+                />
+                <span className="text-sm text-muted-foreground shrink-0">원</span>
+              </div>
+            </div>
+
+            <p className="text-[11px] text-muted-foreground">가격 확정 시 상태가 <span className="text-foreground font-medium">정상</span>으로 변경됩니다.</p>
+
+            <div className="flex gap-2 pt-1">
+              <Button variant="outline" className="flex-1" onClick={() => setEditTarget(null)}>취소</Button>
+              <Button
+                className="flex-1"
+                disabled={!priceInput || parseInt(priceInput) <= 0}
+                onClick={confirmPrice}
+              >
+                가격 확정
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
