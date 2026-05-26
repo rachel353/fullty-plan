@@ -6,17 +6,17 @@ import { useParams } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
-import { MOCK_INQUIRIES, Inquiry } from "@/lib/inquiries";
+import { MOCK_QNA, QnAItem } from "@/lib/qna";
 
 export default function AdminInquiryDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const [inquiries, setInquiries] = useState<Inquiry[]>(MOCK_INQUIRIES);
+  const [qnaList, setQnaList] = useState<QnAItem[]>(MOCK_QNA);
   const [replyText, setReplyText] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
-  const inquiry = inquiries.find((q) => q.id === id);
+  const q = qnaList.find((item) => item.id === id);
 
-  if (!inquiry) {
+  if (!q) {
     return (
       <div className="space-y-4">
         <Link href="/admin/inquiries" className="flex items-center gap-1 text-xs text-muted-foreground hover:text-sage-ink transition-colors">
@@ -29,15 +29,15 @@ export default function AdminInquiryDetailPage() {
 
   function handleSubmitReply() {
     if (!replyText.trim()) return;
-    setInquiries((prev) => prev.map((q) =>
-      q.id === id
-        ? { ...q, status: "답변 완료", reply: { body: replyText, repliedAt: new Date().toISOString().slice(0, 10) } }
-        : q
+    setQnaList((prev) => prev.map((item) =>
+      item.id === id
+        ? { ...item, status: "답변 완료", answer: replyText, answeredAt: new Date().toISOString().slice(0, 10), answeredBy: "Fullty 운영팀" }
+        : item
     ));
     setSubmitted(true);
   }
 
-  const currentInquiry = inquiries.find((q) => q.id === id)!;
+  const current = qnaList.find((item) => item.id === id)!;
 
   return (
     <div className="space-y-6">
@@ -46,37 +46,30 @@ export default function AdminInquiryDetailPage() {
           <ChevronLeft size={13} /> 1:1 문의
         </Link>
         <div className="flex items-start justify-between gap-4">
-          <h2 className="text-xl font-bold">{inquiry.title}</h2>
-          <Badge variant={currentInquiry.status === "답변 완료" ? "sage" : "default"} className="shrink-0 mt-0.5">
-            {currentInquiry.status}
+          <div>
+            <div className="text-[11px] text-muted-foreground mb-1">{q.productBrand} {q.productName} · {q.author}</div>
+            <h2 className="text-lg font-bold leading-snug">{q.question}</h2>
+          </div>
+          <Badge variant={current.status === "답변 완료" ? "sage" : "default"} className="shrink-0 mt-0.5">
+            {current.status}
           </Badge>
         </div>
-        <div className="flex items-center gap-2 mt-2 text-[11px] text-muted-foreground">
-          <span>{inquiry.category}</span>
-          <span>·</span>
-          <span>접수 {inquiry.createdAt}</span>
-        </div>
-      </div>
-
-      {/* 문의 내용 */}
-      <div className="border border-border p-5 space-y-2">
-        <div className="text-[10px] text-muted-foreground tracking-widest uppercase">문의 내용</div>
-        <p className="text-sm leading-relaxed whitespace-pre-line">{inquiry.body}</p>
+        <div className="text-[11px] text-muted-foreground mt-2">{q.date}</div>
       </div>
 
       {/* 기존 답변 */}
-      {currentInquiry.reply && (
+      {current.answer && (
         <div className="border border-sage/30 bg-sage-soft/20 p-5 space-y-2">
           <div className="flex items-center justify-between">
-            <div className="text-[10px] text-sage-ink tracking-widest uppercase font-medium">답변 완료</div>
-            <div className="text-[11px] text-muted-foreground">{currentInquiry.reply.repliedAt}</div>
+            <div className="text-[10px] text-sage-ink tracking-widest uppercase font-medium">{current.answeredBy}</div>
+            <div className="text-[11px] text-muted-foreground">{current.answeredAt}</div>
           </div>
-          <p className="text-sm leading-relaxed whitespace-pre-line">{currentInquiry.reply.body}</p>
+          <p className="text-sm leading-relaxed whitespace-pre-line">{current.answer}</p>
         </div>
       )}
 
-      {/* 답변 작성 — 미답변일 때만 */}
-      {currentInquiry.status === "답변 대기" && !submitted && (
+      {/* 답변 작성 */}
+      {current.status === "답변 대기" && !submitted && (
         <div className="space-y-3 border border-border p-5">
           <div className="text-[10px] text-muted-foreground tracking-widest uppercase">답변 작성</div>
           <textarea
