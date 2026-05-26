@@ -7,7 +7,7 @@ import { assets } from "@/lib/mock";
 import { formatPrice } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 
-const TABS = ["전체", "정상", "검토 필요", "판매 전환"] as const;
+const TABS = ["전체", "정상", "검토 필요"] as const;
 type Tab = typeof TABS[number];
 
 const PAGE_SIZE = 10;
