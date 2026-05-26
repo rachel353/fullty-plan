@@ -343,69 +343,21 @@ export type Order = {
   status: "결제 완료" | "배송 대기" | "배송 준비" | "배송 중" | "배송 완료" | "구매 확정" | "취소" | "반품";
   type: "구매" | "렌탈";
   date: string;
+  buyer: string;
+  seller: string;
+  trackingCarrier?: string;
+  trackingNo?: string;
 };
 
 export const orders: Order[] = [
-  {
-    id: "o001",
-    productId: "p001",
-    productName: "Aeron Chair",
-    brand: "Herman Miller",
-    price: 1280000,
-    status: "배송 중",
-    type: "구매",
-    date: "2026-04-08",
-  },
-  {
-    id: "o006",
-    productId: "p006",
-    productName: "LC4 Chaise Longue",
-    brand: "Cassina",
-    price: 5400000,
-    status: "배송 대기",
-    type: "구매",
-    date: "2026-04-15",
-  },
-  {
-    id: "o002",
-    productId: "p005",
-    productName: "Egg Chair",
-    brand: "Fritz Hansen",
-    price: 850000,
-    status: "배송 완료",
-    type: "렌탈",
-    date: "2026-03-15",
-  },
-  {
-    id: "o003",
-    productId: "p004",
-    productName: "CH24 Wishbone",
-    brand: "Carl Hansen",
-    price: 980000,
-    status: "구매 확정",
-    type: "구매",
-    date: "2026-02-28",
-  },
-  {
-    id: "o004",
-    productId: "p003",
-    productName: "Haller Sideboard",
-    brand: "USM",
-    price: 3200000,
-    status: "취소",
-    type: "구매",
-    date: "2026-04-01",
-  },
-  {
-    id: "o005",
-    productId: "p002",
-    productName: "DSW Side Chair",
-    brand: "Vitra",
-    price: 560000,
-    status: "반품",
-    type: "구매",
-    date: "2026-03-20",
-  },
+  { id: "o001", productId: "p001", productName: "Aeron Chair", brand: "Herman Miller", price: 1280000, status: "배송 중", type: "구매", date: "2026-04-08", buyer: "김풀티", seller: "김컬렉터", trackingCarrier: "CJ대한통운", trackingNo: "1234567890123" },
+  { id: "o006", productId: "p006", productName: "LC4 Chaise Longue", brand: "Cassina", price: 5400000, status: "배송 대기", type: "구매", date: "2026-04-15", buyer: "이가구", seller: "이태리에디션" },
+  { id: "o002", productId: "p005", productName: "Egg Chair", brand: "Fritz Hansen", price: 850000, status: "배송 완료", type: "렌탈", date: "2026-03-15", buyer: "박빈티", seller: "빈티지 웍스", trackingCarrier: "롯데택배", trackingNo: "9988776655443" },
+  { id: "o003", productId: "p004", productName: "CH24 Wishbone", brand: "Carl Hansen", price: 980000, status: "구매 확정", type: "구매", date: "2026-02-28", buyer: "김풀티", seller: "노르딕홈", trackingCarrier: "우체국택배", trackingNo: "4433221100998" },
+  { id: "o004", productId: "p003", productName: "Haller Sideboard", brand: "USM", price: 3200000, status: "취소", type: "구매", date: "2026-04-01", buyer: "최유저", seller: "김컬렉터" },
+  { id: "o005", productId: "p002", productName: "DSW Side Chair", brand: "Vitra", price: 560000, status: "반품", type: "구매", date: "2026-03-20", buyer: "이가구", seller: "오브제 스튜디오" },
+  { id: "o007", productId: "p007", productName: "Barcelona Chair", brand: "Knoll", price: 1850000, status: "결제 완료", type: "구매", date: "2026-04-22", buyer: "박빈티", seller: "빈티지 웍스" },
+  { id: "o008", productId: "p008", productName: "Series 7", brand: "Fritz Hansen", price: 680000, status: "배송 준비", type: "구매", date: "2026-04-20", buyer: "최유저", seller: "노르딕홈" },
 ];
 
 export type Asset = {
