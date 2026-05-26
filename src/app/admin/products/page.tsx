@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { X } from "lucide-react";
@@ -201,6 +201,14 @@ function SuspendModal({ name, onConfirm, onClose }: {
 }
 
 export default function AdminProductsPage() {
+  return (
+    <Suspense>
+      <AdminProductsContent />
+    </Suspense>
+  );
+}
+
+function AdminProductsContent() {
   const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState<Tab>("검수 대기");
   const [sellerFilter, setSellerFilter] = useState(searchParams.get("seller") ?? "");

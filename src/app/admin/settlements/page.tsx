@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { X } from "lucide-react";
@@ -19,6 +19,14 @@ const rows = [
 ];
 
 export default function AdminSettlementsPage() {
+  return (
+    <Suspense>
+      <AdminSettlementsContent />
+    </Suspense>
+  );
+}
+
+function AdminSettlementsContent() {
   const searchParams = useSearchParams();
   const [sellerFilter, setSellerFilter] = useState(searchParams.get("seller") ?? "");
 
