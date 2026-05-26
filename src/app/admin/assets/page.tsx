@@ -3,7 +3,6 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
-import { Button } from "@/components/ui/Button";
 import { assets } from "@/lib/mock";
 import { formatPrice } from "@/lib/utils";
 import { cn } from "@/lib/utils";
@@ -16,14 +15,12 @@ const PAGE_SIZE = 10;
 export default function AdminAssetsPage() {
   const [tab, setTab] = useState<Tab>("전체");
   const [query, setQuery] = useState("");
-  const [sourceFilter, setSourceFilter] = useState("전체");
   const [page, setPage] = useState(1);
 
   const filtered = assets.filter((a) => {
     const matchTab = tab === "전체" || a.status === tab;
-    const matchSource = sourceFilter === "전체" || a.source === sourceFilter;
     const matchQuery = !query || a.brand.includes(query) || a.name.includes(query) || a.owner.includes(query);
-    return matchTab && matchSource && matchQuery;
+    return matchTab && matchQuery;
   });
 
   const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
@@ -47,10 +44,9 @@ export default function AdminAssetsPage() {
       </div>
 
       {/* 요약 스탯 */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
         <Stat label="전체 자산 수" value={`${assets.length}개`} />
         <Stat label="총 자산 가치" value={`${(totalValue / 10000).toFixed(0)}만원`} />
-        <Stat label="직접 등록" value={`${assets.filter((a) => a.source === "직접 등록").length}개`} />
         <Stat label="검토 필요" value={`${reviewCount}개`} accent={reviewCount > 0} />
       </div>
 
@@ -77,28 +73,14 @@ export default function AdminAssetsPage() {
         ))}
       </div>
 
-      {/* 필터 + 검색 */}
-      <div className="flex items-center gap-2 flex-wrap">
+      {/* 검색 */}
+      <div className="flex items-center gap-2">
         <input
           value={query}
           onChange={(e) => { setQuery(e.target.value); setPage(1); }}
           placeholder="브랜드 / 상품명 / 회원명 검색"
           className="h-9 px-3 text-xs border border-border bg-background w-56 outline-none focus:border-sage-ink"
         />
-        {["전체", "풀티 구매", "직접 등록"].map((s) => (
-          <button
-            key={s}
-            onClick={() => { setSourceFilter(s); setPage(1); }}
-            className={cn(
-              "px-4 h-9 text-xs font-medium border transition-colors",
-              sourceFilter === s
-                ? "border-foreground bg-foreground text-background"
-                : "border-border hover:bg-muted"
-            )}
-          >
-            {s}
-          </button>
-        ))}
       </div>
 
       {/* 테이블 */}
@@ -111,7 +93,6 @@ export default function AdminAssetsPage() {
                 <th className="px-4 py-3">회원</th>
                 <th className="px-4 py-3">상품</th>
                 <th className="px-4 py-3">등급</th>
-                <th className="px-4 py-3">등록 경로</th>
                 <th className="px-4 py-3">등록일</th>
                 <th className="px-4 py-3 text-right">현재 가치</th>
                 <th className="px-4 py-3">상태</th>
@@ -120,7 +101,7 @@ export default function AdminAssetsPage() {
             <tbody className="divide-y divide-border">
               {paged.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="px-4 py-12 text-center text-[11px] text-muted-foreground">
+                  <td colSpan={7} className="px-4 py-12 text-center text-[11px] text-muted-foreground">
                     해당 항목이 없습니다.
                   </td>
                 </tr>
@@ -138,11 +119,6 @@ export default function AdminAssetsPage() {
                   </td>
                   <td className="px-4 py-3">
                     <Badge variant="default">{a.grade}</Badge>
-                  </td>
-                  <td className="px-4 py-3">
-                    <Badge variant={a.source === "풀티 구매" ? "sage" : "outline"}>
-                      {a.source}
-                    </Badge>
                   </td>
                   <td className="px-4 py-3 text-muted-foreground text-[11px]">{a.acquiredAt}</td>
                   <td className="px-4 py-3 text-right font-medium">{formatPrice(a.currentValue)}</td>

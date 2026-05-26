@@ -417,17 +417,16 @@ export type Asset = {
   grade: Grade;
   acquiredAt: string;
   currentValue: number;
-  source: "풀티 구매" | "직접 등록";
   status: "정상" | "검토 필요" | "판매 전환";
 };
 
 export const assets: Asset[] = [
-  { id: "a001", owner: "김풀티", ownerId: "m001", brand: "Herman Miller", name: "Aeron Chair", grade: "S", acquiredAt: "2025-09-12", currentValue: 1180000, source: "풀티 구매", status: "정상" },
-  { id: "a002", owner: "이가구", ownerId: "m002", brand: "Vitra", name: "DSW Side Chair", grade: "A+", acquiredAt: "2025-11-04", currentValue: 320000, source: "직접 등록", status: "검토 필요" },
-  { id: "a003", owner: "김풀티", ownerId: "m001", brand: "USM", name: "Haller Sideboard", grade: "S", acquiredAt: "2026-01-20", currentValue: 2980000, source: "풀티 구매", status: "정상" },
-  { id: "a004", owner: "박빈티", ownerId: "m003", brand: "Fritz Hansen", name: "Series 7 Chair", grade: "A", acquiredAt: "2026-02-14", currentValue: 480000, source: "직접 등록", status: "정상" },
-  { id: "a005", owner: "이가구", ownerId: "m002", brand: "Cassina", name: "LC2 Armchair", grade: "A+", acquiredAt: "2025-12-03", currentValue: 2100000, source: "풀티 구매", status: "판매 전환" },
-  { id: "a006", owner: "박빈티", ownerId: "m003", brand: "Artek", name: "Stool 60", grade: "SS", acquiredAt: "2026-03-08", currentValue: 420000, source: "직접 등록", status: "검토 필요" },
+  { id: "a001", owner: "김풀티", ownerId: "m001", brand: "Herman Miller", name: "Aeron Chair", grade: "S", acquiredAt: "2025-09-12", currentValue: 1180000, status: "정상" },
+  { id: "a002", owner: "이가구", ownerId: "m002", brand: "Vitra", name: "DSW Side Chair", grade: "A+", acquiredAt: "2025-11-04", currentValue: 320000, status: "검토 필요" },
+  { id: "a003", owner: "김풀티", ownerId: "m001", brand: "USM", name: "Haller Sideboard", grade: "S", acquiredAt: "2026-01-20", currentValue: 2980000, status: "정상" },
+  { id: "a004", owner: "박빈티", ownerId: "m003", brand: "Fritz Hansen", name: "Series 7 Chair", grade: "A", acquiredAt: "2026-02-14", currentValue: 480000, status: "정상" },
+  { id: "a005", owner: "이가구", ownerId: "m002", brand: "Cassina", name: "LC2 Armchair", grade: "A+", acquiredAt: "2025-12-03", currentValue: 2100000, status: "판매 전환" },
+  { id: "a006", owner: "박빈티", ownerId: "m003", brand: "Artek", name: "Stool 60", grade: "SS", acquiredAt: "2026-03-08", currentValue: 420000, status: "검토 필요" },
 ];
 
 export type ProposalStatus = "발송 대기" | "풀티 검수 중" | "사용자 확인 대기" | "사용자 수락" | "거절됨";
