@@ -6,7 +6,7 @@ import { orders } from "@/lib/mock";
 import { formatPrice } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 
-const TABS = ["전체", "결제 완료", "배송 대기", "배송 준비", "배송 중", "배송 완료", "구매 확정", "취소/반품"] as const;
+const TABS = ["전체", "결제 완료", "배송 대기", "배송 준비", "배송 중", "배송 완료", "구매 확정", "취소"] as const;
 type Tab = typeof TABS[number];
 
 const STATUS_VARIANT: Record<string, "default" | "sage" | "muted" | "outline"> = {
@@ -17,7 +17,6 @@ const STATUS_VARIANT: Record<string, "default" | "sage" | "muted" | "outline"> =
   "배송 완료": "sage",
   "구매 확정": "muted",
   "취소": "outline",
-  "반품": "outline",
 };
 
 export default function AdminOrdersPage() {
@@ -25,10 +24,7 @@ export default function AdminOrdersPage() {
   const [query, setQuery] = useState("");
 
   const filtered = orders.filter((o) => {
-    const matchTab =
-      tab === "전체" ? true :
-      tab === "취소/반품" ? (o.status === "취소" || o.status === "반품") :
-      o.status === tab;
+    const matchTab = tab === "전체" ? true : o.status === tab;
     const matchQuery = !query ||
       o.productName.includes(query) ||
       o.brand.includes(query) ||
@@ -37,7 +33,7 @@ export default function AdminOrdersPage() {
     return matchTab && matchQuery;
   });
 
-  const cancelCount = orders.filter((o) => o.status === "취소" || o.status === "반품").length;
+  const cancelCount = orders.filter((o) => o.status === "취소").length;
   const inDeliveryCount = orders.filter((o) => o.status === "배송 중").length;
 
   return (
@@ -51,7 +47,7 @@ export default function AdminOrdersPage() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <Stat label="전체 주문" value={`${orders.length}건`} />
         <Stat label="배송 중" value={`${inDeliveryCount}건`} />
-        <Stat label="취소 / 반품" value={`${cancelCount}건`} accent={cancelCount > 0} />
+        <Stat label="취소" value={`${cancelCount}건`} accent={cancelCount > 0} />
         <Stat label="이번 달 GMV" value={formatPrice(orders.filter((o) => o.status !== "취소" && o.status !== "반품").reduce((s, o) => s + o.price, 0))} />
       </div>
 
@@ -67,7 +63,7 @@ export default function AdminOrdersPage() {
             )}
           >
             {t}
-            {t === "취소/반품" && cancelCount > 0 && (
+            {t === "취소" && cancelCount > 0 && (
               <span className="ml-1.5 text-[10px] bg-foreground text-background px-1.5 py-0.5">{cancelCount}</span>
             )}
           </button>
