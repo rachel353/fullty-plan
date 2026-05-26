@@ -45,6 +45,11 @@ const ALL_PRODUCTS: AdminProduct[] = [
   { id: "p008", brand: "Knoll", name: "Saarinen Tulip Table", option: "Round 120 / Marble", seller: "미드센추리", grade: "A", price: 4200000, tab: "검수 대기" },
   { id: "p017", brand: "Muuto", name: "E27 Pendant", option: "White", seller: "노르딕홈", grade: "S", price: 380000, tab: "검수 대기" },
   { id: "p018", brand: "HAY", name: "About A Chair AAC22", option: "Soft Black", seller: "빈티지 웍스", grade: "A+", price: 290000, tab: "검수 대기" },
+  // 김컬렉터
+  { id: "sp001", brand: "Herman Miller", name: "Aeron Chair", option: "Size B / Graphite", seller: "김컬렉터", grade: "S", price: 1180000, tab: "판매중", availability: "판매 전용" },
+  { id: "sp002", brand: "Vitra", name: "DSW Chair", option: "White", seller: "김컬렉터", grade: "A+", price: 340000, tab: "판매중", availability: "판매 · 렌탈" },
+  { id: "sp003", brand: "USM", name: "Haller Sideboard", option: "Pure White", seller: "김컬렉터", grade: "S", price: 2980000, tab: "품절" },
+  { id: "sp004", brand: "Artek", name: "Stool 60", option: "Birch", seller: "김컬렉터", grade: "A", price: 420000, tab: "렌탈중" },
   // 판매중
   ...mockProducts.filter((p) => p.status === "판매중" && !PENDING_IDS.has(p.id)).map((p) => ({
     id: p.id, brand: p.brand, name: p.name, option: p.option, seller: p.seller,

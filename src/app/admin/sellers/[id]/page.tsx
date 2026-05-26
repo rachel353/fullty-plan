@@ -105,7 +105,7 @@ const SELLER_DATA = [
   },
   {
     id: "sl006",
-    name: "오브제랩",
+    name: "오브제 스튜디오",
     type: "사업자" as const,
     applied: "2026-02-03",
     status: "승인" as SellerStatus,
