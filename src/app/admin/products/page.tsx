@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { X } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
@@ -200,22 +201,28 @@ function SuspendModal({ name, onConfirm, onClose }: {
 }
 
 export default function AdminProductsPage() {
+  const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState<Tab>("검수 대기");
+  const [sellerFilter, setSellerFilter] = useState(searchParams.get("seller") ?? "");
   const [approveTarget, setApproveTarget] = useState<AdminProduct | null>(null);
   const [rejectTarget, setRejectTarget] = useState<AdminProduct | null>(null);
   const [suspendTarget, setSuspendTarget] = useState<AdminProduct | null>(null);
   const [processed, setProcessed] = useState<Record<string, { result: "승인" | "반려"; reason?: string }>>({});
   const [suspended, setSuspended] = useState<Set<string>>(new Set());
 
+  const sellerFiltered = sellerFilter
+    ? ALL_PRODUCTS.filter((p) => p.seller.includes(sellerFilter))
+    : ALL_PRODUCTS;
+
   const filtered = activeTab === "전체"
-    ? ALL_PRODUCTS.filter((p) => !processed[p.id] || processed[p.id].result === p.tab)
-    : ALL_PRODUCTS.filter((p) => {
+    ? sellerFiltered.filter((p) => !processed[p.id] || processed[p.id].result === p.tab)
+    : sellerFiltered.filter((p) => {
         if (suspended.has(p.id)) return false;
         if (processed[p.id]) return processed[p.id].result === activeTab;
         return p.tab === activeTab;
       });
 
-  const pendingCount = ALL_PRODUCTS.filter((p) => p.tab === "검수 대기" && !processed[p.id]).length;
+  const pendingCount = sellerFiltered.filter((p) => p.tab === "검수 대기" && !processed[p.id]).length;
 
   return (
     <div className="space-y-6">
@@ -229,6 +236,21 @@ export default function AdminProductsPage() {
         <Link href="/admin/products/new">
           <Button size="sm">+ 상품 직접 등록</Button>
         </Link>
+      </div>
+
+      {/* 셀러 필터 */}
+      <div className="flex items-center gap-2">
+        <input
+          value={sellerFilter}
+          onChange={(e) => setSellerFilter(e.target.value)}
+          placeholder="셀러명으로 필터"
+          className="h-9 px-3 text-xs border border-border bg-background w-44 outline-none focus:border-sage-ink"
+        />
+        {sellerFilter && (
+          <button onClick={() => setSellerFilter("")} className="text-muted-foreground hover:text-foreground">
+            <X size={14} />
+          </button>
+        )}
       </div>
 
       {/* 탭 */}
@@ -258,7 +280,7 @@ export default function AdminProductsPage() {
       {activeTab === "전체" && <SectionHeader label="검수 대기" />}
       {(activeTab === "검수 대기" || activeTab === "전체") && (
         <ProductTable
-          products={ALL_PRODUCTS.filter((p) => p.tab === "검수 대기")}
+          products={sellerFiltered.filter((p) => p.tab === "검수 대기")}
           processed={processed}
           columns={["상품", "셀러", "등급", "판매가"]}
           renderAction={(p) => {
@@ -286,7 +308,7 @@ export default function AdminProductsPage() {
       {(activeTab === "판매중" || activeTab === "전체") && (
         <ProductTable
           products={activeTab === "전체"
-            ? ALL_PRODUCTS.filter((p) => p.tab === "판매중" && !suspended.has(p.id))
+            ? sellerFiltered.filter((p) => p.tab === "판매중" && !suspended.has(p.id))
             : filtered}
           processed={processed}
           columns={["상품", "셀러", "등급", "판매가", "유형"]}
@@ -306,7 +328,7 @@ export default function AdminProductsPage() {
       {(activeTab === "렌탈중" || activeTab === "전체") && (
         <ProductTable
           products={activeTab === "전체"
-            ? ALL_PRODUCTS.filter((p) => p.tab === "렌탈중")
+            ? sellerFiltered.filter((p) => p.tab === "렌탈중")
             : filtered}
           processed={processed}
           columns={["상품", "셀러", "등급", "렌탈가"]}
@@ -323,7 +345,7 @@ export default function AdminProductsPage() {
       {(activeTab === "품절" || activeTab === "전체") && (
         <ProductTable
           products={activeTab === "전체"
-            ? ALL_PRODUCTS.filter((p) => p.tab === "품절")
+            ? sellerFiltered.filter((p) => p.tab === "품절")
             : filtered}
           processed={processed}
           columns={["상품", "셀러", "등급", "판매가"]}
@@ -340,7 +362,7 @@ export default function AdminProductsPage() {
       {(activeTab === "반려" || activeTab === "전체") && (
         <ProductTable
           products={activeTab === "전체"
-            ? ALL_PRODUCTS.filter((p) => p.tab === "반려")
+            ? sellerFiltered.filter((p) => p.tab === "반려")
             : filtered}
           processed={processed}
           columns={["상품", "셀러", "등급", "반려일", "반려 사유"]}

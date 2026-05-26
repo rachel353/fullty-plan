@@ -1,15 +1,31 @@
+"use client";
+
+import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { X } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { cn } from "@/lib/utils";
 
 const rows = [
   { id: "ad001", seller: "빈티지 웍스", type: "판매", amount: 1088000, period: "2026-03", status: "정산 완료" as const },
   { id: "ad002", seller: "오브제 스튜디오", type: "렌탈", amount: 722500, period: "2026-03", status: "정산 예정" as const },
   { id: "ad003", seller: "노르딕홈", type: "위탁", amount: 304000, period: "2026-04", status: "정산 예정" as const },
   { id: "ad004", seller: "이태리에디션", type: "판매", amount: 4590000, period: "2026-04", status: "정산 예정" as const },
+  { id: "ad005", seller: "김컬렉터", type: "판매", amount: 1003000, period: "2026-04", status: "정산 완료" as const },
+  { id: "ad006", seller: "김컬렉터", type: "판매", amount: 2533000, period: "2026-03", status: "정산 완료" as const },
+  { id: "ad007", seller: "빈티지 웍스", type: "판매", amount: 2040000, period: "2026-04", status: "정산 완료" as const },
 ];
 
 export default function AdminSettlementsPage() {
+  const searchParams = useSearchParams();
+  const [sellerFilter, setSellerFilter] = useState(searchParams.get("seller") ?? "");
+
+  const filtered = sellerFilter
+    ? rows.filter((r) => r.seller.includes(sellerFilter))
+    : rows;
+
   return (
     <div className="space-y-6">
       <div className="border-b border-border pb-4">
@@ -28,6 +44,26 @@ export default function AdminSettlementsPage() {
         <Stat label="평균 수수료율" value="15.2%" />
       </div>
 
+      {/* 셀러 필터 */}
+      <div className="flex items-center gap-2">
+        <input
+          value={sellerFilter}
+          onChange={(e) => setSellerFilter(e.target.value)}
+          placeholder="셀러명으로 필터"
+          className="h-9 px-3 text-xs border border-border bg-background w-44 outline-none focus:border-sage-ink"
+        />
+        {sellerFilter && (
+          <button onClick={() => setSellerFilter("")} className="text-muted-foreground hover:text-foreground">
+            <X size={14} />
+          </button>
+        )}
+        {sellerFilter && (
+          <span className="text-xs text-muted-foreground">
+            <span className="font-medium text-foreground">{sellerFilter}</span> · {filtered.length}건
+          </span>
+        )}
+      </div>
+
       <div className="border border-border">
         <table className="w-full text-sm">
           <thead className="border-b border-border bg-muted">
@@ -42,7 +78,13 @@ export default function AdminSettlementsPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
-            {rows.map((r) => (
+            {filtered.length === 0 ? (
+              <tr>
+                <td colSpan={7} className="px-4 py-12 text-center text-[11px] text-muted-foreground">
+                  해당 셀러의 정산 내역이 없습니다.
+                </td>
+              </tr>
+            ) : filtered.map((r) => (
               <tr key={r.id} className="hover:bg-muted/30 transition-colors">
                 <td className="px-4 py-3 text-[11px] text-muted-foreground">{r.id}</td>
                 <td className="px-4 py-3 font-medium">{r.seller}</td>

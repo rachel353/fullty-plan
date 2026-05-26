@@ -70,7 +70,12 @@
       "Skill(ux-insight-matcher:*)",
       "Skill(webapp-testing)",
       "Skill(webapp-testing:*)",
-      "mcp__plugin_playwright_playwright__*"
+      "mcp__plugin_playwright_playwright__*",
+      "Bash(gh auth:*)",
+      "Bash(gh --version)"
+    ],
+    "additionalDirectories": [
+      "/Users/cigro/Desktop/풀티/develop-boilerplate/src/app/mypage/sell/[id]"
     ]
   }
 }

@@ -1,0 +1,147 @@
+{
+  "version": "2.0.0",
+  "format": "skill-conceptual-model",
+  "timestamp": "2026-01-27T00:00:00.000000",
+  "description": "Skill-compatible conceptual model with explicit attribute relationships",
+  "project": {
+    "name": "프로젝트명",
+    "description": "프로젝트 설명",
+    "version": "1.0.0",
+    "domain": "도메인 설명"
+  },
+  "summary": {
+    "totalEntities": 0,
+    "totalRelationships": 0,
+    "totalDomainRules": 0,
+    "totalDataFlows": 0,
+    "totalGlossaryTerms": 0,
+    "entityList": []
+  },
+  "entities": [
+    {
+      "name": "EntityName",
+      "businessName": "비즈니스명 (한글)",
+      "description": "엔티티 설명",
+      "category": "core|sales|production|procurement|inventory|financial|settings|master",
+      "attributes": [
+        {
+          "name": "id",
+          "type": "UUID",
+          "required": true,
+          "description": "고유 식별자"
+        },
+        {
+          "name": "code",
+          "type": "String",
+          "required": true,
+          "description": "코드"
+        },
+        {
+          "name": "name",
+          "type": "String",
+          "required": true,
+          "description": "이름"
+        },
+        {
+          "name": "status",
+          "type": "Enum",
+          "required": true,
+          "description": "상태",
+          "enumValues": [
+            "active",
+            "inactive"
+          ]
+        },
+        {
+          "name": "createdDate",
+          "type": "DateTime",
+          "required": true,
+          "description": "생성 일시"
+        }
+      ],
+      "userStories": [
+        "US-XXX"
+      ],
+      "relatedEntities": [
+        "RelatedEntity1",
+        "RelatedEntity2"
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "from": "ParentEntity",
+      "to": "ChildEntity",
+      "cardinality": "1:N",
+      "type": "identifying|non-identifying",
+      "optional": {
+        "from": false,
+        "to": false
+      },
+      "description": "관계 설명",
+      "relationshipId": "rel-1",
+      "businessRule": "비즈니스 규칙"
+    }
+  ],
+  "domainRules": [
+    {
+      "id": "DR-001",
+      "name": "규칙명",
+      "description": "규칙 설명",
+      "entities": [
+        "Entity1",
+        "Entity2"
+      ],
+      "userStories": [
+        "US-XXX"
+      ]
+    }
+  ],
+  "dataFlows": [
+    {
+      "name": "데이터 흐름명",
+      "description": "데이터 흐름 설명",
+      "userStories": [
+        "US-XXX",
+        "US-YYY"
+      ],
+      "steps": [
+        {
+          "order": 1,
+          "action": "Create|Read|Update|Delete|Add|Execute|Confirm|Wait",
+          "entity": "EntityName",
+          "description": "단계 설명"
+        }
+      ]
+    }
+  ],
+  "glossary": [
+    {
+      "koreanTerm": "한글용어",
+      "englishTerm": "EnglishTerm",
+      "definition": "용어 정의"
+    }
+  ],
+  "metadata": {
+    "sourceModel": "user_stories_data.json",
+    "conversionDate": "2026-01-27T00:00:00.000000",
+    "embeddedTypes": [
+      {
+        "name": "ComplexTypeName",
+        "description": "복합 타입 설명",
+        "schema": {
+          "property1": "String",
+          "property2": "Integer"
+        }
+      }
+    ],
+    "qualityNotes": [
+      "모든 엔티티 정의됨",
+      "모든 관계에 cardinality 정의됨",
+      "모든 FK는 명시적으로 references 정보 포함",
+      "도메인 규칙 정의됨",
+      "데이터 흐름 정의됨",
+      "용어 정의 포함"
+    ]
+  }
+}

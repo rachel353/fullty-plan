@@ -329,8 +329,8 @@ export default function SellerDetailPage() {
 
           {/* 핵심 스탯 */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <SalesStat label="등록 상품" value={`${sellerData.sales.products}개`} href={`/admin/sellers/${sellerData.id}/products`} />
-            <SalesStat label="거래 건수" value={`${sellerData.sales.txCount}건`} href={`/admin/sellers/${sellerData.id}/transactions`} />
+            <SalesStat label="등록 상품" value={`${sellerData.sales.products}개`} href={`/admin/products?seller=${encodeURIComponent(sellerData.name)}`} />
+            <SalesStat label="거래 건수" value={`${sellerData.sales.txCount}건`} href={`/admin/settlements?seller=${encodeURIComponent(sellerData.name)}`} />
             <SalesStat label="평균 거래가" value={`${sellerData.sales.avgTxPrice.toLocaleString()}원`} />
             <SalesStat label="활성 렌탈" value={`${sellerData.sales.activeRentals}건`} />
           </div>
