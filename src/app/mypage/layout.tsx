@@ -24,6 +24,12 @@ const sections: SidebarSection[] = [
     ],
   },
   {
+    title: "고객 지원",
+    items: [
+      { href: "/mypage/inquiries", label: "1:1 문의" },
+    ],
+  },
+  {
     title: "계정 설정",
     items: [
       { href: "/mypage/settings", label: "계정 정보" },
