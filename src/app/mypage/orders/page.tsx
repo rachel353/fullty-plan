@@ -68,7 +68,6 @@ export default function OrdersPage() {
 
   function statusBadgeVariant(status: Order["status"]): "default" | "outline" | "muted" {
     if (status === "취소") return "muted";
-    if (status === "반품") return "outline";
     return "default";
   }
 
@@ -95,7 +94,7 @@ export default function OrdersPage() {
       <div className="space-y-3">
         {orders.map((o) => {
           const status = resolvedStatus(o);
-          const isCancelled = status === "취소" || status === "반품";
+          const isCancelled = status === "취소";
           return (
             <div key={o.id} className="border border-border p-4">
               <div className="flex items-center justify-between pb-3 border-b border-border mb-3">
@@ -113,7 +112,7 @@ export default function OrdersPage() {
                   </div>
                   {isCancelled && (
                     <div className="text-[11px] text-muted-foreground mt-2">
-                      {status === "취소" ? "주문이 취소되었습니다." : "반품이 진행 중입니다."}
+                      주문이 취소되었습니다.
                     </div>
                   )}
                 </div>

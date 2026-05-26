@@ -48,7 +48,7 @@ export default function AdminOrdersPage() {
         <Stat label="전체 주문" value={`${orders.length}건`} />
         <Stat label="배송 중" value={`${inDeliveryCount}건`} />
         <Stat label="취소" value={`${cancelCount}건`} accent={cancelCount > 0} />
-        <Stat label="이번 달 GMV" value={formatPrice(orders.filter((o) => o.status !== "취소" && o.status !== "반품").reduce((s, o) => s + o.price, 0))} />
+        <Stat label="이번 달 GMV" value={formatPrice(orders.filter((o) => o.status !== "취소").reduce((s, o) => s + o.price, 0))} />
       </div>
 
       {/* 탭 */}
