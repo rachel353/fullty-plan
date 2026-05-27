@@ -10,7 +10,6 @@ import { cn } from "@/lib/utils";
 
 const STATUS_VARIANT: Record<string, "default" | "sage" | "muted" | "outline"> = {
   "결제 완료": "default",
-  "배송 준비": "default",
   "배송 중": "sage",
   "배송 완료": "sage",
   "구매 확정": "muted",
@@ -58,7 +57,6 @@ function getMockTrackingEvents(status: Order["status"], date: string): TrackingE
 
   const levelMap: Record<Order["status"], number> = {
     "결제 완료": 0,
-    "배송 준비": 1,
     "배송 중": 4,
     "배송 완료": 6,
     "구매 확정": 6,
@@ -74,7 +72,6 @@ function getMockTrackingEvents(status: Order["status"], date: string): TrackingE
 function getCurrentLevel(status: Order["status"]): number {
   const map: Record<Order["status"], number> = {
     "결제 완료": 1,
-    "배송 준비": 1,
     "배송 중": 4,
     "배송 완료": 6,
     "구매 확정": 6,

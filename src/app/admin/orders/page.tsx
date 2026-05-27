@@ -7,12 +7,11 @@ import { orders } from "@/lib/mock";
 import { formatPrice } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 
-const TABS = ["전체", "결제 완료", "배송 준비", "배송 중", "배송 완료", "구매 확정", "취소"] as const;
+const TABS = ["전체", "결제 완료", "배송 중", "배송 완료", "구매 확정", "취소"] as const;
 type Tab = typeof TABS[number];
 
 const STATUS_VARIANT: Record<string, "default" | "sage" | "muted" | "outline"> = {
   "결제 완료": "default",
-  "배송 준비": "default",
   "배송 중": "sage",
   "배송 완료": "sage",
   "구매 확정": "muted",

@@ -340,7 +340,7 @@ export type Order = {
   productName: string;
   brand: string;
   price: number;
-  status: "결제 완료" | "배송 준비" | "배송 중" | "배송 완료" | "구매 확정" | "취소";
+  status: "결제 완료" | "배송 중" | "배송 완료" | "구매 확정" | "취소";
   type: "구매" | "렌탈";
   date: string;
   buyer: string;
@@ -351,25 +351,25 @@ export type Order = {
 
 export const orders: Order[] = [
   { id: "o001", productId: "p001", productName: "Aeron Chair", brand: "Herman Miller", price: 1280000, status: "배송 중", type: "구매", date: "2026-04-08", buyer: "김풀티", seller: "김컬렉터", trackingCarrier: "CJ대한통운", trackingNo: "1234567890123" },
-  { id: "o006", productId: "p006", productName: "LC4 Chaise Longue", brand: "Cassina", price: 5400000, status: "배송 준비", type: "구매", date: "2026-04-15", buyer: "이가구", seller: "이태리에디션" },
+  { id: "o006", productId: "p006", productName: "LC4 Chaise Longue", brand: "Cassina", price: 5400000, status: "결제 완료", type: "구매", date: "2026-04-15", buyer: "이가구", seller: "이태리에디션" },
   { id: "o002", productId: "p005", productName: "Egg Chair", brand: "Fritz Hansen", price: 850000, status: "배송 완료", type: "렌탈", date: "2026-03-15", buyer: "박빈티", seller: "빈티지 웍스", trackingCarrier: "롯데택배", trackingNo: "9988776655443" },
   { id: "o003", productId: "p004", productName: "CH24 Wishbone", brand: "Carl Hansen", price: 980000, status: "구매 확정", type: "구매", date: "2026-02-28", buyer: "김풀티", seller: "노르딕홈", trackingCarrier: "우체국택배", trackingNo: "4433221100998" },
   { id: "o004", productId: "p003", productName: "Haller Sideboard", brand: "USM", price: 3200000, status: "취소", type: "구매", date: "2026-04-01", buyer: "최유저", seller: "김컬렉터" },
   { id: "o005", productId: "p002", productName: "DSW Side Chair", brand: "Vitra", price: 560000, status: "취소", type: "구매", date: "2026-03-20", buyer: "이가구", seller: "오브제 스튜디오" },
   { id: "o007", productId: "p007", productName: "Barcelona Chair", brand: "Knoll", price: 1850000, status: "결제 완료", type: "구매", date: "2026-04-22", buyer: "박빈티", seller: "빈티지 웍스" },
-  { id: "o008", productId: "p008", productName: "Series 7", brand: "Fritz Hansen", price: 680000, status: "배송 준비", type: "구매", date: "2026-04-20", buyer: "최유저", seller: "노르딕홈" },
+  { id: "o008", productId: "p008", productName: "Series 7", brand: "Fritz Hansen", price: 680000, status: "결제 완료", type: "구매", date: "2026-04-20", buyer: "최유저", seller: "노르딕홈" },
   { id: "o009", productId: "p009", productName: "Eames Lounge Chair", brand: "Vitra", price: 8900000, status: "구매 확정", type: "구매", date: "2026-03-10", buyer: "박빈티", seller: "오브제 스튜디오", trackingCarrier: "CJ대한통운", trackingNo: "5544332211009" },
   { id: "o010", productId: "p010", productName: "Stool 60", brand: "Artek", price: 420000, status: "배송 중", type: "구매", date: "2026-04-18", buyer: "정모던", seller: "노르딕홈", trackingCarrier: "우체국택배", trackingNo: "7766554433221" },
-  { id: "o011", productId: "p011", productName: "Womb Chair", brand: "Knoll", price: 2100000, status: "배송 준비", type: "구매", date: "2026-04-25", buyer: "최유저", seller: "빈티지 웍스" },
+  { id: "o011", productId: "p011", productName: "Womb Chair", brand: "Knoll", price: 2100000, status: "결제 완료", type: "구매", date: "2026-04-25", buyer: "최유저", seller: "빈티지 웍스" },
   { id: "o012", productId: "p012", productName: "Louis Ghost", brand: "Kartell", price: 240000, status: "배송 완료", type: "구매", date: "2026-03-28", buyer: "김풀티", seller: "이태리에디션", trackingCarrier: "롯데택배", trackingNo: "3322110099887" },
   { id: "o013", productId: "p013", productName: "About A Chair", brand: "HAY", price: 290000, status: "결제 완료", type: "구매", date: "2026-04-26", buyer: "이가구", seller: "노르딕홈" },
-  { id: "o014", productId: "p014", productName: "Panton Chair", brand: "Vitra", price: 360000, status: "배송 준비", type: "구매", date: "2026-04-23", buyer: "박빈티", seller: "오브제 스튜디오" },
+  { id: "o014", productId: "p014", productName: "Panton Chair", brand: "Vitra", price: 360000, status: "결제 완료", type: "구매", date: "2026-04-23", buyer: "박빈티", seller: "오브제 스튜디오" },
   { id: "o015", productId: "p015", productName: "Copenhague CPH30", brand: "HAY", price: 780000, status: "구매 확정", type: "구매", date: "2026-03-05", buyer: "정모던", seller: "모듈러 코리아", trackingCarrier: "CJ대한통운", trackingNo: "2211009988776" },
   { id: "o016", productId: "p016", productName: "Aeron Chair", brand: "Herman Miller", price: 1380000, status: "배송 중", type: "렌탈", date: "2026-04-10", buyer: "최유저", seller: "김컬렉터", trackingCarrier: "CJ대한통운", trackingNo: "8877665544332" },
   { id: "o017", productId: "p017", productName: "E27 Lamp", brand: "Muuto", price: 180000, status: "취소", type: "구매", date: "2026-04-05", buyer: "정모던", seller: "빈티지 웍스" },
   { id: "o018", productId: "p018", productName: "81C Side Table", brand: "Artek", price: 320000, status: "배송 완료", type: "구매", date: "2026-03-22", buyer: "이가구", seller: "노르딕홈", trackingCarrier: "우체국택배", trackingNo: "6655443322110" },
-  { id: "o019", productId: "p019", productName: "Haller Trolley", brand: "USM", price: 980000, status: "배송 준비", type: "구매", date: "2026-04-27", buyer: "김풀티", seller: "모듈러 코리아" },
-  { id: "o020", productId: "p020", productName: "Eames DSW", brand: "Vitra", price: 580000, status: "배송 준비", type: "구매", date: "2026-04-21", buyer: "박빈티", seller: "오브제 스튜디오" },
+  { id: "o019", productId: "p019", productName: "Haller Trolley", brand: "USM", price: 980000, status: "결제 완료", type: "구매", date: "2026-04-27", buyer: "김풀티", seller: "모듈러 코리아" },
+  { id: "o020", productId: "p020", productName: "Eames DSW", brand: "Vitra", price: 580000, status: "결제 완료", type: "구매", date: "2026-04-21", buyer: "박빈티", seller: "오브제 스튜디오" },
   { id: "o021", productId: "p021", productName: "LC2 Armchair", brand: "Cassina", price: 2100000, status: "구매 확정", type: "구매", date: "2026-02-15", buyer: "최유저", seller: "이태리에디션", trackingCarrier: "CJ대한통운", trackingNo: "4455667788990" },
   { id: "o022", productId: "p022", productName: "Series 7", brand: "Fritz Hansen", price: 620000, status: "취소", type: "구매", date: "2026-03-18", buyer: "정모던", seller: "덴마크빈티지" },
 ];

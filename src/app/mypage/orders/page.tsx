@@ -85,7 +85,7 @@ export default function OrdersPage() {
           <Select placeholder="최근 3개월" options={["최근 3개월", "최근 6개월", "최근 1년"]} className="w-32" />
           <Select
             placeholder="전체 상태"
-            options={["전체 상태", "배송 준비", "배송 중", "배송 완료", "구매 확정", "취소"]}
+            options={["전체 상태", "배송 중", "배송 완료", "구매 확정", "취소"]}
             className="w-32"
           />
         </div>
