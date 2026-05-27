@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { Modal } from "@/components/ui/Modal";
 import { orders, type Order } from "@/lib/mock";
 import { formatPrice } from "@/lib/utils";
 import { cn } from "@/lib/utils";
@@ -90,6 +91,7 @@ export default function AdminOrderDetailPage() {
   const [trackingNo, setTrackingNo] = useState(original?.trackingNo ?? "");
   const [saved, setSaved] = useState(false);
   const [cancelled, setCancelled] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   if (!original) {
     return (
@@ -112,6 +114,7 @@ export default function AdminOrderDetailPage() {
   function handleCancel() {
     setStatus("취소");
     setCancelled(true);
+    setConfirmOpen(false);
   }
 
   return (
@@ -148,7 +151,7 @@ export default function AdminOrderDetailPage() {
           <div className="px-5 pb-5">
             <div className="border-t border-border pt-4 flex items-center justify-between">
               <p className="text-[12px] text-muted-foreground">배송 시작 전에만 취소할 수 있습니다.</p>
-              <Button variant="outline" size="sm" onClick={handleCancel}>
+              <Button variant="outline" size="sm" onClick={() => setConfirmOpen(true)}>
                 주문 취소
               </Button>
             </div>
@@ -366,6 +369,29 @@ export default function AdminOrderDetailPage() {
         </section>
       )}
 
+      {/* 취소 확인 모달 */}
+      <Modal open={confirmOpen} onClose={() => setConfirmOpen(false)} title="주문 취소">
+        <div className="p-6 space-y-5">
+          <div className="space-y-1">
+            <div className="text-[11px] text-muted-foreground">{original.brand}</div>
+            <div className="text-base font-semibold">{original.productName}</div>
+            <div className="text-sm font-medium text-sage-ink">{formatPrice(original.price)}</div>
+          </div>
+          <div className="bg-muted/50 border border-border p-4 space-y-1.5 text-[12px] text-sage-ink">
+            <div className="font-semibold mb-1">취소 안내</div>
+            <div>· 취소 후에는 되돌릴 수 없습니다.</div>
+            <div>· 결제 금액은 3~5 영업일 내 환불됩니다.</div>
+          </div>
+          <div className="flex gap-2 pt-2">
+            <Button variant="outline" size="sm" className="flex-1" onClick={() => setConfirmOpen(false)}>
+              돌아가기
+            </Button>
+            <Button size="sm" className="flex-1" onClick={handleCancel}>
+              취소 확인
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }
