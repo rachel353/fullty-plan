@@ -17,8 +17,6 @@ const STATUS_VARIANT: Record<string, "default" | "sage" | "muted" | "outline"> =
   "취소": "outline",
 };
 
-const STATUS_FLOW: Order["status"][] = ["결제 완료", "배송 준비", "배송 중", "배송 완료", "구매 확정"];
-const ALL_STATUSES: Order["status"][] = [...STATUS_FLOW, "취소"];
 
 // 스마트택배 API trackingDetails 이벤트 구조
 type TrackingEvent = {
@@ -90,7 +88,6 @@ export default function AdminOrderDetailPage() {
   const router = useRouter();
 
   const original = orders.find((o) => o.id === id);
-  const [status, setStatus] = useState<Order["status"]>(original?.status ?? "결제 완료");
   const [carrier, setCarrier] = useState(original?.trackingCarrier ?? "");
   const [trackingNo, setTrackingNo] = useState(original?.trackingNo ?? "");
   const [saved, setSaved] = useState(false);
@@ -103,11 +100,11 @@ export default function AdminOrderDetailPage() {
     );
   }
 
+  const status = original.status;
   const isCancelled = status === "취소";
   const hasTracking = !!(carrier || original.trackingCarrier) && !!(trackingNo || original.trackingNo);
   const events = getMockTrackingEvents(status, original.date);
   const currentLevel = getCurrentLevel(status);
-  const currentStepIndex = STATUS_FLOW.indexOf(status);
 
   function handleSave() {
     setSaved(true);
@@ -130,6 +127,40 @@ export default function AdminOrderDetailPage() {
         </div>
         <Badge variant={STATUS_VARIANT[status] ?? "outline"}>{status}</Badge>
       </div>
+
+      {/* 운송장 등록 */}
+      {!isCancelled && (
+        <section className="border border-border">
+          <SectionHeader>운송장 정보</SectionHeader>
+          <div className="p-5 space-y-4">
+            <div className="flex gap-3">
+              <div className="flex-1">
+                <div className="text-[11px] text-muted-foreground mb-1">택배사</div>
+                <input
+                  value={carrier}
+                  onChange={(e) => setCarrier(e.target.value)}
+                  placeholder="예: CJ대한통운"
+                  className="h-8 px-3 text-xs border border-border bg-background w-full outline-none focus:border-sage-ink"
+                />
+              </div>
+              <div className="flex-1">
+                <div className="text-[11px] text-muted-foreground mb-1">운송장 번호</div>
+                <input
+                  value={trackingNo}
+                  onChange={(e) => setTrackingNo(e.target.value)}
+                  placeholder="운송장 번호 입력"
+                  className="h-8 px-3 text-xs border border-border bg-background w-full outline-none focus:border-sage-ink font-mono"
+                />
+              </div>
+            </div>
+            <div className="flex justify-end">
+              <Button size="sm" onClick={handleSave}>
+                {saved ? "저장 완료 ✓" : "저장"}
+              </Button>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* 주문 정보 */}
       <section className="border border-border">
@@ -315,66 +346,6 @@ export default function AdminOrderDetailPage() {
         </section>
       )}
 
-      {/* 상태 관리 */}
-      {!isCancelled && (
-        <section className="border border-border">
-          <SectionHeader>상태 관리</SectionHeader>
-          <div className="p-5 space-y-5">
-            <div>
-              <div className="text-xs text-muted-foreground mb-3">주문 상태 변경</div>
-              <div className="flex flex-wrap gap-2">
-                {ALL_STATUSES.map((s) => (
-                  <button
-                    key={s}
-                    onClick={() => setStatus(s)}
-                    className={cn(
-                      "px-3 py-1.5 text-xs border transition-colors",
-                      status === s
-                        ? "bg-foreground text-background border-foreground"
-                        : "border-border text-muted-foreground hover:border-foreground hover:text-foreground"
-                    )}
-                  >
-                    {s}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* 운송장 등록 — 배송 준비 이상 */}
-            {currentStepIndex >= 1 && (
-              <div className="space-y-3 pt-3 border-t border-border">
-                <div className="text-xs text-muted-foreground">운송장 정보</div>
-                <div className="flex gap-3">
-                  <div className="flex-1">
-                    <div className="text-[11px] text-muted-foreground mb-1">택배사</div>
-                    <input
-                      value={carrier}
-                      onChange={(e) => setCarrier(e.target.value)}
-                      placeholder="예: CJ대한통운"
-                      className="h-8 px-3 text-xs border border-border bg-background w-full outline-none focus:border-sage-ink"
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <div className="text-[11px] text-muted-foreground mb-1">운송장 번호</div>
-                    <input
-                      value={trackingNo}
-                      onChange={(e) => setTrackingNo(e.target.value)}
-                      placeholder="운송장 번호 입력"
-                      className="h-8 px-3 text-xs border border-border bg-background w-full outline-none focus:border-sage-ink font-mono"
-                    />
-                  </div>
-                </div>
-              </div>
-            )}
-
-            <div className="flex justify-end pt-2">
-              <Button size="sm" onClick={handleSave}>
-                {saved ? "저장 완료 ✓" : "변경 저장"}
-              </Button>
-            </div>
-          </div>
-        </section>
-      )}
     </div>
   );
 }
