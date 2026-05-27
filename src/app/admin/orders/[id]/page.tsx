@@ -20,31 +20,69 @@ const STATUS_VARIANT: Record<string, "default" | "sage" | "muted" | "outline"> =
 const STATUS_FLOW: Order["status"][] = ["결제 완료", "배송 준비", "배송 중", "배송 완료", "구매 확정"];
 const ALL_STATUSES: Order["status"][] = [...STATUS_FLOW, "취소"];
 
-function getTrackingSteps(status: Order["status"], date: string) {
+// 스마트택배 API trackingDetails 이벤트 구조
+type TrackingEvent = {
+  level: 1 | 2 | 3 | 4 | 5 | 6;
+  kind: string;
+  where: string;
+  timeString: string;
+  manName?: string;
+  telno?: string;
+};
+
+const LEVEL_LABELS: Record<number, string> = {
+  1: "배송 준비",
+  2: "집하",
+  3: "이동 중",
+  4: "배송 출발",
+  5: "배달 중",
+  6: "배달 완료",
+};
+
+// 주문 상태와 날짜 기반으로 trackingDetails mock 생성
+function getMockTrackingEvents(status: Order["status"], date: string): TrackingEvent[] {
   const base = new Date(date);
-  const fmt = (d: Date) =>
-    `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, "0")}.${String(d.getDate()).padStart(2, "0")}`;
+  const fmt = (d: Date, h: number, m: number) => {
+    const dd = new Date(d);
+    dd.setDate(dd.getDate());
+    return `${dd.getFullYear()}.${String(dd.getMonth() + 1).padStart(2, "0")}.${String(dd.getDate()).padStart(2, "0")} ${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+  };
+  const addDay = (n: number) => new Date(base.getTime() + 86400000 * n);
 
-  const d0 = fmt(base);
-  const d1 = fmt(new Date(base.getTime() + 86400000));
-  const d2 = fmt(new Date(base.getTime() + 86400000 * 2));
-  const d3 = fmt(new Date(base.getTime() + 86400000 * 3));
-
-  const statusIndex = STATUS_FLOW.indexOf(status);
-
-  const steps = [
-    { label: "결제 완료", sub: "주문이 접수되었습니다", date: d0, doneIndex: 0 },
-    { label: "배송 준비", sub: "운송장 등록 및 발송 준비 중", date: d1, doneIndex: 1 },
-    { label: "배송 중", sub: "상품이 이동 중입니다", date: d2, doneIndex: 2 },
-    { label: "배송 완료", sub: "배달이 완료되었습니다", date: d3, doneIndex: 3 },
-    { label: "구매 확정", sub: "구매가 최종 확정되었습니다", date: d3, doneIndex: 4 },
+  const all: TrackingEvent[] = [
+    { level: 1, kind: "인터넷 접수", where: "온라인 접수", timeString: fmt(base, 14, 22) },
+    { level: 2, kind: "집하 완료", where: "서울 강남 영업소", timeString: fmt(addDay(1), 9, 15) },
+    { level: 3, kind: "간선 이동 중", where: "서울 허브 터미널", timeString: fmt(addDay(1), 18, 40) },
+    { level: 3, kind: "간선 이동 완료", where: "수도권 허브 터미널", timeString: fmt(addDay(2), 3, 12) },
+    { level: 4, kind: "배달 출발", where: "서울 마포 영업소", timeString: fmt(addDay(2), 8, 55), manName: "홍길동", telno: "010-1234-5678" },
+    { level: 6, kind: "배달 완료", where: "서울 마포구 서교동", timeString: fmt(addDay(2), 14, 33), manName: "홍길동", telno: "010-1234-5678" },
   ];
 
-  return steps.map((s) => ({
-    ...s,
-    done: s.doneIndex <= statusIndex,
-    current: s.doneIndex === statusIndex,
-  }));
+  const levelMap: Record<Order["status"], number> = {
+    "결제 완료": 0,
+    "배송 준비": 1,
+    "배송 중": 4,
+    "배송 완료": 6,
+    "구매 확정": 6,
+    "취소": 0,
+  };
+
+  const maxIndex = levelMap[status];
+  // 최신순 역순 반환 (실제 API와 동일)
+  return all.filter((_, i) => i < maxIndex).reverse();
+}
+
+// 상태 → 현재 level 매핑
+function getCurrentLevel(status: Order["status"]): number {
+  const map: Record<Order["status"], number> = {
+    "결제 완료": 1,
+    "배송 준비": 1,
+    "배송 중": 4,
+    "배송 완료": 6,
+    "구매 확정": 6,
+    "취소": 0,
+  };
+  return map[status] ?? 1;
 }
 
 export default function AdminOrderDetailPage() {
@@ -53,7 +91,7 @@ export default function AdminOrderDetailPage() {
 
   const original = orders.find((o) => o.id === id);
   const [status, setStatus] = useState<Order["status"]>(original?.status ?? "결제 완료");
-  const [trackingCarrier, setTrackingCarrier] = useState(original?.trackingCarrier ?? "");
+  const [carrier, setCarrier] = useState(original?.trackingCarrier ?? "");
   const [trackingNo, setTrackingNo] = useState(original?.trackingNo ?? "");
   const [saved, setSaved] = useState(false);
 
@@ -66,7 +104,9 @@ export default function AdminOrderDetailPage() {
   }
 
   const isCancelled = status === "취소";
-  const trackingSteps = getTrackingSteps(status, original.date);
+  const hasTracking = !!(carrier || original.trackingCarrier) && !!(trackingNo || original.trackingNo);
+  const events = getMockTrackingEvents(status, original.date);
+  const currentLevel = getCurrentLevel(status);
   const currentStepIndex = STATUS_FLOW.indexOf(status);
 
   function handleSave() {
@@ -93,9 +133,7 @@ export default function AdminOrderDetailPage() {
 
       {/* 주문 정보 */}
       <section className="border border-border">
-        <div className="px-5 py-3 border-b border-border bg-muted">
-          <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">주문 정보</span>
-        </div>
+        <SectionHeader>주문 정보</SectionHeader>
         <div className="p-5 grid grid-cols-2 gap-x-8 gap-y-4 text-sm">
           <InfoRow label="상품" value={`${original.brand} ${original.productName}`} />
           <InfoRow label="유형">
@@ -111,91 +149,177 @@ export default function AdminOrderDetailPage() {
       {/* 배송 추적 */}
       {!isCancelled && (
         <section className="border border-border">
-          <div className="px-5 py-3 border-b border-border bg-muted">
-            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">배송 추적</span>
-          </div>
-          <div className="p-5 space-y-5">
-            {/* 운송장 정보 */}
-            {original.trackingNo ? (
-              <div className="flex gap-6 text-sm">
-                <div>
-                  <div className="text-[11px] text-muted-foreground mb-0.5">택배사</div>
-                  <div className="font-medium">{trackingCarrier || original.trackingCarrier}</div>
+          <SectionHeader>
+            <span>배송 추적</span>
+            {hasTracking && currentLevel === 6 && (
+              <span className="ml-2 text-[10px] bg-sage-ink text-background px-2 py-0.5">배달 완료</span>
+            )}
+          </SectionHeader>
+
+          {!hasTracking ? (
+            <div className="p-5 text-[12px] text-muted-foreground">운송장이 등록되지 않았습니다.</div>
+          ) : (
+            <div className="p-5 space-y-6">
+              {/* 택배사 + 운송장 */}
+              <div className="flex items-center justify-between border border-border p-4 bg-muted/30">
+                <div className="space-y-0.5">
+                  <div className="text-[11px] text-muted-foreground">택배사</div>
+                  <div className="text-sm font-semibold">{carrier || original.trackingCarrier}</div>
                 </div>
-                <div>
-                  <div className="text-[11px] text-muted-foreground mb-0.5">운송장 번호</div>
-                  <div className="font-mono font-medium tracking-wider">{trackingNo || original.trackingNo}</div>
+                <div className="text-right space-y-0.5">
+                  <div className="text-[11px] text-muted-foreground">운송장 번호</div>
+                  <div className="text-sm font-mono font-semibold tracking-widest">
+                    {trackingNo || original.trackingNo}
+                  </div>
                 </div>
               </div>
-            ) : (
-              <div className="text-[11px] text-muted-foreground">운송장 미등록</div>
-            )}
 
-            {/* 타임라인 */}
-            <div className="space-y-0">
-              {trackingSteps.map((step, i) => (
-                <div key={i} className="flex gap-4">
-                  <div className="flex flex-col items-center">
-                    <div
-                      className={cn(
-                        "w-3 h-3 rounded-full border-2 mt-0.5 flex-shrink-0",
-                        step.current
-                          ? "bg-sage-ink border-sage-ink ring-2 ring-sage-ink/20"
-                          : step.done
-                          ? "bg-foreground border-foreground"
-                          : "bg-background border-border"
-                      )}
-                    />
-                    {i < trackingSteps.length - 1 && (
-                      <div className={cn("w-px flex-1 mt-1 mb-1", step.done ? "bg-foreground/30" : "bg-border")} />
-                    )}
+              {/* Level 진행 바 (스마트택배 level 1~6) */}
+              <div>
+                <div className="flex justify-between mb-2">
+                  {[1, 2, 3, 4, 6].map((lv) => (
+                    <div key={lv} className="flex flex-col items-center gap-1 flex-1">
+                      <div
+                        className={cn(
+                          "w-4 h-4 rounded-full border-2 mx-auto transition-colors",
+                          currentLevel >= lv
+                            ? currentLevel === lv
+                              ? "bg-sage-ink border-sage-ink ring-2 ring-sage-ink/20"
+                              : "bg-foreground border-foreground"
+                            : "bg-background border-border"
+                        )}
+                      />
+                      <span
+                        className={cn(
+                          "text-[10px] text-center leading-tight",
+                          currentLevel >= lv ? "text-foreground font-medium" : "text-muted-foreground/50"
+                        )}
+                      >
+                        {LEVEL_LABELS[lv]}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+                {/* 연결선 */}
+                <div className="relative -mt-8 mb-6 mx-2 h-px">
+                  <div className="absolute inset-0 bg-border" />
+                  <div
+                    className="absolute inset-y-0 left-0 bg-foreground transition-all"
+                    style={{ width: `${Math.min(100, ((currentLevel - 1) / 5) * 100)}%` }}
+                  />
+                </div>
+              </div>
+
+              {/* 이벤트 타임라인 (최신순) */}
+              {events.length > 0 && (
+                <div>
+                  <div className="text-[11px] text-muted-foreground mb-3 uppercase tracking-wide font-medium">
+                    배송 이력
                   </div>
-                  <div className="pb-5">
-                    <div
-                      className={cn(
-                        "text-sm font-medium",
-                        step.current ? "text-sage-ink" : step.done ? "text-foreground" : "text-muted-foreground/50"
-                      )}
-                    >
-                      {step.label}
-                      {step.current && (
-                        <span className="ml-2 text-[10px] bg-sage-ink text-background px-1.5 py-0.5">현재</span>
-                      )}
-                    </div>
-                    <div className={cn("text-[11px]", step.done ? "text-muted-foreground" : "text-muted-foreground/40")}>
-                      {step.sub}
-                    </div>
-                    {step.done && (
-                      <div className="text-[10px] text-muted-foreground/60 mt-0.5">{step.date}</div>
-                    )}
+                  <div className="space-y-0">
+                    {events.map((ev, i) => {
+                      const isLatest = i === 0;
+                      return (
+                        <div key={i} className="flex gap-3">
+                          {/* 시각 */}
+                          <div className="w-[120px] flex-shrink-0 pt-0.5">
+                            <div
+                              className={cn(
+                                "text-[11px] leading-tight",
+                                isLatest ? "text-foreground font-medium" : "text-muted-foreground"
+                              )}
+                            >
+                              {ev.timeString.split(" ")[0]}
+                            </div>
+                            <div
+                              className={cn(
+                                "text-[11px]",
+                                isLatest ? "text-sage-ink font-semibold" : "text-muted-foreground"
+                              )}
+                            >
+                              {ev.timeString.split(" ")[1]}
+                            </div>
+                          </div>
+
+                          {/* 타임라인 도트 */}
+                          <div className="flex flex-col items-center flex-shrink-0">
+                            <div
+                              className={cn(
+                                "w-2.5 h-2.5 rounded-full border-2 mt-0.5 flex-shrink-0",
+                                isLatest
+                                  ? "bg-sage-ink border-sage-ink"
+                                  : "bg-muted-foreground/30 border-muted-foreground/30"
+                              )}
+                            />
+                            {i < events.length - 1 && (
+                              <div className="w-px flex-1 bg-border mt-1 mb-1 min-h-[20px]" />
+                            )}
+                          </div>
+
+                          {/* 이벤트 내용 */}
+                          <div className="pb-5 flex-1 min-w-0">
+                            <div
+                              className={cn(
+                                "text-sm font-medium",
+                                isLatest ? "text-foreground" : "text-muted-foreground"
+                              )}
+                            >
+                              {ev.kind}
+                            </div>
+                            <div className="text-[11px] text-muted-foreground mt-0.5">{ev.where}</div>
+                            {ev.manName && (
+                              <div className="flex items-center gap-2 mt-1 text-[11px] text-muted-foreground">
+                                <span>{ev.manName} 기사</span>
+                                <span className="font-mono">{ev.telno}</span>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* 레벨 뱃지 */}
+                          <div className="flex-shrink-0 pt-0.5">
+                            <span
+                              className={cn(
+                                "text-[10px] px-1.5 py-0.5 border",
+                                isLatest
+                                  ? "border-sage-ink/40 text-sage-ink bg-sage-ink/5"
+                                  : "border-border text-muted-foreground/50"
+                              )}
+                            >
+                              Lv.{ev.level}
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
-              ))}
+              )}
+
+              {events.length === 0 && (
+                <div className="text-[12px] text-muted-foreground">
+                  아직 배송 이력이 없습니다. 택배사 집하 후 업데이트됩니다.
+                </div>
+              )}
             </div>
-          </div>
+          )}
         </section>
       )}
 
       {/* 취소 정보 */}
       {isCancelled && (
         <section className="border border-border">
-          <div className="px-5 py-3 border-b border-border bg-muted">
-            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">취소 정보</span>
-          </div>
+          <SectionHeader>취소 정보</SectionHeader>
           <div className="p-5 text-sm text-muted-foreground">
             주문이 취소된 상태입니다. 결제 금액은 3~5 영업일 내 환불 처리됩니다.
           </div>
         </section>
       )}
 
-      {/* 어드민 상태 관리 */}
+      {/* 상태 관리 */}
       {!isCancelled && (
         <section className="border border-border">
-          <div className="px-5 py-3 border-b border-border bg-muted">
-            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">상태 관리</span>
-          </div>
+          <SectionHeader>상태 관리</SectionHeader>
           <div className="p-5 space-y-5">
-            {/* 상태 스텝 버튼 */}
             <div>
               <div className="text-xs text-muted-foreground mb-3">주문 상태 변경</div>
               <div className="flex flex-wrap gap-2">
@@ -216,17 +340,17 @@ export default function AdminOrderDetailPage() {
               </div>
             </div>
 
-            {/* 운송장 등록 - 배송 준비 이상부터 */}
-            {currentStepIndex >= 2 && (
+            {/* 운송장 등록 — 배송 준비 이상 */}
+            {currentStepIndex >= 1 && (
               <div className="space-y-3 pt-3 border-t border-border">
                 <div className="text-xs text-muted-foreground">운송장 정보</div>
                 <div className="flex gap-3">
                   <div className="flex-1">
                     <div className="text-[11px] text-muted-foreground mb-1">택배사</div>
                     <input
-                      value={trackingCarrier}
-                      onChange={(e) => setTrackingCarrier(e.target.value)}
-                      placeholder="CJ대한통운"
+                      value={carrier}
+                      onChange={(e) => setCarrier(e.target.value)}
+                      placeholder="예: CJ대한통운"
                       className="h-8 px-3 text-xs border border-border bg-background w-full outline-none focus:border-sage-ink"
                     />
                   </div>
@@ -251,6 +375,14 @@ export default function AdminOrderDetailPage() {
           </div>
         </section>
       )}
+    </div>
+  );
+}
+
+function SectionHeader({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="px-5 py-3 border-b border-border bg-muted flex items-center gap-1">
+      <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">{children}</span>
     </div>
   );
 }
