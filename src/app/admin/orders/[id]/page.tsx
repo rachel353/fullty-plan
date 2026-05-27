@@ -10,7 +10,6 @@ import { cn } from "@/lib/utils";
 
 const STATUS_VARIANT: Record<string, "default" | "sage" | "muted" | "outline"> = {
   "결제 완료": "default",
-  "배송 대기": "default",
   "배송 준비": "default",
   "배송 중": "sage",
   "배송 완료": "sage",
@@ -18,7 +17,7 @@ const STATUS_VARIANT: Record<string, "default" | "sage" | "muted" | "outline"> =
   "취소": "outline",
 };
 
-const STATUS_FLOW: Order["status"][] = ["결제 완료", "배송 대기", "배송 준비", "배송 중", "배송 완료", "구매 확정"];
+const STATUS_FLOW: Order["status"][] = ["결제 완료", "배송 준비", "배송 중", "배송 완료", "구매 확정"];
 const ALL_STATUSES: Order["status"][] = [...STATUS_FLOW, "취소"];
 
 function getTrackingSteps(status: Order["status"], date: string) {
@@ -35,11 +34,10 @@ function getTrackingSteps(status: Order["status"], date: string) {
 
   const steps = [
     { label: "결제 완료", sub: "주문이 접수되었습니다", date: d0, doneIndex: 0 },
-    { label: "배송 대기", sub: "상품 발송 준비 중", date: d0, doneIndex: 1 },
-    { label: "배송 준비", sub: "운송장 등록 완료", date: d1, doneIndex: 2 },
-    { label: "배송 중", sub: "상품이 이동 중입니다", date: d2, doneIndex: 3 },
-    { label: "배송 완료", sub: "배달이 완료되었습니다", date: d3, doneIndex: 4 },
-    { label: "구매 확정", sub: "구매가 최종 확정되었습니다", date: d3, doneIndex: 5 },
+    { label: "배송 준비", sub: "운송장 등록 및 발송 준비 중", date: d1, doneIndex: 1 },
+    { label: "배송 중", sub: "상품이 이동 중입니다", date: d2, doneIndex: 2 },
+    { label: "배송 완료", sub: "배달이 완료되었습니다", date: d3, doneIndex: 3 },
+    { label: "구매 확정", sub: "구매가 최종 확정되었습니다", date: d3, doneIndex: 4 },
   ];
 
   return steps.map((s) => ({

@@ -85,7 +85,7 @@ export default function OrdersPage() {
           <Select placeholder="최근 3개월" options={["최근 3개월", "최근 6개월", "최근 1년"]} className="w-32" />
           <Select
             placeholder="전체 상태"
-            options={["전체 상태", "배송 대기", "배송 중", "배송 완료", "구매 확정", "취소"]}
+            options={["전체 상태", "배송 준비", "배송 중", "배송 완료", "구매 확정", "취소"]}
             className="w-32"
           />
         </div>
@@ -118,7 +118,7 @@ export default function OrdersPage() {
                 </div>
                 {!isCancelled && (
                   <div className="flex flex-col gap-2">
-                    {status === "배송 대기" ? (
+                    {status === "결제 완료" ? (
                       <Button size="sm" variant="outline" className="w-28" onClick={() => open("cancel", o)}>
                         주문 취소
                       </Button>
@@ -163,7 +163,7 @@ export default function OrdersPage() {
 
           <div className="bg-muted/50 border border-border p-4 space-y-2 text-[12px] text-sage-ink">
             <div className="font-semibold mb-1">취소 안내사항</div>
-            <div>· 배송 대기 상태에서만 취소가 가능합니다.</div>
+            <div>· 결제 완료 상태에서만 취소가 가능합니다.</div>
             <div>· 결제 금액은 3~5 영업일 내 환불됩니다.</div>
             <div>· 취소 후에는 되돌릴 수 없습니다.</div>
           </div>
