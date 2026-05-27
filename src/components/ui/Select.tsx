@@ -8,13 +8,18 @@ interface SelectProps {
   placeholder?: string;
   options: string[];
   className?: string;
+  value?: string;
   onChange?: (value: string) => void;
 }
 
-export function Select({ placeholder = "선택", options, className, onChange }: SelectProps) {
+export function Select({ placeholder = "선택", options, className, value, onChange }: SelectProps) {
   const [open, setOpen] = useState(false);
-  const [selected, setSelected] = useState("");
+  const [selected, setSelected] = useState(value ?? "");
   const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (value !== undefined) setSelected(value);
+  }, [value]);
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {

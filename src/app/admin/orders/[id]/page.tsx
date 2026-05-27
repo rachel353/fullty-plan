@@ -5,9 +5,23 @@ import { useParams, useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Modal } from "@/components/ui/Modal";
+import { Select } from "@/components/ui/Select";
 import { orders, type Order } from "@/lib/mock";
 import { formatPrice } from "@/lib/utils";
 import { cn } from "@/lib/utils";
+
+const CARRIERS = [
+  "CJ대한통운",
+  "한진택배",
+  "롯데택배",
+  "우체국택배",
+  "로젠택배",
+  "대신택배",
+  "경동택배",
+  "일양로지스",
+  "드림택배",
+  "합동택배",
+];
 
 const STATUS_VARIANT: Record<string, "default" | "sage" | "muted" | "outline"> = {
   "결제 완료": "default",
@@ -174,11 +188,12 @@ export default function AdminOrderDetailPage() {
             <div className="flex gap-3">
               <div className="flex-1">
                 <div className="text-[11px] text-muted-foreground mb-1">택배사</div>
-                <input
+                <Select
+                  placeholder="택배사 선택"
                   value={carrier}
-                  onChange={(e) => setCarrier(e.target.value)}
-                  placeholder="예: CJ대한통운"
-                  className="h-8 px-3 text-xs border border-border bg-background w-full outline-none focus:border-sage-ink"
+                  options={CARRIERS}
+                  onChange={setCarrier}
+                  className="h-8 [&_button]:h-8 [&_button]:text-xs"
                 />
               </div>
               <div className="flex-1">
