@@ -85,9 +85,11 @@ export default function AdminOrderDetailPage() {
   const router = useRouter();
 
   const original = orders.find((o) => o.id === id);
+  const [status, setStatus] = useState<Order["status"]>(original?.status ?? "결제 완료");
   const [carrier, setCarrier] = useState(original?.trackingCarrier ?? "");
   const [trackingNo, setTrackingNo] = useState(original?.trackingNo ?? "");
   const [saved, setSaved] = useState(false);
+  const [cancelled, setCancelled] = useState(false);
 
   if (!original) {
     return (
@@ -97,7 +99,6 @@ export default function AdminOrderDetailPage() {
     );
   }
 
-  const status = original.status;
   const isCancelled = status === "취소";
   const hasTracking = !!(carrier || original.trackingCarrier) && !!(trackingNo || original.trackingNo);
   const events = getMockTrackingEvents(status, original.date);
@@ -106,6 +107,11 @@ export default function AdminOrderDetailPage() {
   function handleSave() {
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
+  }
+
+  function handleCancel() {
+    setStatus("취소");
+    setCancelled(true);
   }
 
   return (
@@ -138,6 +144,23 @@ export default function AdminOrderDetailPage() {
           <InfoRow label="결제 금액" value={formatPrice(original.price)} bold />
           <InfoRow label="주문일" value={original.date} />
         </div>
+        {status === "결제 완료" && !cancelled && (
+          <div className="px-5 pb-5">
+            <div className="border-t border-border pt-4 flex items-center justify-between">
+              <p className="text-[12px] text-muted-foreground">배송 시작 전에만 취소할 수 있습니다.</p>
+              <Button variant="outline" size="sm" onClick={handleCancel}>
+                주문 취소
+              </Button>
+            </div>
+          </div>
+        )}
+        {cancelled && (
+          <div className="px-5 pb-5">
+            <div className="border-t border-border pt-4">
+              <p className="text-[12px] text-muted-foreground">주문이 취소되었습니다. 결제 금액은 3~5 영업일 내 환불됩니다.</p>
+            </div>
+          </div>
+        )}
       </section>
 
       {/* 운송장 정보 */}
