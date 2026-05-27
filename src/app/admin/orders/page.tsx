@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/Badge";
 import { orders } from "@/lib/mock";
 import { formatPrice } from "@/lib/utils";
@@ -19,9 +20,13 @@ const STATUS_VARIANT: Record<string, "default" | "sage" | "muted" | "outline"> =
   "취소": "outline",
 };
 
+const PAGE_SIZE = 10;
+
 export default function AdminOrdersPage() {
+  const router = useRouter();
   const [tab, setTab] = useState<Tab>("전체");
   const [query, setQuery] = useState("");
+  const [page, setPage] = useState(1);
 
   const filtered = orders.filter((o) => {
     const matchTab = tab === "전체" ? true : o.status === tab;
@@ -33,6 +38,20 @@ export default function AdminOrdersPage() {
     return matchTab && matchQuery;
   });
 
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages);
+  const paginated = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
+  function handleTabChange(t: Tab) {
+    setTab(t);
+    setPage(1);
+  }
+
+  function handleQueryChange(q: string) {
+    setQuery(q);
+    setPage(1);
+  }
+
   const cancelCount = orders.filter((o) => o.status === "취소").length;
   const inDeliveryCount = orders.filter((o) => o.status === "배송 중").length;
 
@@ -43,7 +62,6 @@ export default function AdminOrdersPage() {
         <p className="text-sm text-muted-foreground mt-1">전체 주문 현황 조회 및 배송·취소 관리</p>
       </div>
 
-      {/* 요약 스탯 */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <Stat label="전체 주문" value={`${orders.length}건`} />
         <Stat label="배송 중" value={`${inDeliveryCount}건`} />
@@ -51,12 +69,11 @@ export default function AdminOrdersPage() {
         <Stat label="이번 달 GMV" value={formatPrice(orders.filter((o) => o.status !== "취소").reduce((s, o) => s + o.price, 0))} />
       </div>
 
-      {/* 탭 */}
       <div className="flex items-center gap-0 border-b border-border overflow-x-auto">
         {TABS.map((t) => (
           <button
             key={t}
-            onClick={() => setTab(t)}
+            onClick={() => handleTabChange(t)}
             className={cn(
               "px-4 py-2.5 text-sm font-medium border-b-2 -mb-px transition-colors whitespace-nowrap relative",
               tab === t ? "border-foreground text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"
@@ -70,17 +87,15 @@ export default function AdminOrdersPage() {
         ))}
       </div>
 
-      {/* 검색 */}
       <div>
         <input
           value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          onChange={(e) => handleQueryChange(e.target.value)}
           placeholder="상품명 / 브랜드 / 구매자 / 셀러 검색"
           className="h-9 px-3 text-xs border border-border bg-background w-64 outline-none focus:border-sage-ink"
         />
       </div>
 
-      {/* 테이블 */}
       <div className="border border-border">
         <table className="w-full text-sm">
           <thead className="border-b border-border bg-muted">
@@ -97,14 +112,18 @@ export default function AdminOrdersPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
-            {filtered.length === 0 ? (
+            {paginated.length === 0 ? (
               <tr>
                 <td colSpan={9} className="px-4 py-12 text-center text-[11px] text-muted-foreground">
                   해당 주문이 없습니다.
                 </td>
               </tr>
-            ) : filtered.map((o) => (
-              <tr key={o.id} className="hover:bg-muted/30 transition-colors">
+            ) : paginated.map((o) => (
+              <tr
+                key={o.id}
+                onClick={() => router.push(`/admin/orders/${o.id}`)}
+                className="hover:bg-muted/30 transition-colors cursor-pointer"
+              >
                 <td className="px-4 py-3 text-[11px] text-muted-foreground">{o.id}</td>
                 <td className="px-4 py-3">
                   <div className="text-[11px] text-muted-foreground">{o.brand}</div>
@@ -135,7 +154,49 @@ export default function AdminOrdersPage() {
           </tbody>
         </table>
       </div>
+
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between pt-2">
+          <div className="text-[11px] text-muted-foreground">
+            총 {filtered.length}건 · {currentPage}/{totalPages} 페이지
+          </div>
+          <div className="flex items-center gap-1">
+            <PageBtn onClick={() => setPage(1)} disabled={currentPage === 1} label="«" />
+            <PageBtn onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={currentPage === 1} label="‹" />
+            {Array.from({ length: totalPages }, (_, i) => i + 1)
+              .filter((p) => Math.abs(p - currentPage) <= 2)
+              .map((p) => (
+                <button
+                  key={p}
+                  onClick={() => setPage(p)}
+                  className={cn(
+                    "w-8 h-8 text-xs border transition-colors",
+                    p === currentPage
+                      ? "bg-foreground text-background border-foreground"
+                      : "border-border text-muted-foreground hover:border-foreground hover:text-foreground"
+                  )}
+                >
+                  {p}
+                </button>
+              ))}
+            <PageBtn onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages} label="›" />
+            <PageBtn onClick={() => setPage(totalPages)} disabled={currentPage === totalPages} label="»" />
+          </div>
+        </div>
+      )}
     </div>
+  );
+}
+
+function PageBtn({ onClick, disabled, label }: { onClick: () => void; disabled: boolean; label: string }) {
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      className="w-8 h-8 text-xs border border-border text-muted-foreground hover:border-foreground hover:text-foreground disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+    >
+      {label}
+    </button>
   );
 }
 
