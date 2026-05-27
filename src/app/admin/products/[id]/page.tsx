@@ -346,7 +346,8 @@ export default function AdminProductDetailPage() {
   const [rejectOpen, setRejectOpen] = useState(false);
   const [suspendOpen, setSuspendOpen] = useState(false);
   const [returnOpen, setReturnOpen] = useState(false);
-  const [result, setResult] = useState<{ type: "승인" | "반려" | "판매중단" | "렌탈종료"; reason?: string } | null>(null);
+  const [restoreOpen, setRestoreOpen] = useState(false);
+  const [result, setResult] = useState<{ type: "승인" | "반려" | "판매중단" | "렌탈종료" | "판매재개"; reason?: string; restoreAs?: "판매중" | "렌탈중" } | null>(null);
 
   if (!product) {
     return (
@@ -361,6 +362,7 @@ export default function AdminProductDetailPage() {
     : result?.type === "반려" ? "반려"
     : result?.type === "판매중단" ? "품절"
     : result?.type === "렌탈종료" ? "판매중"
+    : result?.type === "판매재개" ? (result.restoreAs ?? "판매중")
     : product.tab;
 
   const tabLabel = currentTab;
@@ -532,6 +534,17 @@ export default function AdminProductDetailPage() {
         </section>
       )}
 
+      {/* 품절 액션 */}
+      {currentTab === "품절" && !result && (
+        <div className="border border-border px-5 py-4 flex items-center justify-between">
+          <div>
+            <div className="text-sm font-medium">판매 재개</div>
+            <div className="text-[11px] text-muted-foreground mt-0.5">판매중 또는 렌탈중으로 상태를 전환합니다</div>
+          </div>
+          <Button variant="outline" size="sm" onClick={() => setRestoreOpen(true)}>판매 재개</Button>
+        </div>
+      )}
+
       {/* 검수 결정 액션 */}
       {currentTab === "검수 대기" && !result && (
         <div className="border border-border px-5 py-5 space-y-4">
@@ -578,6 +591,46 @@ export default function AdminProductDetailPage() {
       {rejectOpen && <RejectModal product={product} onConfirm={(r) => { setRejectOpen(false); setResult({ type: "반려", reason: r }); }} onClose={() => setRejectOpen(false)} />}
       {suspendOpen && <SuspendModal product={product} onConfirm={(r) => { setSuspendOpen(false); setResult({ type: "판매중단", reason: r }); }} onClose={() => setSuspendOpen(false)} />}
       {returnOpen && <ReturnModal product={product} onConfirm={() => { setReturnOpen(false); setResult({ type: "렌탈종료" }); }} onClose={() => setReturnOpen(false)} />}
+      {restoreOpen && <RestoreModal product={product} onConfirm={(s) => { setRestoreOpen(false); setResult({ type: "판매재개", restoreAs: s }); }} onClose={() => setRestoreOpen(false)} />}
+    </div>
+  );
+}
+
+function RestoreModal({ product, onConfirm, onClose }: { product: AdminProductDetail; onConfirm: (status: "판매중" | "렌탈중") => void; onClose: () => void }) {
+  const [selected, setSelected] = useState<"판매중" | "렌탈중">("판매중");
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      <div className="absolute inset-0 bg-black/40" onClick={onClose} />
+      <div className="relative bg-background border border-border w-full max-w-sm p-6 space-y-5 z-10">
+        <div className="flex items-center justify-between">
+          <h3 className="text-base font-semibold">판매 재개</h3>
+          <button onClick={onClose}><X size={16} className="text-muted-foreground" /></button>
+        </div>
+        <div className="border border-border px-4 py-3 text-sm space-y-1">
+          <div className="text-[11px] text-muted-foreground">{product.brand}</div>
+          <div className="font-semibold">{product.name}</div>
+          <div className="text-[11px] text-muted-foreground">{product.option}</div>
+        </div>
+        <div className="space-y-2">
+          <div className="text-[10px] text-muted-foreground tracking-widest uppercase">재개 상태 선택</div>
+          {(["판매중", "렌탈중"] as const).map((s) => (
+            <button
+              key={s}
+              onClick={() => setSelected(s)}
+              className={cn(
+                "w-full text-left px-3 py-2.5 border text-sm transition-colors",
+                selected === s ? "border-sage-ink bg-sage-soft/20 text-sage-ink font-medium" : "border-border hover:bg-muted"
+              )}
+            >
+              {s}
+            </button>
+          ))}
+        </div>
+        <div className="flex gap-2 pt-1">
+          <Button variant="outline" className="flex-1" onClick={onClose}>취소</Button>
+          <Button className="flex-1" onClick={() => onConfirm(selected)}>재개 확정</Button>
+        </div>
+      </div>
     </div>
   );
 }

@@ -205,49 +205,6 @@ function SuspendModal({ name, onConfirm, onClose }: {
   );
 }
 
-function RestoreModal({ product, onConfirm, onClose }: {
-  product: AdminProduct;
-  onConfirm: (status: "판매중" | "렌탈중") => void;
-  onClose: () => void;
-}) {
-  const [selected, setSelected] = useState<"판매중" | "렌탈중">("판매중");
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div className="absolute inset-0 bg-black/40" onClick={onClose} />
-      <div className="relative bg-background border border-border w-full max-w-sm p-6 space-y-5 z-10">
-        <div className="flex items-center justify-between">
-          <h3 className="text-base font-semibold">판매 재개</h3>
-          <button onClick={onClose}><X size={16} className="text-muted-foreground" /></button>
-        </div>
-        <div className="border border-border px-4 py-3 text-sm space-y-1">
-          <div className="text-[11px] text-muted-foreground">{product.brand}</div>
-          <div className="font-semibold">{product.name}</div>
-          <div className="text-[11px] text-muted-foreground">{product.option}</div>
-        </div>
-        <div className="space-y-2">
-          <div className="text-[10px] text-muted-foreground tracking-widest uppercase">재개 상태 선택</div>
-          {(["판매중", "렌탈중"] as const).map((s) => (
-            <button
-              key={s}
-              onClick={() => setSelected(s)}
-              className={cn(
-                "w-full text-left px-3 py-2.5 border text-sm transition-colors",
-                selected === s ? "border-sage-ink bg-sage-soft/20 text-sage-ink font-medium" : "border-border hover:bg-muted"
-              )}
-            >
-              {s}
-            </button>
-          ))}
-        </div>
-        <div className="flex gap-2 pt-1">
-          <Button variant="outline" className="flex-1" onClick={onClose}>취소</Button>
-          <Button className="flex-1" onClick={() => onConfirm(selected)}>재개 확정</Button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 export default function AdminProductsPage() {
   return (
     <Suspense>
@@ -265,8 +222,6 @@ function AdminProductsContent() {
   const [suspendTarget, setSuspendTarget] = useState<AdminProduct | null>(null);
   const [processed, setProcessed] = useState<Record<string, { result: "승인" | "반려"; reason?: string }>>({});
   const [suspended, setSuspended] = useState<Set<string>>(new Set());
-  const [restoreTarget, setRestoreTarget] = useState<AdminProduct | null>(null);
-  const [restored, setRestored] = useState<Record<string, "판매중" | "렌탈중">>({});
 
   const sellerFiltered = sellerFilter
     ? ALL_PRODUCTS.filter((p) => p.seller.includes(sellerFilter))
@@ -276,7 +231,6 @@ function AdminProductsContent() {
     ? sellerFiltered.filter((p) => !processed[p.id] || processed[p.id].result === p.tab)
     : sellerFiltered.filter((p) => {
         if (suspended.has(p.id)) return false;
-        if (restored[p.id]) return restored[p.id] === activeTab;
         if (processed[p.id]) return processed[p.id].result === activeTab;
         return p.tab === activeTab;
       });
@@ -404,17 +358,14 @@ function AdminProductsContent() {
       {(activeTab === "품절" || activeTab === "전체") && (
         <ProductTable
           products={activeTab === "전체"
-            ? sellerFiltered.filter((p) => p.tab === "품절" && !restored[p.id])
-            : filtered.filter((p) => !restored[p.id])}
+            ? sellerFiltered.filter((p) => p.tab === "품절")
+            : filtered}
           processed={processed}
           columns={["상품", "셀러", "등급", "판매가"]}
           renderAction={(p) => (
-            <div className="flex gap-1">
-              <Button size="sm" variant="outline" onClick={() => setRestoreTarget(p)}>판매 재개</Button>
-              <Link href={`/admin/products/${p.id}`}>
-                <Button size="sm" variant="ghost">상세</Button>
-              </Link>
-            </div>
+            <Link href={`/admin/products/${p.id}`}>
+              <Button size="sm" variant="ghost">상세</Button>
+            </Link>
           )}
         />
       )}
@@ -475,16 +426,6 @@ function AdminProductsContent() {
         />
       )}
 
-      {restoreTarget && (
-        <RestoreModal
-          product={restoreTarget}
-          onConfirm={(status) => {
-            setRestored((prev) => ({ ...prev, [restoreTarget.id]: status }));
-            setRestoreTarget(null);
-          }}
-          onClose={() => setRestoreTarget(null)}
-        />
-      )}
     </div>
   );
 }
