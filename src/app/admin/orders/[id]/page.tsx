@@ -128,7 +128,22 @@ export default function AdminOrderDetailPage() {
         <Badge variant={STATUS_VARIANT[status] ?? "outline"}>{status}</Badge>
       </div>
 
-      {/* 운송장 등록 */}
+      {/* 주문 정보 */}
+      <section className="border border-border">
+        <SectionHeader>주문 정보</SectionHeader>
+        <div className="p-5 grid grid-cols-2 gap-x-8 gap-y-4 text-sm">
+          <InfoRow label="상품" value={`${original.brand} ${original.productName}`} />
+          <InfoRow label="유형">
+            <Badge variant="outline">{original.type}</Badge>
+          </InfoRow>
+          <InfoRow label="구매자" value={original.buyer} />
+          <InfoRow label="셀러" value={original.seller} />
+          <InfoRow label="결제 금액" value={formatPrice(original.price)} bold />
+          <InfoRow label="주문일" value={original.date} />
+        </div>
+      </section>
+
+      {/* 운송장 정보 */}
       {!isCancelled && (
         <section className="border border-border">
           <SectionHeader>운송장 정보</SectionHeader>
@@ -161,21 +176,6 @@ export default function AdminOrderDetailPage() {
           </div>
         </section>
       )}
-
-      {/* 주문 정보 */}
-      <section className="border border-border">
-        <SectionHeader>주문 정보</SectionHeader>
-        <div className="p-5 grid grid-cols-2 gap-x-8 gap-y-4 text-sm">
-          <InfoRow label="상품" value={`${original.brand} ${original.productName}`} />
-          <InfoRow label="유형">
-            <Badge variant="outline">{original.type}</Badge>
-          </InfoRow>
-          <InfoRow label="구매자" value={original.buyer} />
-          <InfoRow label="셀러" value={original.seller} />
-          <InfoRow label="결제 금액" value={formatPrice(original.price)} bold />
-          <InfoRow label="주문일" value={original.date} />
-        </div>
-      </section>
 
       {/* 배송 추적 */}
       {!isCancelled && (
