@@ -7,13 +7,14 @@ import { getBanners, subscribe, type Banner } from "@/lib/bannerStore";
 import { cn } from "@/lib/utils";
 
 function getSnapshot() {
-  return getBanners().filter((b) => b.status === "활성");
+  return getBanners();
 }
 
 const INTERVAL = 4000;
 
 export function HeroBannerCarousel() {
-  const banners: Banner[] = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
+  const allBanners = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
+  const banners = allBanners.filter((b) => b.status === "활성");
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
 

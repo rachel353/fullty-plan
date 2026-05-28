@@ -5,11 +5,12 @@ import Link from "next/link";
 import { getCardBanners, subscribeCards, type Banner } from "@/lib/bannerStore";
 
 function getSnapshot(): Banner[] {
-  return getCardBanners().filter((b) => b.status === "활성");
+  return getCardBanners();
 }
 
 export function CardNewsBanners() {
-  const cards = useSyncExternalStore(subscribeCards, getSnapshot, getSnapshot);
+  const allCards = useSyncExternalStore(subscribeCards, getSnapshot, getSnapshot);
+  const cards = allCards.filter((b) => b.status === "활성");
 
   if (cards.length === 0) return null;
 
