@@ -2,12 +2,16 @@ import Link from "next/link";
 import { ImageBox } from "@/components/ImageBox";
 import { ProductCard } from "@/components/ProductCard";
 import { Button } from "@/components/ui/Button";
+import { HeroBannerCarousel } from "@/components/HeroBannerCarousel";
 import { products, getRequests } from "@/lib/mock";
 import { ArrowUpRight } from "lucide-react";
 
 export default function HomePage() {
   return (
     <div>
+      {/* Banner carousel */}
+      <HeroBannerCarousel />
+
       {/* Hero — sage backdrop, editorial */}
       <section className="bg-sage">
         <div className="max-w-canvas mx-auto px-12 pt-20 pb-32 grid grid-cols-1 md:grid-cols-12 gap-12 items-end">
