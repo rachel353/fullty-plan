@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Search, RefreshCw, Check } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
@@ -50,6 +50,13 @@ function parsePrice(val: string) {
   return isNaN(n) ? 0 : n;
 }
 
+function generateProductId(brand: string, model: string): string {
+  const brandCode = brand.trim().split(/\s+/).map((w) => w[0]?.toUpperCase() ?? "").join("");
+  const modelCode = model.trim().split(/\s+/)[0]?.toUpperCase().slice(0, 5) ?? "";
+  const suffix = String(Math.floor(100 + Math.random() * 900));
+  return `${brandCode}-${modelCode}-${suffix}`;
+}
+
 type CrawlState = "idle" | "loading" | "done";
 
 export type ProductFormMode = "seller-individual" | "seller-business" | "admin";
@@ -64,12 +71,26 @@ export function ProductForm({ mode }: { mode: ProductFormMode }) {
   const [carrier, setCarrier] = useState("CJ대한통운");
   const [shipDay, setShipDay] = useState("2일");
   const [crawlState, setCrawlState] = useState<CrawlState>("idle");
-  const [minPrice, setMinPrice] = useState("");   // 네이버 최저가 (수정 가능)
+  const [minPrice, setMinPrice] = useState("");
   const [supplyPrice, setSupplyPrice] = useState("");
   const [shipping, setShipping] = useState("");
+  const [productId, setProductId] = useState("");
+  const idGeneratedRef = useRef(false);
 
   const isBusiness = mode === "seller-business" || mode === "admin";
   const isAdmin = mode === "admin";
+
+  // 브랜드+모델 둘 다 채워지면 고유번호 최초 1회 자동 생성
+  useEffect(() => {
+    if (isAdmin && brand.trim() && model.trim() && !idGeneratedRef.current) {
+      setProductId(generateProductId(brand, model));
+      idGeneratedRef.current = true;
+    }
+    if (!brand.trim() || !model.trim()) {
+      idGeneratedRef.current = false;
+      setProductId("");
+    }
+  }, [brand, model, isAdmin]);
   const canCrawl = brand.trim().length > 0 && model.trim().length > 0;
 
   function handleCrawl() {
@@ -114,6 +135,30 @@ export function ProductForm({ mode }: { mode: ProductFormMode }) {
           <SimpleField label="옵션 / 사이즈" placeholder="Size B / Graphite" />
           <SimpleField label="카테고리" placeholder="가구 / 조명 / 테이블웨어 / 홈데코 / 아트" />
         </div>
+
+        {/* 고유번호 — admin 전용 */}
+        {isAdmin && (
+          <div className="mt-3 border border-border p-4 bg-muted/30 space-y-2">
+            <div className="flex items-center justify-between">
+              <div className="text-[11px] text-muted-foreground">상품 고유번호 (자동 생성)</div>
+              <button
+                type="button"
+                onClick={() => {
+                  if (brand.trim() && model.trim()) {
+                    setProductId(generateProductId(brand, model));
+                  }
+                }}
+                disabled={!brand.trim() || !model.trim()}
+                className="text-[11px] px-2.5 py-1 border border-border text-muted-foreground hover:border-foreground hover:text-foreground transition-colors disabled:opacity-30"
+              >
+                재생성
+              </button>
+            </div>
+            <div className="font-mono text-sm font-semibold text-sage-ink tracking-widest">
+              {productId || <span className="text-muted-foreground font-normal">브랜드 + 모델명 입력 시 자동 생성됩니다</span>}
+            </div>
+          </div>
+        )}
       </Section>
 
       {/* 최저가 크롤링 */}

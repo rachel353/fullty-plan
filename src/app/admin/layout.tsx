@@ -34,7 +34,13 @@ const sections: SidebarSection[] = [
       { href: "/admin/coupons", label: "쿠폰 관리" },
       { href: "/admin/lounge", label: "리빙 라운지 관리" },
       { href: "/admin/reports", label: "신고 관리" },
+    ],
+  },
+  {
+    title: "콘텐츠",
+    items: [
       { href: "/admin/banners", label: "배너 관리" },
+      { href: "/admin/popups", label: "팝업 관리" },
     ],
   },
 ];
