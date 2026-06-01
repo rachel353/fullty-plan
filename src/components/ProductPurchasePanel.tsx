@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Heart } from "lucide-react";
+import { Heart, Bell, BellOff, Check } from "lucide-react";
 import { Badge } from "./ui/Badge";
 import { Button } from "./ui/Button";
 import { Product, rentalPricing } from "@/lib/mock";
@@ -39,6 +39,7 @@ export function ProductPurchasePanel({ product }: { product: Product }) {
   const [mode, setMode] = useState<Mode>(canRent && !canBuy ? "rent" : canBuy && !canRent ? "buy" : "rent");
   const [selectedDays, setSelectedDays] = useState(7);
   const [selectedShipping, setSelectedShipping] = useState(0);
+  const [restockAlert, setRestockAlert] = useState(false);
 
   const shippingList = mode === "rent" ? rentShipping : buyShipping;
 
@@ -193,16 +194,67 @@ export function ProductPurchasePanel({ product }: { product: Product }) {
       </div>
 
       {/* CTA */}
-      {mode === "buy" ? (
+      {soldOut ? (
+        <div className="pt-6 space-y-3">
+          {/* 품절 안내 */}
+          <div className="border border-border px-4 py-3 bg-muted/40 text-center">
+            <div className="text-xs font-semibold text-muted-foreground tracking-widest uppercase">SOLD OUT</div>
+            <div className="text-[11px] text-muted-foreground mt-1">현재 재고가 없습니다</div>
+          </div>
+          {/* 입고 알림 */}
+          <button
+            onClick={() => setRestockAlert((v) => !v)}
+            className={cn(
+              "w-full h-12 border flex items-center justify-center gap-2 text-sm transition-colors",
+              restockAlert
+                ? "bg-sage-ink text-background border-sage-ink"
+                : "border-border text-sage-ink hover:bg-sage-soft/40"
+            )}
+          >
+            {restockAlert ? (
+              <>
+                <Check size={15} />
+                입고 알림 신청 완료
+              </>
+            ) : (
+              <>
+                <Bell size={15} />
+                입고되면 알려주세요
+              </>
+            )}
+          </button>
+          {restockAlert && (
+            <div className="text-[11px] text-muted-foreground text-center leading-relaxed">
+              입고 시 가입하신 이메일 및 앱 푸시로 알림을 보내드립니다.
+              <br />
+              <button
+                onClick={() => setRestockAlert(false)}
+                className="text-sage-ink underline mt-1"
+              >
+                알림 취소
+              </button>
+            </div>
+          )}
+          <button
+            onClick={() => toggle(product.id)}
+            className="w-full h-11 border border-border flex items-center justify-center gap-2 text-sm hover:bg-muted transition-colors"
+          >
+            <Heart size={15} className={wished ? "fill-sage-deep text-sage-deep" : "text-muted-foreground"} />
+            <span className={wished ? "text-sage-deep" : "text-muted-foreground"}>
+              {wished ? "위시리스트에 담겼습니다" : "위시리스트에 담기"}
+            </span>
+          </button>
+        </div>
+      ) : mode === "buy" ? (
         <div className="pt-6 space-y-2">
           <div className="grid grid-cols-2 gap-2">
-            <Link href="/cart" className={soldOut ? "pointer-events-none" : ""}>
-              <Button variant="outline" size="lg" className="w-full" disabled={soldOut}>
+            <Link href="/cart">
+              <Button variant="outline" size="lg" className="w-full">
                 장바구니 담기
               </Button>
             </Link>
-            <Link href="/checkout" className={soldOut ? "pointer-events-none" : ""}>
-              <Button size="lg" className="w-full" disabled={soldOut}>
+            <Link href="/checkout">
+              <Button size="lg" className="w-full">
                 바로 구매
               </Button>
             </Link>
