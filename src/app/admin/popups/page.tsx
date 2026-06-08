@@ -280,13 +280,13 @@ export default function AdminPopupsPage() {
               <button
                 onClick={() => setEditTarget({ ...editTarget, oncePerDay: !editTarget.oncePerDay })}
                 className={cn(
-                  "w-10 h-5 rounded-full transition-colors relative",
-                  editTarget.oncePerDay ? "bg-sage-ink" : "bg-border"
+                  "w-10 h-6 relative flex-shrink-0",
+                  editTarget.oncePerDay ? "bg-sage-ink" : "bg-muted border border-border"
                 )}
               >
                 <span className={cn(
-                  "absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform",
-                  editTarget.oncePerDay ? "translate-x-5" : "translate-x-0.5"
+                  "absolute top-0.5 w-5 h-5 bg-background transition-all",
+                  editTarget.oncePerDay ? "left-5" : "left-0.5 border border-border"
                 )} />
               </button>
             </div>
