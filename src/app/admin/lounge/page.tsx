@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Trash2 } from "lucide-react";
+import { Trash2, EyeOff, Eye } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { reviews, articles } from "@/lib/lounge";
@@ -44,11 +44,20 @@ export default function AdminLoungePage() {
   const [filter, setFilter] = useState("전체");
   const [query, setQuery] = useState("");
   const [deletedIds, setDeletedIds] = useState<Set<string>>(new Set());
+  const [hiddenIds, setHiddenIds] = useState<Set<string>>(new Set());
   const [deleteTarget, setDeleteTarget] = useState<{ id: string; label: string } | null>(null);
 
   function handleDelete(id: string) {
     setDeletedIds((prev) => new Set(prev).add(id));
     setDeleteTarget(null);
+  }
+
+  function toggleHidden(id: string) {
+    setHiddenIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
   }
 
   const visibleReviews = reviews
@@ -75,12 +84,17 @@ export default function AdminLoungePage() {
       </div>
 
       {/* 요약 */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
         <Stat label="전체 리뷰" value={`${reviews.length}건`} />
         <Stat label="전체 정보글" value={`${articles.length}건`} />
         <Stat label="이번 달 신규" value="6건" />
         <Stat label="신고 접수" value="2건" accent />
+        <Stat label="숨김 처리" value={`${hiddenIds.size}건`} />
       </div>
+
+      <p className="text-[11px] text-muted-foreground">
+        숨김 처리된 게시글은 라운지 화면에서 보이지 않지만 삭제되지 않으며, 언제든 숨김을 해제해 다시 노출할 수 있습니다.
+      </p>
 
       {/* 탭 */}
       <div className="flex items-center gap-0 border-b border-border">
@@ -151,9 +165,14 @@ export default function AdminLoungePage() {
                   </td>
                 </tr>
               ) : visibleReviews.map((r) => (
-                <tr key={r.id} className="hover:bg-muted/30 transition-colors">
+                <tr key={r.id} className={cn("hover:bg-muted/30 transition-colors", hiddenIds.has(r.id) && "opacity-50")}>
                   <td className="px-4 py-3 text-[11px] text-muted-foreground">{r.id}</td>
-                  <td className="px-4 py-3 font-medium">{r.author}</td>
+                  <td className="px-4 py-3 font-medium">
+                    <div className="flex items-center gap-1.5">
+                      {r.author}
+                      {hiddenIds.has(r.id) && <Badge variant="muted">숨김</Badge>}
+                    </div>
+                  </td>
                   <td className="px-4 py-3 text-muted-foreground max-w-[180px] truncate">{r.product}</td>
                   <td className="px-4 py-3"><Badge variant="default">{r.grade}</Badge></td>
                   <td className="px-4 py-3">
@@ -166,12 +185,26 @@ export default function AdminLoungePage() {
                   <td className="px-4 py-3 text-right text-muted-foreground">{r.helpful}</td>
                   <td className="px-4 py-3 text-muted-foreground">{r.date}</td>
                   <td className="px-4 py-3 text-right">
-                    <button
-                      onClick={() => setDeleteTarget({ id: r.id, label: `${r.author}의 리뷰` })}
-                      className="w-7 h-7 flex items-center justify-center border border-border hover:bg-red-50 hover:border-red-200 transition-colors ml-auto"
-                    >
-                      <Trash2 size={12} className="text-muted-foreground" />
-                    </button>
+                    <div className="flex items-center justify-end gap-1.5">
+                      <button
+                        onClick={() => toggleHidden(r.id)}
+                        title={hiddenIds.has(r.id) ? "숨김 해제" : "숨김 처리"}
+                        className={cn(
+                          "w-7 h-7 flex items-center justify-center border transition-colors",
+                          hiddenIds.has(r.id)
+                            ? "border-sage-ink bg-sage-soft/50 text-sage-ink"
+                            : "border-border text-muted-foreground hover:bg-muted"
+                        )}
+                      >
+                        {hiddenIds.has(r.id) ? <EyeOff size={12} /> : <Eye size={12} />}
+                      </button>
+                      <button
+                        onClick={() => setDeleteTarget({ id: r.id, label: `${r.author}의 리뷰` })}
+                        className="w-7 h-7 flex items-center justify-center border border-border hover:bg-red-50 hover:border-red-200 transition-colors"
+                      >
+                        <Trash2 size={12} className="text-muted-foreground" />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -204,21 +237,40 @@ export default function AdminLoungePage() {
                   </td>
                 </tr>
               ) : visibleArticles.map((a) => (
-                <tr key={a.id} className="hover:bg-muted/30 transition-colors">
+                <tr key={a.id} className={cn("hover:bg-muted/30 transition-colors", hiddenIds.has(a.id) && "opacity-50")}>
                   <td className="px-4 py-3 text-[11px] text-muted-foreground">{a.id}</td>
                   <td className="px-4 py-3 font-medium">{a.author}</td>
-                  <td className="px-4 py-3 max-w-[220px] truncate text-sage-ink">{a.title}</td>
+                  <td className="px-4 py-3 max-w-[220px] truncate text-sage-ink">
+                    <div className="flex items-center gap-1.5">
+                      <span className="truncate">{a.title}</span>
+                      {hiddenIds.has(a.id) && <Badge variant="muted" className="flex-shrink-0">숨김</Badge>}
+                    </div>
+                  </td>
                   <td className="px-4 py-3"><Badge variant="outline">{a.tag}</Badge></td>
                   <td className="px-4 py-3 text-right text-muted-foreground">{a.views.toLocaleString()}</td>
                   <td className="px-4 py-3 text-right text-muted-foreground">{a.likes}</td>
                   <td className="px-4 py-3 text-muted-foreground">{a.date}</td>
                   <td className="px-4 py-3 text-right">
-                    <button
-                      onClick={() => setDeleteTarget({ id: a.id, label: `"${a.title}"` })}
-                      className="w-7 h-7 flex items-center justify-center border border-border hover:bg-red-50 hover:border-red-200 transition-colors ml-auto"
-                    >
-                      <Trash2 size={12} className="text-muted-foreground" />
-                    </button>
+                    <div className="flex items-center justify-end gap-1.5">
+                      <button
+                        onClick={() => toggleHidden(a.id)}
+                        title={hiddenIds.has(a.id) ? "숨김 해제" : "숨김 처리"}
+                        className={cn(
+                          "w-7 h-7 flex items-center justify-center border transition-colors",
+                          hiddenIds.has(a.id)
+                            ? "border-sage-ink bg-sage-soft/50 text-sage-ink"
+                            : "border-border text-muted-foreground hover:bg-muted"
+                        )}
+                      >
+                        {hiddenIds.has(a.id) ? <EyeOff size={12} /> : <Eye size={12} />}
+                      </button>
+                      <button
+                        onClick={() => setDeleteTarget({ id: a.id, label: `"${a.title}"` })}
+                        className="w-7 h-7 flex items-center justify-center border border-border hover:bg-red-50 hover:border-red-200 transition-colors"
+                      >
+                        <Trash2 size={12} className="text-muted-foreground" />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
