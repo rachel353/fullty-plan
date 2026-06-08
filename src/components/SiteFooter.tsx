@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export function SiteFooter() {
   return (
     <footer className="mt-32 bg-sage-ink text-background">
@@ -23,7 +25,7 @@ export function SiteFooter() {
         <div className="md:col-span-2">
           <div className="text-[10px] tracking-[0.2em] mb-4">SUPPORT</div>
           <ul className="space-y-2.5 text-xs">
-            <li>공지사항</li>
+            <li><Link href="/notice" className="hover:text-background/70 transition-colors">공지사항</Link></li>
             <li>FAQ</li>
             <li>1:1 문의</li>
           </ul>

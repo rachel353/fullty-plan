@@ -2,7 +2,8 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { Search, ShoppingBag, User, Bell } from "lucide-react";
+import { Search, ShoppingBag, User, Bell, Megaphone } from "lucide-react";
+import { notices } from "@/lib/notices";
 
 const nav = [
   { href: "/products", label: "SHOP" },
@@ -32,6 +33,9 @@ export function SiteHeader() {
 
   const unreadCount = readAll ? 0 : notifications.filter((n) => n.unread).length;
 
+  const visibleNotices = notices.filter((n) => n.published);
+  const headlineNotice = visibleNotices.find((n) => n.pinned) ?? visibleNotices[0];
+
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       if (bellRef.current && !bellRef.current.contains(e.target as Node)) {
@@ -44,6 +48,34 @@ export function SiteHeader() {
 
   return (
     <header className="bg-sage sticky top-0 z-40">
+      {/* Notice ticker */}
+      {headlineNotice && (
+        <div className="bg-sage-ink">
+          <div
+            className="max-w-canvas mx-auto px-12 flex items-center justify-between h-9 text-[11px]"
+          >
+            <Link
+              href={`/notice/${headlineNotice.id}`}
+              className="flex items-center gap-2 min-w-0 text-background/80 hover:text-background transition-colors"
+            >
+              <Megaphone size={13} strokeWidth={1.5} className="flex-shrink-0" />
+              {headlineNotice.pinned && (
+                <span className="flex-shrink-0 text-[9px] tracking-[0.18em] uppercase font-semibold text-background">
+                  공지
+                </span>
+              )}
+              <span className="truncate">{headlineNotice.title}</span>
+            </Link>
+            <Link
+              href="/notice"
+              className="flex-shrink-0 text-background/60 hover:text-background tracking-[0.1em] transition-colors ml-4"
+            >
+              공지사항 전체보기 →
+            </Link>
+          </div>
+        </div>
+      )}
+
       {/* Main row */}
       <div
         className="max-w-canvas mx-auto px-12 flex items-center justify-between"
