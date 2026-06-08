@@ -56,8 +56,9 @@ export default function AdminPopupsPage() {
   const [popups, setPopups] = useState<Popup[]>(INITIAL_POPUPS);
   const [editTarget, setEditTarget] = useState<Popup | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Popup | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const editFileRef = useRef<HTMLInputElement>(null);
+
+  const isNew = !!editTarget && !popups.some((p) => p.id === editTarget.id);
 
   function toggleStatus(id: string) {
     setPopups((prev) =>
@@ -65,24 +66,18 @@ export default function AdminPopupsPage() {
     );
   }
 
-  function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const url = URL.createObjectURL(file);
-    const newPopup: Popup = {
+  function openCreateModal() {
+    setEditTarget({
       id: `pp${Date.now()}`,
-      imageUrl: url,
-      imageName: file.name,
+      imageUrl: "",
+      imageName: "",
       linkHref: "",
       status: "비활성",
       position: "center",
       oncePerDay: true,
       startDate: "",
       endDate: "",
-    };
-    setPopups((prev) => [...prev, newPopup]);
-    e.target.value = "";
-    setEditTarget(newPopup);
+    });
   }
 
   function handleEditImage(e: React.ChangeEvent<HTMLInputElement>) {
@@ -94,7 +89,11 @@ export default function AdminPopupsPage() {
 
   function saveEdit() {
     if (!editTarget) return;
-    setPopups((prev) => prev.map((p) => p.id === editTarget.id ? editTarget : p));
+    setPopups((prev) =>
+      prev.some((p) => p.id === editTarget.id)
+        ? prev.map((p) => (p.id === editTarget.id ? editTarget : p))
+        : [...prev, editTarget]
+    );
     setEditTarget(null);
   }
 
@@ -113,8 +112,7 @@ export default function AdminPopupsPage() {
           <p className="text-sm text-muted-foreground mt-1">홈 화면 노출 팝업 등록 및 노출 기간 관리</p>
         </div>
         <div>
-          <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleUpload} />
-          <Button size="sm" onClick={() => fileInputRef.current?.click()}>+ 팝업 등록</Button>
+          <Button size="sm" onClick={openCreateModal}>+ 팝업 등록</Button>
         </div>
       </div>
 
@@ -194,7 +192,7 @@ export default function AdminPopupsPage() {
           <div className="absolute inset-0 bg-black/40" onClick={() => setEditTarget(null)} />
           <div className="relative bg-background border border-border w-full max-w-md p-6 space-y-5 z-10 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between">
-              <h3 className="text-base font-semibold">팝업 편집</h3>
+              <h3 className="text-base font-semibold">{isNew ? "팝업 등록" : "팝업 편집"}</h3>
               <button onClick={() => setEditTarget(null)}><X size={16} className="text-muted-foreground" /></button>
             </div>
 
@@ -316,7 +314,7 @@ export default function AdminPopupsPage() {
 
             <div className="flex gap-2 pt-1">
               <Button variant="outline" className="flex-1" onClick={() => setEditTarget(null)}>취소</Button>
-              <Button className="flex-1" onClick={saveEdit}>저장</Button>
+              <Button className="flex-1" onClick={saveEdit}>{isNew ? "등록" : "저장"}</Button>
             </div>
           </div>
         </div>
