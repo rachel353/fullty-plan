@@ -28,7 +28,7 @@ export default function AdminBannersPage() {
 
       {/* 탭 */}
       <div className="flex gap-0 border border-border w-fit">
-        {([["carousel", "메인 슬라이드"], ["cards", "카드뉴스 (4)"]] as [Tab, string][]).map(([t, label]) => (
+        {([["carousel", "메인 슬라이드"], ["cards", "카드뉴스 (3)"]] as [Tab, string][]).map(([t, label]) => (
           <button
             key={t}
             onClick={() => setTab(t)}
@@ -162,9 +162,9 @@ function CarouselTab() {
 }
 
 // ─────────────────────────────────────────────────────────────
-// 카드뉴스 탭 (4 고정 슬롯)
+// 카드뉴스 탭 (3 고정 슬롯)
 // ─────────────────────────────────────────────────────────────
-const CARD_LABELS = ["카드 1", "카드 2", "카드 3", "카드 4"];
+const CARD_LABELS = ["카드 1", "카드 2", "카드 3"];
 
 function CardsTab() {
   const cards = useSyncExternalStore(subscribeCards, getCardsSnapshot, getCardsSnapshot);
@@ -193,10 +193,10 @@ function CardsTab() {
   return (
     <div className="space-y-5">
       <p className="text-[11px] text-muted-foreground">
-        카드뉴스는 4개 고정 슬롯입니다. 각 카드에 이미지를 업로드하고 링크를 설정하세요.
+        카드뉴스는 3개 고정 슬롯입니다. 각 카드에 이미지를 업로드하고 링크를 설정하세요.
       </p>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {cards.map((card, i) => (
           <div
             key={card.id}
@@ -208,7 +208,7 @@ function CardsTab() {
             {/* 이미지 */}
             <div
               className="w-full bg-muted overflow-hidden cursor-pointer relative group"
-              style={{ aspectRatio: "3/4" }}
+              style={{ aspectRatio: "4/3" }}
               onClick={() => setEditTarget({ ...card })}
             >
               {card.imageUrl ? (

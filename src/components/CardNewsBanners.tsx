@@ -17,10 +17,10 @@ export function CardNewsBanners() {
   return (
     <section>
       <div className="max-w-canvas mx-auto px-12 py-12">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {cards.map((card) => {
             const inner = (
-              <div className="relative w-full overflow-hidden bg-muted group" style={{ aspectRatio: "3/4" }}>
+              <div className="relative w-full overflow-hidden bg-muted group" style={{ aspectRatio: "4/3" }}>
                 {card.imageUrl ? (
                   <img
                     src={card.imageUrl}

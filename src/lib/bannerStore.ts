@@ -28,12 +28,11 @@ export function subscribe(fn: () => void): () => void {
   return () => _listeners.delete(fn);
 }
 
-// ── 카드뉴스 (고정 4슬롯) ─────────────────────────────────
+// ── 카드뉴스 (고정 3슬롯) ─────────────────────────────────
 const INITIAL_CARD_BANNERS: Banner[] = [
   { id: "card1", imageUrl: "", imageName: "card_news_1.jpg", linkHref: "/products", status: "활성" },
   { id: "card2", imageUrl: "", imageName: "card_news_2.jpg", linkHref: "/get", status: "활성" },
   { id: "card3", imageUrl: "", imageName: "card_news_3.jpg", linkHref: "/sell", status: "활성" },
-  { id: "card4", imageUrl: "", imageName: "card_news_4.jpg", linkHref: "/mypage/collection", status: "활성" },
 ];
 
 let _cardBanners: Banner[] = [...INITIAL_CARD_BANNERS];
