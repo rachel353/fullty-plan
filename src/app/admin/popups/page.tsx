@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 
 type PopupStatus = "활성" | "비활성";
-type PopupPosition = "center" | "bottom-right";
+type PopupPosition = "center" | "bottom-left" | "bottom-right";
 
 type Popup = {
   id: string;
@@ -48,6 +48,7 @@ const INITIAL_POPUPS: Popup[] = [
 
 const POSITION_LABELS: Record<PopupPosition, string> = {
   center: "중앙",
+  "bottom-left": "좌하단",
   "bottom-right": "우하단",
 };
 
@@ -230,7 +231,7 @@ export default function AdminPopupsPage() {
             <div>
               <div className="text-[11px] text-muted-foreground mb-2">노출 위치</div>
               <div className="flex gap-2">
-                {(["center", "bottom-right"] as PopupPosition[]).map((pos) => (
+                {(["center", "bottom-left", "bottom-right"] as PopupPosition[]).map((pos) => (
                   <button
                     key={pos}
                     onClick={() => setEditTarget({ ...editTarget, position: pos })}
@@ -245,6 +246,9 @@ export default function AdminPopupsPage() {
                   </button>
                 ))}
               </div>
+              <p className="text-[10px] text-muted-foreground mt-1.5 leading-relaxed">
+                중앙은 화면을 덮는 메인 팝업, 좌·우하단은 페이지를 가리지 않는 레이어 팝업으로 동시에 여러 개 노출할 수 있습니다.
+              </p>
             </div>
 
             {/* 노출 기간 */}
