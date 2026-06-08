@@ -6,7 +6,7 @@ import { Bell, Package, RotateCcw, Tag, TrendingUp, MessageSquare, HelpCircle } 
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 
-type NotifCategory = "주문/배송" | "렌탈" | "GET·SELL" | "라운지" | "자산" | "Q&A";
+type NotifCategory = "주문/배송" | "렌탈" | "GET·SELL" | "라운지" | "자산" | "상품" | "Q&A";
 
 type Notification = {
   id: string;
@@ -128,6 +128,16 @@ const MOCK: Notification[] = [
     actionLabel: "확정하기",
     actionHref: "/mypage/orders",
   },
+  {
+    id: "n9",
+    category: "상품",
+    text: "[재입고 알림] Knoll Saarinen Tulip Table이 입고되었습니다!",
+    detail: "입고 알림을 신청하신 상품이 재입고되었습니다. 품절되기 전에 빠르게 확인해 보세요.",
+    unread: true,
+    time: "10분 전",
+    actionLabel: "상품 보기",
+    actionHref: "/products/p008",
+  },
 ];
 
 const TABS: { label: string; value: NotifCategory | "전체" | "읽지 않음" }[] = [
@@ -138,6 +148,7 @@ const TABS: { label: string; value: NotifCategory | "전체" | "읽지 않음" }
   { label: "GET·SELL", value: "GET·SELL" },
   { label: "라운지", value: "라운지" },
   { label: "자산", value: "자산" },
+  { label: "상품", value: "상품" },
   { label: "Q&A", value: "Q&A" },
 ];
 
@@ -147,6 +158,7 @@ function CategoryIcon({ category }: { category: NotifCategory }) {
   if (category === "렌탈") return <div className={cn(cls, "bg-muted")}><RotateCcw size={14} className="text-sage-ink" /></div>;
   if (category === "GET·SELL") return <div className={cn(cls, "bg-muted")}><Tag size={14} className="text-sage-ink" /></div>;
   if (category === "자산") return <div className={cn(cls, "bg-sage-soft/60")}><TrendingUp size={14} className="text-sage-ink" /></div>;
+  if (category === "상품") return <div className={cn(cls, "bg-sage-soft/60")}><Bell size={14} className="text-sage-ink" /></div>;
   if (category === "Q&A") return <div className={cn(cls, "bg-muted")}><HelpCircle size={14} className="text-sage-ink" /></div>;
   return <div className={cn(cls, "bg-muted")}><MessageSquare size={14} className="text-sage-ink" /></div>;
 }

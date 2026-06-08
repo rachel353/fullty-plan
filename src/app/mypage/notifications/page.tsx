@@ -27,6 +27,12 @@ const groups = [
     ],
   },
   {
+    title: "상품",
+    items: [
+      { id: "n9", label: "재입고 알림", desc: "입고 알림을 신청한 품절 상품이 재입고되면 알림을 받습니다." },
+    ],
+  },
+  {
     title: "Q&A",
     items: [
       { id: "nq1", label: "Q&A 답변 알림", desc: "내가 남긴 Q&A에 셀러 또는 운영팀이 답변하면 알림." },
@@ -61,6 +67,7 @@ export default function NotificationsPage() {
     nl1: true,
     nl2: true,
     n8: false,
+    n9: true,
   });
 
   return (
