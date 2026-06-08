@@ -5,7 +5,7 @@ import { Heart } from "lucide-react";
 import { ImageBox } from "./ImageBox";
 import { Badge } from "./ui/Badge";
 import { Product } from "@/lib/mock";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice, cn } from "@/lib/utils";
 import { useWishlist } from "@/lib/wishlist-context";
 
 export function ProductCard({ product }: { product: Product }) {
@@ -29,6 +29,11 @@ export function ProductCard({ product }: { product: Product }) {
             {product.availability === "rent" && <Badge variant="sage">RENT ONLY</Badge>}
             {product.availability === "both" && <Badge variant="outline">BUY · RENT</Badge>}
           </div>
+          {product.status === "품절" && (
+            <span className="absolute top-3 right-3 bg-sage-ink text-background text-[10px] tracking-[0.2em] font-medium px-2 py-1">
+              SOLD OUT
+            </span>
+          )}
         </div>
         <div className="pt-4 space-y-1">
           <div className="text-[10px] text-muted-foreground tracking-[0.18em] uppercase">
@@ -46,7 +51,10 @@ export function ProductCard({ product }: { product: Product }) {
       <button
         onClick={() => toggle(product.id)}
         aria-label={wished ? "위시리스트 제거" : "위시리스트 추가"}
-        className="absolute top-3 right-3 w-8 h-8 bg-background/80 backdrop-blur-sm border border-border flex items-center justify-center hover:bg-background transition-colors"
+        className={cn(
+          "absolute right-3 w-8 h-8 bg-background/80 backdrop-blur-sm border border-border flex items-center justify-center hover:bg-background transition-colors",
+          product.status === "품절" ? "top-12" : "top-3"
+        )}
       >
         <Heart
           size={14}

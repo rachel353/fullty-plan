@@ -32,7 +32,14 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
         {/* Image gallery */}
         <div>
-          <ImageBox ratio="square" />
+          <div className="relative">
+            <ImageBox ratio="square" />
+            {product.status === "품절" && (
+              <span className="absolute top-3 right-3 bg-sage-ink text-background text-[10px] tracking-[0.2em] font-medium px-2 py-1">
+                SOLD OUT
+              </span>
+            )}
+          </div>
           <div className="grid grid-cols-4 gap-2 mt-2">
             {[1, 2, 3, 4].map((i) => (
               <ImageBox key={i} ratio="square" />
