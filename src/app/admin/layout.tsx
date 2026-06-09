@@ -23,12 +23,12 @@ const sections: SidebarSection[] = [
     items: [
       { href: "/admin/get", label: "GET 관리" },
       { href: "/admin/sell", label: "SELL 관리" },
+      { href: "/admin/contracts", label: "SELL 계약 관리" },
     ],
   },
   {
     title: "운영",
     items: [
-      { href: "/admin/contracts", label: "계약 관리" },
       { href: "/admin/inquiries", label: "1:1 문의" },
       { href: "/admin/settlements", label: "정산 관리" },
       { href: "/admin/money", label: "풀티머니 관리" },
