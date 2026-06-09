@@ -53,6 +53,9 @@ export default function AdminContractsPage() {
   // 취소 확인 모달
   const [cancelTarget, setCancelTarget] = useState<Contract | null>(null);
 
+  // 템플릿 삭제 확인 모달
+  const [deleteTmplTarget, setDeleteTmplTarget] = useState<ContractTemplate | null>(null);
+
   const filtered = contracts.filter(
     (c) => statusFilter === "전체" || c.status === statusFilter
   );
@@ -102,6 +105,11 @@ export default function AdminContractsPage() {
     setTmplName("");
     setTmplDesc("");
     setTmplFile("");
+  }
+
+  function handleDeleteTemplate(id: string) {
+    setTemplates((prev) => prev.filter((t) => t.id !== id));
+    setDeleteTmplTarget(null);
   }
 
   function handleCancel(id: string) {
@@ -246,31 +254,50 @@ export default function AdminContractsPage() {
             </Button>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {templates.map((t) => (
-              <div key={t.id} className="border border-border p-5 space-y-3">
-                <div className="flex items-start justify-between gap-2">
-                  <div className="flex items-center gap-2">
-                    <FileText size={14} className="text-muted-foreground flex-shrink-0 mt-0.5" />
-                    <div>
-                      <div className="font-medium text-sage-ink">{t.name}</div>
-                      <div className="text-[10px] font-mono text-muted-foreground mt-0.5">{t.fileName}</div>
+            {templates.map((t) => {
+              const inUse = contracts.filter(
+                (c) => c.templateId === t.id && c.status === "대기 중"
+              ).length;
+              return (
+                <div key={t.id} className="border border-border p-5 space-y-3">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <FileText size={14} className="text-muted-foreground flex-shrink-0 mt-0.5" />
+                      <div className="min-w-0">
+                        <div className="font-medium text-sage-ink truncate">{t.name}</div>
+                        <div className="text-[10px] font-mono text-muted-foreground mt-0.5">{t.fileName}</div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      <span className="text-[10px] text-muted-foreground">{t.createdAt}</span>
+                      <button
+                        onClick={() => setDeleteTmplTarget(t)}
+                        className="p-1 text-muted-foreground hover:text-foreground transition-colors"
+                        title="템플릿 삭제"
+                      >
+                        <X size={14} />
+                      </button>
                     </div>
                   </div>
-                  <span className="text-[10px] text-muted-foreground flex-shrink-0">{t.createdAt}</span>
+                  <p className="text-[11px] text-muted-foreground leading-relaxed">{t.description}</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {t.fields.map((f) => (
+                      <span
+                        key={f.id}
+                        className="text-[10px] px-2 py-0.5 border border-border bg-muted text-muted-foreground"
+                      >
+                        {f.label} ({f.type})
+                      </span>
+                    ))}
+                  </div>
+                  {inUse > 0 && (
+                    <p className="text-[10px] text-amber-600">
+                      현재 서명 대기 중인 계약 {inUse}건에서 사용 중
+                    </p>
+                  )}
                 </div>
-                <p className="text-[11px] text-muted-foreground leading-relaxed">{t.description}</p>
-                <div className="flex flex-wrap gap-1.5">
-                  {t.fields.map((f) => (
-                    <span
-                      key={f.id}
-                      className="text-[10px] px-2 py-0.5 border border-border bg-muted text-muted-foreground"
-                    >
-                      {f.label} ({f.type})
-                    </span>
-                  ))}
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}
@@ -377,7 +404,7 @@ export default function AdminContractsPage() {
         </Modal>
       )}
 
-      {/* 취소 확인 모달 */}
+      {/* 계약 취소 확인 모달 */}
       {cancelTarget && (
         <Modal title="계약 취소" onClose={() => setCancelTarget(null)}>
           <p className="text-sm text-muted-foreground leading-relaxed">
@@ -388,6 +415,25 @@ export default function AdminContractsPage() {
           <div className="flex gap-2 mt-6">
             <Button variant="outline" className="flex-1" onClick={() => setCancelTarget(null)}>돌아가기</Button>
             <Button className="flex-1 bg-red-500 hover:bg-red-600" onClick={() => handleCancel(cancelTarget.id)}>취소 확정</Button>
+          </div>
+        </Modal>
+      )}
+
+      {/* 템플릿 삭제 확인 모달 */}
+      {deleteTmplTarget && (
+        <Modal title="템플릿 삭제" onClose={() => setDeleteTmplTarget(null)}>
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            <span className="font-semibold text-foreground">"{deleteTmplTarget.name}"</span> 템플릿을 삭제합니다.
+            삭제 후 이 템플릿으로 새 계약을 발송할 수 없습니다.
+          </p>
+          {contracts.some((c) => c.templateId === deleteTmplTarget.id && c.status === "대기 중") && (
+            <p className="text-[11px] text-amber-600 mt-3 border border-amber-200 bg-amber-50 px-3 py-2">
+              현재 서명 대기 중인 계약이 있습니다. 삭제해도 기존 발송된 계약은 유지됩니다.
+            </p>
+          )}
+          <div className="flex gap-2 mt-6">
+            <Button variant="outline" className="flex-1" onClick={() => setDeleteTmplTarget(null)}>취소</Button>
+            <Button className="flex-1 bg-red-500 hover:bg-red-600" onClick={() => handleDeleteTemplate(deleteTmplTarget.id)}>삭제</Button>
           </div>
         </Modal>
       )}
