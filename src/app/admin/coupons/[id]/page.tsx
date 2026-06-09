@@ -19,7 +19,7 @@ type Coupon = {
   discountType: DiscountType;
   discountValue: number;
   target: CouponTarget;
-  maxIssue: number | null;
+  maxIssue: number;
   issued: number;
   used: number;
   startDate: string;
@@ -35,7 +35,7 @@ const COUPONS: Record<string, Coupon> = {
     discountType: "정액",
     discountValue: 50000,
     target: "신규 가입",
-    maxIssue: null,
+    maxIssue: 2000,
     issued: 1284,
     used: 642,
     startDate: "2026-01-01",
@@ -113,7 +113,6 @@ export default function CouponFormPage() {
   const [discountType, setDiscountType] = useState<DiscountType>(existing?.discountType ?? "정액");
   const [discountValue, setDiscountValue] = useState(String(existing?.discountValue ?? ""));
   const [target, setTarget] = useState<CouponTarget>(existing?.target ?? "전체");
-  const [hasLimit, setHasLimit] = useState(existing?.maxIssue != null);
   const [maxIssue, setMaxIssue] = useState(String(existing?.maxIssue ?? ""));
   const [startDate, setStartDate] = useState(existing?.startDate ?? "");
   const [endDate, setEndDate] = useState(existing?.endDate ?? "");
@@ -129,7 +128,7 @@ export default function CouponFormPage() {
     );
   }
 
-  const canSave = name && code && discountValue && startDate && endDate;
+  const canSave = name && code && discountValue && maxIssue && Number(maxIssue) > 0 && startDate && endDate;
 
   function handleSave() {
     setSaved(true);
@@ -250,33 +249,21 @@ export default function CouponFormPage() {
           </select>
         </Field>
 
-        <Field label="최대 발행 수량">
-          <div className="space-y-2">
-            <label className="flex items-center gap-2 cursor-pointer">
-              <div
-                onClick={() => setHasLimit(!hasLimit)}
-                className={cn(
-                  "w-4 h-4 border flex items-center justify-center flex-shrink-0 cursor-pointer",
-                  !hasLimit ? "border-sage-ink bg-sage-ink" : "border-border"
-                )}
-              >
-                {!hasLimit && <span className="text-background text-[10px] font-bold">✓</span>}
-              </div>
-              <span className="text-sm text-muted-foreground">무제한</span>
-            </label>
-            {hasLimit && (
-              <div className="flex items-center border border-border focus-within:border-sage-ink">
-                <input
-                  type="number"
-                  value={maxIssue}
-                  onChange={(e) => setMaxIssue(e.target.value)}
-                  placeholder="예: 1000"
-                  className="flex-1 h-10 px-3 text-sm bg-background outline-none"
-                />
-                <span className="px-3 text-sm text-muted-foreground border-l border-border h-10 flex items-center">장</span>
-              </div>
-            )}
+        <Field label="최대 발행 수량" required>
+          <div className="flex items-center border border-border focus-within:border-sage-ink">
+            <input
+              type="number"
+              min={1}
+              value={maxIssue}
+              onChange={(e) => setMaxIssue(e.target.value)}
+              placeholder="예: 1000"
+              className="flex-1 h-10 px-3 text-sm bg-background outline-none"
+            />
+            <span className="px-3 text-sm text-muted-foreground border-l border-border h-10 flex items-center">장</span>
           </div>
+          {!isNew && existing && Number(maxIssue) > 0 && Number(maxIssue) < existing.issued && (
+            <p className="text-[11px] text-red-500 mt-1">이미 발행된 수량({existing.issued.toLocaleString()}장)보다 작게 설정할 수 없습니다.</p>
+          )}
         </Field>
       </section>
 

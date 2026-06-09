@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { cn } from "@/lib/utils";
 
 const coupons = [
   {
@@ -54,6 +55,11 @@ const coupons = [
 ];
 
 export default function AdminCouponsPage() {
+  const totalIssued = coupons.reduce((s, c) => s + c.issued, 0);
+  const totalUsed = coupons.reduce((s, c) => s + c.used, 0);
+  const totalRemaining = coupons.reduce((s, c) => s + c.remaining, 0);
+  const overallRate = totalIssued > 0 ? Math.round((totalUsed / totalIssued) * 100) : 0;
+
   return (
     <div className="space-y-8">
       <div className="border-b border-border pb-4 flex items-end justify-between">
@@ -66,13 +72,33 @@ export default function AdminCouponsPage() {
         <Link href="/admin/coupons/new"><Button>+ 쿠폰 생성</Button></Link>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-        <Stat label="활성 쿠폰" value="3개" />
-        <Stat label="이번 달 발행" value="1,420장" />
-        <Stat label="이번 달 사용" value="742장" />
-        <Stat label="예상 할인액" value="18,240,000원" />
+      {/* 전체 요약 stats */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <Stat label="활성 쿠폰" value={`${coupons.filter(c => c.status === "활성").length}개`} />
+        <Stat label="총 발행" value={totalIssued.toLocaleString() + "장"} />
+        <Stat label="총 사용" value={totalUsed.toLocaleString() + "장"} highlight />
+        <Stat label="총 잔여" value={totalRemaining.toLocaleString() + "장"} />
       </div>
 
+      {/* 전체 사용률 바 */}
+      <div className="border border-border p-5 space-y-3">
+        <div className="flex items-center justify-between text-[11px]">
+          <span className="text-muted-foreground font-medium tracking-wide">전체 쿠폰 사용률</span>
+          <span className="font-bold text-sage-ink">{overallRate}%</span>
+        </div>
+        <div className="relative h-3 bg-muted overflow-hidden">
+          <div
+            className="absolute inset-y-0 left-0 bg-sage-ink transition-all"
+            style={{ width: `${overallRate}%` }}
+          />
+        </div>
+        <div className="flex justify-between text-[10px] text-muted-foreground">
+          <span>사용 {totalUsed.toLocaleString()}장</span>
+          <span>잔여 {totalRemaining.toLocaleString()}장 · 총 {totalIssued.toLocaleString()}장 발행</span>
+        </div>
+      </div>
+
+      {/* 필터 탭 */}
       <div className="flex items-center gap-2">
         {["전체", "활성", "예정", "종료"].map((s, i) => (
           <button
@@ -88,57 +114,120 @@ export default function AdminCouponsPage() {
         ))}
       </div>
 
-      <div className="border border-border">
-        <table className="w-full text-sm">
-          <thead className="border-b border-border bg-muted">
-            <tr className="text-left text-xs font-medium text-muted-foreground">
-              <th className="px-4 py-3">쿠폰 ID</th>
-              <th className="px-4 py-3">이름</th>
-              <th className="px-4 py-3">코드</th>
-              <th className="px-4 py-3">대상</th>
-              <th className="px-4 py-3">할인</th>
-              <th className="px-4 py-3">발행/사용/잔여</th>
-              <th className="px-4 py-3">만료</th>
-              <th className="px-4 py-3">상태</th>
-              <th className="px-4 py-3 text-right">관리</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-border">
-            {coupons.map((c) => (
-              <tr key={c.id}>
-                <td className="px-4 py-3 text-[11px] text-muted-foreground">{c.id}</td>
-                <td className="px-4 py-3 font-medium">{c.name}</td>
-                <td className="px-4 py-3 font-mono text-[11px]">{c.code}</td>
-                <td className="px-4 py-3">
+      {/* 쿠폰 목록 */}
+      <div className="border border-border divide-y divide-border">
+        {coupons.map((c) => {
+          const rate = c.issued > 0 ? Math.round((c.used / c.issued) * 100) : 0;
+          const isLow = c.remaining > 0 && c.remaining / c.issued < 0.05;
+          const isExpired = c.status === "종료";
+
+          return (
+            <div
+              key={c.id}
+              className={cn(
+                "px-5 py-5 grid grid-cols-12 gap-4 items-start",
+                isExpired && "opacity-60"
+              )}
+            >
+              {/* 왼쪽: 기본 정보 */}
+              <div className="col-span-12 md:col-span-5 space-y-1.5">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <Badge variant={isExpired ? "muted" : "default"}>{c.status}</Badge>
                   <Badge variant="outline">{c.target}</Badge>
-                </td>
-                <td className="px-4 py-3 font-medium">{c.discount}</td>
-                <td className="px-4 py-3 text-[11px] text-muted-foreground">
-                  {c.issued} / {c.used} / <strong className="text-sage-ink">{c.remaining}</strong>
-                </td>
-                <td className="px-4 py-3 text-muted-foreground">{c.expires}</td>
-                <td className="px-4 py-3">
-                  <Badge variant={c.status === "활성" ? "default" : "muted"}>{c.status}</Badge>
-                </td>
-                <td className="px-4 py-3 text-right">
-                  <Link href={`/admin/coupons/${c.id}`}>
-                    <Button size="sm" variant="ghost">수정</Button>
-                  </Link>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                  <span className="font-mono text-[11px] text-muted-foreground bg-muted px-2 py-0.5">
+                    {c.code}
+                  </span>
+                </div>
+                <div className="font-medium text-sage-ink">{c.name}</div>
+                <div className="text-[11px] text-muted-foreground">
+                  할인 <span className="text-foreground font-medium">{c.discount}</span>
+                  &nbsp;·&nbsp;
+                  만료 <span className="text-foreground">{c.expires}</span>
+                </div>
+              </div>
+
+              {/* 오른쪽: 사용 현황 */}
+              <div className="col-span-12 md:col-span-6 space-y-2">
+                {/* 수치 행 */}
+                <div className="grid grid-cols-3 text-center divide-x divide-border border border-border">
+                  <UsageStat label="발행" value={c.issued} />
+                  <UsageStat label="사용" value={c.used} accent />
+                  <UsageStat
+                    label="잔여"
+                    value={c.remaining}
+                    warn={isLow}
+                  />
+                </div>
+
+                {/* 프로그레스 바 */}
+                <div className="space-y-1">
+                  <div className="relative h-2 bg-muted overflow-hidden">
+                    <div
+                      className={cn(
+                        "absolute inset-y-0 left-0 transition-all",
+                        isExpired ? "bg-muted-foreground/40" : "bg-sage-ink"
+                      )}
+                      style={{ width: `${rate}%` }}
+                    />
+                  </div>
+                  <div className="flex justify-between text-[10px] text-muted-foreground">
+                    <span>사용률 <strong className={cn("font-semibold", !isExpired && "text-sage-ink")}>{rate}%</strong></span>
+                    {isLow && (
+                      <span className="text-amber-600 font-medium">잔여 수량 부족</span>
+                    )}
+                    {!isLow && (
+                      <span>잔여 {c.remaining.toLocaleString()}장</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* 관리 버튼 */}
+              <div className="col-span-12 md:col-span-1 flex md:justify-end items-start">
+                <Link href={`/admin/coupons/${c.id}`}>
+                  <Button size="sm" variant="outline">수정</Button>
+                </Link>
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
 }
 
-function Stat({ label, value }: { label: string; value: string }) {
+function Stat({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) {
   return (
     <div className="border border-border p-5">
       <div className="text-[11px] text-muted-foreground">{label}</div>
-      <div className="text-xl font-bold mt-2">{value}</div>
+      <div className={cn("text-xl font-bold mt-2", highlight && "text-sage-ink")}>{value}</div>
+    </div>
+  );
+}
+
+function UsageStat({
+  label,
+  value,
+  accent,
+  warn,
+}: {
+  label: string;
+  value: number;
+  accent?: boolean;
+  warn?: boolean;
+}) {
+  return (
+    <div className="py-2.5 px-3">
+      <div className="text-[10px] text-muted-foreground mb-0.5">{label}</div>
+      <div
+        className={cn(
+          "text-base font-bold",
+          accent && "text-sage-ink",
+          warn && "text-amber-600"
+        )}
+      >
+        {value.toLocaleString()}
+      </div>
     </div>
   );
 }
