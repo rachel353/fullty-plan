@@ -13,7 +13,7 @@ const STATUS_VARIANT: Record<ContractStatus, "default" | "outline" | "muted" | "
 
 const FIELD_TYPE_LABEL: Record<string, string> = {
   text: "텍스트",
-  date: "날짜",
+  "date-parts": "날짜",
   signature: "서명",
 };
 
@@ -69,25 +69,31 @@ export default function AdminContractDetailPage({ params }: { params: { id: stri
           ))}
           {/* 서명 필드 */}
           {template && (
-            <div className="pt-6 border-t border-gray-200 space-y-5">
+            <div className="pt-6 border-t border-gray-200 space-y-5 font-sans">
               {template.fields.map((field) => {
                 const value = contract.signedValues?.[field.id];
+                const label = field.docLabel ?? field.label;
+
+                if (field.type === "signature") {
+                  return (
+                    <div key={field.id} className="flex items-end gap-4">
+                      <span className="text-xs text-gray-500 w-20 flex-shrink-0 tracking-wider">{label}</span>
+                      <div className="flex-1 border-b border-dashed border-gray-300 h-8 flex items-center">
+                        {isSigned && <span className="text-sage-ink text-sm font-medium italic">✓ 전자 서명 완료</span>}
+                      </div>
+                    </div>
+                  );
+                }
+
                 return (
                   <div key={field.id} className="flex items-end gap-4">
-                    <span className="text-xs text-gray-500 w-24 flex-shrink-0">{field.label}</span>
-                    {field.type === "signature" ? (
-                      isSigned ? (
-                        <div className="flex-1 border-b border-gray-300 pb-1 flex items-center gap-2">
-                          <span className="text-sage-ink text-sm font-medium italic">✓ 전자 서명 완료</span>
-                        </div>
-                      ) : (
-                        <div className="flex-1 border-b border-dashed border-gray-300 h-8" />
-                      )
-                    ) : (
-                      <div className="flex-1 border-b border-gray-300 pb-1 text-sm">
-                        {value ?? <span className="text-gray-300">—</span>}
-                      </div>
-                    )}
+                    <span className="text-xs text-gray-500 w-20 flex-shrink-0 tracking-wider">{label}</span>
+                    <div className="flex-1 border-b border-gray-300 pb-1 text-sm flex items-center justify-between min-h-[28px]">
+                      <span>{value ?? <span className="text-gray-300">—</span>}</span>
+                      {field.variant === "name-with-seal" && (
+                        <span className="text-gray-400 text-xs ml-2">(인)</span>
+                      )}
+                    </div>
                   </div>
                 );
               })}

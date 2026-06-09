@@ -1,11 +1,13 @@
 export type ContractStatus = "대기 중" | "서명 완료" | "만료" | "취소됨";
 
-export type ContractFieldType = "text" | "date" | "signature";
+export type ContractFieldType = "text" | "date-parts" | "signature";
 
 export type ContractField = {
   id: string;
   label: string;
+  docLabel?: string;
   type: ContractFieldType;
+  variant?: "name-with-seal";
   required: boolean;
 };
 
@@ -33,17 +35,22 @@ export type Contract = {
   signedValues?: Record<string, string>;
 };
 
+const CONTRACT_FIELDS: ContractField[] = [
+  { id: "f_date",    label: "날짜",   docLabel: "날    짜",  type: "date-parts", required: true },
+  { id: "f_name",    label: "고객명", docLabel: "고 객 명",  type: "text", variant: "name-with-seal", required: true },
+  { id: "f_address", label: "주소",   docLabel: "주    소",  type: "text", required: true },
+  { id: "f_bank",    label: "은행명", docLabel: "은 행 명",  type: "text", required: true },
+  { id: "f_account", label: "계좌번호", docLabel: "계좌번호", type: "text", required: true },
+  { id: "f_sig",     label: "서명",   docLabel: "서    명",  type: "signature", required: true },
+];
+
 export const contractTemplates: ContractTemplate[] = [
   {
     id: "tmpl001",
     name: "렌탈 서비스 이용 약정서",
     fileName: "rental_agreement_v3.pdf",
     description: "렌탈 상품 수령 후 고객 서명이 필요한 이용 약정서입니다.",
-    fields: [
-      { id: "f1", label: "성명", type: "text", required: true },
-      { id: "f2", label: "서명 일자", type: "date", required: true },
-      { id: "f3", label: "서명", type: "signature", required: true },
-    ],
+    fields: CONTRACT_FIELDS,
     createdAt: "2026-01-10",
   },
   {
@@ -51,11 +58,7 @@ export const contractTemplates: ContractTemplate[] = [
     name: "자산화 위탁 계약서",
     fileName: "asset_consignment_v2.pdf",
     description: "자산화 서비스 신청 시 위탁 조건 확인 및 서명이 필요한 계약서입니다.",
-    fields: [
-      { id: "f1", label: "위탁인 성명", type: "text", required: true },
-      { id: "f2", label: "계약 체결일", type: "date", required: true },
-      { id: "f3", label: "서명", type: "signature", required: true },
-    ],
+    fields: CONTRACT_FIELDS,
     createdAt: "2026-02-14",
   },
 ];
@@ -73,7 +76,7 @@ export const contracts: Contract[] = [
     signedAt: "2026-05-21",
     expiresAt: "2026-06-20",
     note: "Egg Chair 렌탈 계약",
-    signedValues: { f1: "김풀티", f2: "2026-05-21", f3: "__signed__" },
+    signedValues: { f_date: "2026년 5월 21일", f_name: "김풀티", f_address: "서울 강남구 테헤란로 123", f_bank: "카카오뱅크", f_account: "3333-01-1234567", f_sig: "__signed__" },
   },
   {
     id: "ct002",
@@ -99,7 +102,7 @@ export const contracts: Contract[] = [
     signedAt: "2026-04-11",
     expiresAt: "2026-05-10",
     note: "Tulip Table 렌탈 계약",
-    signedValues: { f1: "이라운지", f2: "2026-04-11", f3: "__signed__" },
+    signedValues: { f_date: "2026년 4월 11일", f_name: "이라운지", f_address: "경기도 성남시 분당구 판교로 45", f_bank: "신한은행", f_account: "110-123-456789", f_sig: "__signed__" },
   },
   {
     id: "ct004",

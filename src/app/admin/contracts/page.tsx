@@ -94,9 +94,12 @@ export default function AdminContractsPage() {
       fileName: tmplFile || `${tmplName.replace(/\s/g, "_")}.pdf`,
       description: tmplDesc,
       fields: [
-        { id: "f1", label: "성명", type: "text", required: true },
-        { id: "f2", label: "서명 일자", type: "date", required: true },
-        { id: "f3", label: "서명", type: "signature", required: true },
+        { id: "f_date",    label: "날짜",   docLabel: "날    짜", type: "date-parts" as const, required: true },
+        { id: "f_name",    label: "고객명", docLabel: "고 객 명", type: "text" as const, variant: "name-with-seal" as const, required: true },
+        { id: "f_address", label: "주소",   docLabel: "주    소", type: "text" as const, required: true },
+        { id: "f_bank",    label: "은행명", docLabel: "은 행 명", type: "text" as const, required: true },
+        { id: "f_account", label: "계좌번호", docLabel: "계좌번호", type: "text" as const, required: true },
+        { id: "f_sig",     label: "서명",   docLabel: "서    명", type: "signature" as const, required: true },
       ],
       createdAt: new Date().toISOString().slice(0, 10),
     };
