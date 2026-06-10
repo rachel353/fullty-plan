@@ -133,7 +133,7 @@ export function ProductForm({ mode }: { mode: ProductFormMode }) {
             />
           </Field>
           <SimpleField label="옵션 / 사이즈" placeholder="Size B / Graphite" />
-          <SimpleField label="카테고리" placeholder="가구 / 조명 / 테이블웨어 / 홈데코 / 아트" />
+          <SimpleField label="카테고리" placeholder="Furniture / Lighting / Tableware / Home Decor / Art" />
         </div>
 
         {/* 고유번호 — admin 전용 */}
