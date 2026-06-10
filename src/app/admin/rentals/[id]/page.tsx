@@ -380,6 +380,20 @@ export default function RentalDetailPage() {
         </div>
       </section>
 
+      {/* 추가 청구 */}
+      <section className="space-y-3">
+        <div className="text-[10px] text-muted-foreground tracking-widest uppercase">추가 청구</div>
+        <div className="border border-border px-5 py-4 flex items-center justify-between">
+          <div>
+            <div className="text-sm font-medium">손상 / 연체 / 클리닝 비용 청구</div>
+            <div className="text-[11px] text-muted-foreground mt-0.5">사용자에게 추가 결제 요청을 발송합니다</div>
+          </div>
+          <Link href={`/admin/billing?rentalId=${rental.id}`}>
+            <Button size="sm" variant="outline">추가 청구 보내기</Button>
+          </Link>
+        </div>
+      </section>
+
       {/* 관리 액션 */}
       {!isDone && (
         <section className="space-y-3">

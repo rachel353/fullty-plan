@@ -7,6 +7,7 @@ const sections: SidebarSection[] = [
       { href: "/mypage/orders", label: "주문 조회" },
       { href: "/mypage/rentals", label: "렌탈 중인 상품" },
       { href: "/mypage/contracts", label: "계약서" },
+      { href: "/mypage/billing", label: "추가 청구" },
     ],
   },
   {
