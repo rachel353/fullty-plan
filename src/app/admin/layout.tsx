@@ -13,6 +13,7 @@ const sections: SidebarSection[] = [
     title: "상품 / 거래",
     items: [
       { href: "/admin/products", label: "상품 관리" },
+      { href: "/admin/categories", label: "카테고리 관리" },
       { href: "/admin/assets", label: "자산화 상품 관리" },
       { href: "/admin/orders", label: "주문 / 배송 / 취소" },
       { href: "/admin/rentals", label: "렌탈 관리" },

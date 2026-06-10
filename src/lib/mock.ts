@@ -1,3 +1,5 @@
+import { getActiveCategoryNames } from "./categories";
+
 export type Grade = "SS" | "S" | "A+" | "A" | "B";
 
 export type Availability = "buy" | "rent" | "both";
@@ -210,7 +212,7 @@ export const products: Product[] = [
   },
 ];
 
-export const categories = ["전체", "가구", "조명", "테이블웨어", "홈데코", "아트"];
+export const categories = ["전체", ...getActiveCategoryNames()];
 
 export type GetRequest = {
   id: string;

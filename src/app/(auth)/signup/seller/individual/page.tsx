@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Select } from "@/components/ui/Select";
 import { FileUpload } from "@/components/ui/FileUpload";
+import { getActiveCategoryNames } from "@/lib/categories";
 
 const banks = [
   "국민은행", "신한은행", "하나은행", "우리은행", "농협은행",
@@ -64,7 +65,7 @@ export default function IndividualSellerSignupPage() {
 
       <Section title="취급 카테고리">
         <div className="grid grid-cols-3 gap-2">
-          {["가구", "조명", "테이블웨어", "홈데코", "아트"].map((c) => (
+          {getActiveCategoryNames().map((c) => (
             <label
               key={c}
               className="flex items-center gap-2 border border-border p-2.5 text-xs cursor-pointer hover:bg-muted"
