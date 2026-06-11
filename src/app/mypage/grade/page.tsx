@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 
@@ -71,8 +72,11 @@ export default function GradePage() {
         </Card>
 
         <Card>
-          <CardHeader>
+          <CardHeader className="flex items-center justify-between">
             <CardTitle>풀티머니</CardTitle>
+            <Link href="/mypage/money" className="text-[11px] text-sage-ink hover:underline">
+              전체 내역 보기 →
+            </Link>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold">124,500원</div>
