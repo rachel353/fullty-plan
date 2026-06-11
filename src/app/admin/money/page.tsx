@@ -35,10 +35,13 @@ const INITIAL_PENDING: PendingApproval[] = [
   { id: "pa004", memberId: "m003", member: "박빈티", reason: "장문 구매평 추가지급", amount: 500, date: "2026-04-25" },
 ];
 
+type ConfirmAction = { type: "approve" | "reject"; item: PendingApproval };
+
 export default function AdminMoneyPage() {
   const [balances, setBalances] = useState(INITIAL_BALANCES);
   const [history, setHistory] = useState(INITIAL_HISTORY);
   const [pending, setPending] = useState<PendingApproval[]>(INITIAL_PENDING);
+  const [confirmAction, setConfirmAction] = useState<ConfirmAction | null>(null);
 
   function handleApprove(item: PendingApproval) {
     setBalances((prev) =>
@@ -53,6 +56,16 @@ export default function AdminMoneyPage() {
 
   function handleReject(id: string) {
     setPending((prev) => prev.filter((p) => p.id !== id));
+  }
+
+  function handleConfirm() {
+    if (!confirmAction) return;
+    if (confirmAction.type === "approve") {
+      handleApprove(confirmAction.item);
+    } else {
+      handleReject(confirmAction.item.id);
+    }
+    setConfirmAction(null);
   }
 
   return (
@@ -115,10 +128,14 @@ export default function AdminMoneyPage() {
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex justify-end gap-1.5">
-                        <Button size="sm" variant="outline" onClick={() => handleReject(p.id)}>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => setConfirmAction({ type: "reject", item: p })}
+                        >
                           <X size={12} className="mr-1" /> 거절
                         </Button>
-                        <Button size="sm" onClick={() => handleApprove(p)}>
+                        <Button size="sm" onClick={() => setConfirmAction({ type: "approve", item: p })}>
                           <Check size={12} className="mr-1" /> 승인
                         </Button>
                       </div>
@@ -217,6 +234,61 @@ export default function AdminMoneyPage() {
             </tbody>
           </table>
         </div>
+      </div>
+
+      {/* 승인/거절 확인 모달 */}
+      {confirmAction && (
+        <Modal
+          title={confirmAction.type === "approve" ? "적립 승인" : "적립 거절"}
+          onClose={() => setConfirmAction(null)}
+        >
+          {confirmAction.type === "approve" ? (
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              <span className="font-semibold text-foreground">{confirmAction.item.member}</span>님의{" "}
+              <span className="font-semibold text-foreground">&quot;{confirmAction.item.reason}&quot;</span> 적립 요청을
+              승인합니다. 회원 잔액에{" "}
+              <span className="font-semibold text-foreground">
+                +{confirmAction.item.amount.toLocaleString()}원
+              </span>
+              이 적립되고, 적립/사용 이력에 기록됩니다.
+            </p>
+          ) : (
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              <span className="font-semibold text-foreground">{confirmAction.item.member}</span>님의{" "}
+              <span className="font-semibold text-foreground">&quot;{confirmAction.item.reason}&quot;</span> 적립 요청
+              (+{confirmAction.item.amount.toLocaleString()}원)을 거절합니다. 거절된 요청은 복구할 수 없습니다.
+            </p>
+          )}
+          <div className="flex gap-2 mt-6">
+            <Button variant="outline" className="flex-1" onClick={() => setConfirmAction(null)}>
+              취소
+            </Button>
+            {confirmAction.type === "approve" ? (
+              <Button className="flex-1" onClick={handleConfirm}>승인</Button>
+            ) : (
+              <Button
+                className="flex-1 border-red-400 bg-red-500 text-white hover:bg-red-600 hover:border-red-500"
+                onClick={handleConfirm}
+              >
+                거절
+              </Button>
+            )}
+          </div>
+        </Modal>
+      )}
+    </div>
+  );
+}
+
+function Modal({ title, onClose, children }: { title: string; onClose: () => void; children: React.ReactNode }) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      <div className="absolute inset-0 bg-black/40" onClick={onClose} />
+      <div className="relative bg-background border border-border w-full max-w-md p-6 space-y-1 z-10">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-base font-semibold">{title}</h3>
+        </div>
+        {children}
       </div>
     </div>
   );
