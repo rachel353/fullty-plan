@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 
 type RewardType = "정액" | "정률";
+type PayoutMode = "자동" | "승인";
 
 type Rule = {
   id: string;
@@ -18,6 +19,8 @@ type Rule = {
   cap: number | null;
   expireDays: number;
   enabled: boolean;
+  payoutMode: PayoutMode;
+  minLength?: number;
 };
 
 const INITIAL_RULES: Rule[] = [
@@ -30,6 +33,7 @@ const INITIAL_RULES: Rule[] = [
     cap: null,
     expireDays: 90,
     enabled: true,
+    payoutMode: "자동",
   },
   {
     id: "r02",
@@ -40,6 +44,7 @@ const INITIAL_RULES: Rule[] = [
     cap: null,
     expireDays: 180,
     enabled: true,
+    payoutMode: "자동",
   },
   {
     id: "r03",
@@ -50,6 +55,7 @@ const INITIAL_RULES: Rule[] = [
     cap: 50000,
     expireDays: 365,
     enabled: true,
+    payoutMode: "자동",
   },
   {
     id: "r04",
@@ -60,16 +66,41 @@ const INITIAL_RULES: Rule[] = [
     cap: null,
     expireDays: 180,
     enabled: true,
+    payoutMode: "자동",
   },
   {
     id: "r05",
-    trigger: "리뷰 작성",
+    trigger: "구매평 작성",
     desc: "구매 확정 후 리뷰 등록 시 지급",
+    type: "정액",
+    amount: 2000,
+    cap: null,
+    expireDays: 90,
+    enabled: true,
+    payoutMode: "승인",
+  },
+  {
+    id: "r09",
+    trigger: "포토 구매평 추가지급",
+    desc: "이미지 1장 이상 포함된 구매평 작성 시 추가 지급",
     type: "정액",
     amount: 1000,
     cap: null,
     expireDays: 90,
     enabled: true,
+    payoutMode: "승인",
+  },
+  {
+    id: "r10",
+    trigger: "장문 구매평 추가지급",
+    desc: "최소 글자수 이상 작성 시 추가 지급",
+    type: "정액",
+    amount: 500,
+    cap: null,
+    expireDays: 90,
+    enabled: true,
+    payoutMode: "승인",
+    minLength: 100,
   },
   {
     id: "r06",
@@ -80,6 +111,7 @@ const INITIAL_RULES: Rule[] = [
     cap: null,
     expireDays: 90,
     enabled: false,
+    payoutMode: "자동",
   },
   {
     id: "r07",
@@ -90,6 +122,7 @@ const INITIAL_RULES: Rule[] = [
     cap: 30000,
     expireDays: 365,
     enabled: false,
+    payoutMode: "자동",
   },
   {
     id: "r08",
@@ -100,6 +133,7 @@ const INITIAL_RULES: Rule[] = [
     cap: null,
     expireDays: 180,
     enabled: false,
+    payoutMode: "자동",
   },
 ];
 
@@ -118,6 +152,8 @@ const EMPTY_DRAFT: Draft = {
   cap: null,
   expireDays: 90,
   enabled: true,
+  payoutMode: "자동",
+  minLength: undefined,
 };
 
 function RuleModal({
@@ -248,6 +284,41 @@ function RuleModal({
               />
             </div>
           </div>
+
+          {/* 지급 방식 */}
+          <div className="space-y-1.5">
+            <label className="text-[11px] text-muted-foreground">지급 방식</label>
+            <div className="flex gap-2">
+              {(["자동", "승인"] as PayoutMode[]).map((m) => (
+                <button
+                  key={m}
+                  onClick={() => set("payoutMode", m)}
+                  className={cn(
+                    "flex-1 h-9 text-xs font-medium border transition-colors",
+                    draft.payoutMode === m
+                      ? "border-foreground bg-foreground text-background"
+                      : "border-border hover:bg-muted"
+                  )}
+                >
+                  {m === "자동" ? "자동 지급" : "승인 후 지급"}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* 최소 글자수 조건 — 리뷰 글자수 기준 */}
+          <div className="space-y-1.5">
+            <label className="text-[11px] text-muted-foreground">최소 글자수 조건 (선택, 리뷰 글자수 기준)</label>
+            <input
+              type="number"
+              value={draft.minLength ?? ""}
+              onChange={(e) =>
+                set("minLength", e.target.value === "" ? undefined : Number(e.target.value))
+              }
+              placeholder="비우면 미적용"
+              className="w-full h-10 px-3 text-sm border border-border bg-background outline-none focus:border-sage-ink"
+            />
+          </div>
         </div>
 
         <div className="flex gap-2 pt-1">
@@ -261,13 +332,15 @@ function RuleModal({
   );
 }
 
-let nextId = 9;
+let nextId = 11;
 
 export default function MoneyPolicyPage() {
   const [rules, setRules] = useState<Rule[]>(INITIAL_RULES);
   const [editing, setEditing] = useState<Rule | null>(null);
   const [creating, setCreating] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [minBalance, setMinBalance] = useState(5000);
+  const [minOrderAmount, setMinOrderAmount] = useState(100000);
 
   function toggleEnabled(id: string) {
     setRules((prev) => prev.map((r) => (r.id === id ? { ...r, enabled: !r.enabled } : r)));
@@ -380,8 +453,16 @@ export default function MoneyPolicyPage() {
                   <Badge variant={rule.enabled ? "sage" : "muted"}>
                     {rule.enabled ? "활성" : "비활성"}
                   </Badge>
+                  {rule.payoutMode === "승인" && (
+                    <Badge variant="outline" className="border-amber-300 bg-amber-50 text-amber-700">
+                      승인 후 지급
+                    </Badge>
+                  )}
                 </div>
-                <div className="text-[11px] text-muted-foreground mt-0.5">{rule.desc}</div>
+                <div className="text-[11px] text-muted-foreground mt-0.5">
+                  {rule.desc}
+                  {rule.minLength ? ` · ${rule.minLength}자 이상` : ""}
+                </div>
               </div>
 
               <div className="text-right flex-shrink-0 space-y-0.5">
@@ -406,14 +487,63 @@ export default function MoneyPolicyPage() {
         <div className="border border-border/50 bg-muted/30 px-4 py-3 text-[11px] text-muted-foreground leading-relaxed">
           · 정률 적립은 실결제 금액(배송비 제외) 기준으로 계산됩니다.<br />
           · 지급된 풀티머니는 유효기간 내 사용하지 않으면 자동 소멸됩니다.<br />
+          · "승인 후 지급" 조건은 풀티머니 관리 화면의 "적립 승인 대기"에서 개별 승인합니다.<br />
           · 전체 저장 버튼을 눌러야 변경사항이 실제 정책에 반영됩니다.
         </div>
       )}
 
+      {/* 적립금 사용 조건 */}
+      <div className="border border-border p-5 space-y-4">
+        <div>
+          <div className="text-sm font-semibold">적립금 사용 조건</div>
+          <p className="text-[11px] text-muted-foreground mt-0.5">
+            아래 조건을 모두 만족해야 결제 시 풀티머니를 사용할 수 있습니다.
+          </p>
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-1.5">
+            <label className="text-[11px] text-muted-foreground">최소 보유 적립금</label>
+            <div className="flex items-center border border-border focus-within:border-sage-ink">
+              <input
+                type="number"
+                value={minBalance}
+                onChange={(e) => setMinBalance(Number(e.target.value) || 0)}
+                className="flex-1 h-10 px-3 text-sm bg-background outline-none"
+              />
+              <span className="px-3 text-sm text-muted-foreground border-l border-border h-10 flex items-center">원</span>
+            </div>
+            <p className="text-[11px] text-muted-foreground">보유 적립금이 이 금액 이상일 때만 사용 가능</p>
+          </div>
+          <div className="space-y-1.5">
+            <label className="text-[11px] text-muted-foreground">최소 구매금액 합계</label>
+            <div className="flex items-center border border-border focus-within:border-sage-ink">
+              <input
+                type="number"
+                value={minOrderAmount}
+                onChange={(e) => setMinOrderAmount(Number(e.target.value) || 0)}
+                className="flex-1 h-10 px-3 text-sm bg-background outline-none"
+              />
+              <span className="px-3 text-sm text-muted-foreground border-l border-border h-10 flex items-center">원</span>
+            </div>
+            <p className="text-[11px] text-muted-foreground">주문 금액이 이 금액 이상일 때만 사용 가능</p>
+          </div>
+        </div>
+      </div>
+
       {editing && (
         <RuleModal
           title="적립 조건 수정"
-          initial={{ trigger: editing.trigger, desc: editing.desc, type: editing.type, amount: editing.amount, cap: editing.cap, expireDays: editing.expireDays, enabled: editing.enabled }}
+          initial={{
+            trigger: editing.trigger,
+            desc: editing.desc,
+            type: editing.type,
+            amount: editing.amount,
+            cap: editing.cap,
+            expireDays: editing.expireDays,
+            enabled: editing.enabled,
+            payoutMode: editing.payoutMode,
+            minLength: editing.minLength,
+          }}
           onSave={saveEdit}
           onClose={() => setEditing(null)}
         />

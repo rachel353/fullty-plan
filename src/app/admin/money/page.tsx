@@ -1,22 +1,60 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
-import { Settings } from "lucide-react";
+import { Settings, Check, X } from "lucide-react";
 
-const balances = [
+const INITIAL_BALANCES = [
   { id: "m001", name: "김풀티", email: "kimfullty@gmail.com", balance: 124500 },
   { id: "m002", name: "이가구", email: "leeg@kakao.com", balance: 48200 },
   { id: "m003", name: "박빈티", email: "park@gmail.com", balance: 0 },
 ];
 
-const history = [
+const INITIAL_HISTORY = [
   { date: "2026-04-13", member: "김풀티", type: "적립" as const, amount: 12800, reason: "구매 적립" },
   { date: "2026-04-10", member: "이가구", type: "사용" as const, amount: -50000, reason: "결제 사용" },
   { date: "2026-04-08", member: "박빈티", type: "수동 조정" as const, amount: 10000, reason: "운영팀 보정" },
   { date: "2026-04-05", member: "김풀티", type: "프로모션" as const, amount: 30000, reason: "신규 가입 혜택" },
 ];
 
+type PendingApproval = {
+  id: string;
+  memberId: string;
+  member: string;
+  reason: string;
+  amount: number;
+  date: string;
+};
+
+const INITIAL_PENDING: PendingApproval[] = [
+  { id: "pa001", memberId: "m001", member: "김풀티", reason: "구매평 작성", amount: 2000, date: "2026-04-27" },
+  { id: "pa002", memberId: "m001", member: "김풀티", reason: "포토 구매평 추가지급", amount: 1000, date: "2026-04-27" },
+  { id: "pa003", memberId: "m002", member: "이가구", reason: "구매평 작성", amount: 2000, date: "2026-04-26" },
+  { id: "pa004", memberId: "m003", member: "박빈티", reason: "장문 구매평 추가지급", amount: 500, date: "2026-04-25" },
+];
+
 export default function AdminMoneyPage() {
+  const [balances, setBalances] = useState(INITIAL_BALANCES);
+  const [history, setHistory] = useState(INITIAL_HISTORY);
+  const [pending, setPending] = useState<PendingApproval[]>(INITIAL_PENDING);
+
+  function handleApprove(item: PendingApproval) {
+    setBalances((prev) =>
+      prev.map((b) => (b.id === item.memberId ? { ...b, balance: b.balance + item.amount } : b))
+    );
+    setHistory((prev) => [
+      { date: item.date, member: item.member, type: "적립" as const, amount: item.amount, reason: item.reason },
+      ...prev,
+    ]);
+    setPending((prev) => prev.filter((p) => p.id !== item.id));
+  }
+
+  function handleReject(id: string) {
+    setPending((prev) => prev.filter((p) => p.id !== id));
+  }
+
   return (
     <div className="space-y-8">
       <div className="border-b border-border pb-4 flex items-end justify-between">
@@ -38,6 +76,44 @@ export default function AdminMoneyPage() {
         <Stat label="총 사용액" value="8,210,000원" />
         <Stat label="총 잔액" value="4,630,000원" />
         <Stat label="이번 달 적립" value="840,000원" />
+      </div>
+
+      {/* 적립 승인 대기 */}
+      <div>
+        <div className="flex items-end justify-between mb-3">
+          <div className="text-xs font-semibold tracking-widest text-muted-foreground uppercase">
+            적립 승인 대기
+          </div>
+          {pending.length > 0 && <Badge variant="sage">{pending.length}건 대기</Badge>}
+        </div>
+        {pending.length === 0 ? (
+          <div className="border border-dashed border-border py-8 text-center text-sm text-muted-foreground">
+            승인 대기 중인 적립 요청이 없습니다.
+          </div>
+        ) : (
+          <div className="border border-border divide-y divide-border">
+            {pending.map((p) => (
+              <div key={p.id} className="px-5 py-3 flex items-center gap-4">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-semibold">{p.member}</span>
+                    <Badge variant="outline">{p.reason}</Badge>
+                  </div>
+                  <div className="text-[11px] text-muted-foreground mt-0.5">{p.date}</div>
+                </div>
+                <div className="text-sm font-semibold flex-shrink-0">+{p.amount.toLocaleString()}원</div>
+                <div className="flex gap-1.5 flex-shrink-0">
+                  <Button size="sm" variant="outline" onClick={() => handleReject(p.id)}>
+                    <X size={12} className="mr-1" /> 거절
+                  </Button>
+                  <Button size="sm" onClick={() => handleApprove(p)}>
+                    <Check size={12} className="mr-1" /> 승인
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Balances */}
