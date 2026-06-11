@@ -3,19 +3,20 @@ import { Badge } from "@/components/ui/Badge";
 import { contracts, type ContractStatus } from "@/lib/contracts";
 import { cn } from "@/lib/utils";
 
-const MY_USER_ID = "u001";
+const MY_MEMBER_ID = "m001";
 
 const STATUS_VARIANT: Record<ContractStatus, "default" | "outline" | "muted" | "sage"> = {
-  "대기 중": "outline",
+  "작성중": "muted",
+  "서명 대기": "outline",
   "서명 완료": "sage",
   "만료": "muted",
   "취소됨": "muted",
 };
 
 export default function MypageContractsPage() {
-  const myContracts = contracts.filter((c) => c.userId === MY_USER_ID);
-  const pending = myContracts.filter((c) => c.status === "대기 중");
-  const rest = myContracts.filter((c) => c.status !== "대기 중");
+  const myContracts = contracts.filter((c) => c.memberId === MY_MEMBER_ID && c.status !== "작성중");
+  const pending = myContracts.filter((c) => c.status === "서명 대기");
+  const rest = myContracts.filter((c) => c.status !== "서명 대기");
 
   return (
     <div className="space-y-8">
@@ -36,11 +37,11 @@ export default function MypageContractsPage() {
                 <div className="border border-sage-ink/30 bg-sage-soft/10 px-5 py-4 flex items-center justify-between gap-4 hover:bg-sage-soft/20 transition-colors">
                   <div className="min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                      <Badge variant="outline">대기 중</Badge>
-                      <span className="text-[10px] text-muted-foreground">만료 {c.expiresAt}</span>
+                      <Badge variant="outline">서명 대기</Badge>
+                      <span className="text-[10px] text-muted-foreground">만료 {c.signatureExpiry}</span>
                     </div>
                     <div className="font-medium text-sage-ink truncate">{c.templateName}</div>
-                    {c.note && <div className="text-[11px] text-muted-foreground mt-0.5">{c.note}</div>}
+                    {c.messageToSigner && <div className="text-[11px] text-muted-foreground mt-0.5">{c.messageToSigner}</div>}
                   </div>
                   <span className="text-xs font-medium text-sage-ink flex-shrink-0">서명하기 →</span>
                 </div>
@@ -68,11 +69,11 @@ export default function MypageContractsPage() {
                   <div className="flex items-center gap-2 mb-1">
                     <Badge variant={STATUS_VARIANT[c.status]}>{c.status}</Badge>
                     <span className="text-[10px] text-muted-foreground">
-                      {c.signedAt ? `서명 ${c.signedAt}` : `발송 ${c.sentAt}`}
+                      {c.completedAt ? `서명 ${c.completedAt}` : `발송 ${c.sentAt}`}
                     </span>
                   </div>
                   <div className="font-medium text-sage-ink truncate">{c.templateName}</div>
-                  {c.note && <div className="text-[11px] text-muted-foreground mt-0.5">{c.note}</div>}
+                  {c.messageToSigner && <div className="text-[11px] text-muted-foreground mt-0.5">{c.messageToSigner}</div>}
                 </div>
                 {c.status === "서명 완료" && (
                   <span className="text-xs text-muted-foreground flex-shrink-0">보기 →</span>
