@@ -26,13 +26,15 @@ type PendingApproval = {
   reason: string;
   amount: number;
   date: string;
+  orderId: string;
+  expiresAt: string;
 };
 
 const INITIAL_PENDING: PendingApproval[] = [
-  { id: "pa001", memberId: "m001", member: "김풀티", reason: "구매평 작성", amount: 2000, date: "2026-04-27" },
-  { id: "pa002", memberId: "m001", member: "김풀티", reason: "포토 구매평 추가지급", amount: 1000, date: "2026-04-27" },
-  { id: "pa003", memberId: "m002", member: "이가구", reason: "구매평 작성", amount: 2000, date: "2026-04-26" },
-  { id: "pa004", memberId: "m003", member: "박빈티", reason: "장문 구매평 추가지급", amount: 500, date: "2026-04-25" },
+  { id: "pa001", memberId: "m001", member: "김풀티", reason: "구매평 작성", amount: 2000, date: "2026-04-27", orderId: "ORD-20260420-001", expiresAt: "2026-07-26" },
+  { id: "pa002", memberId: "m001", member: "김풀티", reason: "포토 구매평 추가지급", amount: 1000, date: "2026-04-27", orderId: "ORD-20260420-001", expiresAt: "2026-07-26" },
+  { id: "pa003", memberId: "m002", member: "이가구", reason: "구매평 작성", amount: 2000, date: "2026-04-26", orderId: "ORD-20260418-002", expiresAt: "2026-07-25" },
+  { id: "pa004", memberId: "m003", member: "박빈티", reason: "장문 구매평 추가지급", amount: 500, date: "2026-04-25", orderId: "ORD-20260415-003", expiresAt: "2026-07-24" },
 ];
 
 type ConfirmAction = { type: "approve" | "reject"; item: PendingApproval };
@@ -112,6 +114,7 @@ export default function AdminMoneyPage() {
                   <th className="px-4 py-3">회원</th>
                   <th className="px-4 py-3">사유</th>
                   <th className="px-4 py-3 text-right">금액</th>
+                  <th className="px-4 py-3">만료 예정일</th>
                   <th className="px-4 py-3 text-right">작업</th>
                 </tr>
               </thead>
@@ -122,10 +125,12 @@ export default function AdminMoneyPage() {
                     <td className="px-4 py-3 font-medium">{p.member}</td>
                     <td className="px-4 py-3">
                       <Badge variant="outline">{p.reason}</Badge>
+                      <div className="text-[11px] text-muted-foreground mt-1">{p.orderId}</div>
                     </td>
                     <td className="px-4 py-3 text-right font-medium">
                       +{p.amount.toLocaleString()}원
                     </td>
+                    <td className="px-4 py-3 text-muted-foreground">{p.expiresAt}</td>
                     <td className="px-4 py-3">
                       <div className="flex justify-end gap-1.5">
                         <Button
@@ -243,15 +248,27 @@ export default function AdminMoneyPage() {
           onClose={() => setConfirmAction(null)}
         >
           {confirmAction.type === "approve" ? (
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              <span className="font-semibold text-foreground">{confirmAction.item.member}</span>님의{" "}
-              <span className="font-semibold text-foreground">&quot;{confirmAction.item.reason}&quot;</span> 적립 요청을
-              승인합니다. 회원 잔액에{" "}
-              <span className="font-semibold text-foreground">
-                +{confirmAction.item.amount.toLocaleString()}원
-              </span>
-              이 적립되고, 적립/사용 이력에 기록됩니다.
-            </p>
+            <div className="space-y-3">
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                <span className="font-semibold text-foreground">{confirmAction.item.member}</span>님의{" "}
+                <span className="font-semibold text-foreground">&quot;{confirmAction.item.reason}&quot;</span> 적립 요청을
+                승인합니다. 회원 잔액에{" "}
+                <span className="font-semibold text-foreground">
+                  +{confirmAction.item.amount.toLocaleString()}원
+                </span>
+                이 적립되고, 적립/사용 이력에 기록됩니다.
+              </p>
+              <dl className="text-[11px] text-muted-foreground border border-border divide-y divide-border">
+                <div className="flex justify-between px-3 py-2">
+                  <dt>관련 주문</dt>
+                  <dd className="text-foreground">{confirmAction.item.orderId}</dd>
+                </div>
+                <div className="flex justify-between px-3 py-2">
+                  <dt>만료 예정일</dt>
+                  <dd className="text-foreground">{confirmAction.item.expiresAt}</dd>
+                </div>
+              </dl>
+            </div>
           ) : (
             <p className="text-sm text-muted-foreground leading-relaxed">
               <span className="font-semibold text-foreground">{confirmAction.item.member}</span>님의{" "}
