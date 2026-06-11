@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { ChevronLeft, Check, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, Check, X, Image as ImageIcon } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { INITIAL_PENDING } from "@/lib/money";
@@ -21,6 +21,7 @@ export default function MoneyApprovalDetailPage() {
   const [confirmType, setConfirmType] = useState<"approve" | "reject" | null>(null);
   const [processed, setProcessed] = useState<"approve" | "reject" | null>(null);
   const [showBanner, setShowBanner] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   if (!item) {
     return (
@@ -101,6 +102,19 @@ export default function MoneyApprovalDetailPage() {
           <span>글자수 {item.reviewText.length}자</span>
           <span>첨부 이미지 {item.reviewImages}장</span>
         </div>
+        {item.reviewImages > 0 && (
+          <div className="grid grid-cols-4 gap-2">
+            {Array.from({ length: item.reviewImages }).map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setLightboxIndex(i)}
+                className="aspect-square border border-border bg-muted flex items-center justify-center hover:border-sage-ink transition-colors"
+              >
+                <ImageIcon size={20} className="text-muted-foreground" />
+              </button>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* 처리 */}
@@ -179,6 +193,37 @@ export default function MoneyApprovalDetailPage() {
             )}
           </div>
         </Modal>
+      )}
+
+      {/* 이미지 라이트박스 */}
+      {lightboxIndex !== null && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/60" onClick={() => setLightboxIndex(null)} />
+          <div className="relative z-10 flex items-center gap-4">
+            <button
+              onClick={() => setLightboxIndex((i) => (i! - 1 + item.reviewImages) % item.reviewImages)}
+              disabled={item.reviewImages <= 1}
+              className="text-white hover:text-sage-soft disabled:opacity-30 transition-colors"
+            >
+              <ChevronLeft size={24} />
+            </button>
+            <div className="space-y-2">
+              <div className="w-72 h-72 border border-border bg-muted flex items-center justify-center">
+                <ImageIcon size={48} className="text-muted-foreground" />
+              </div>
+              <div className="text-center text-xs text-white">
+                사진 {lightboxIndex + 1} / {item.reviewImages}
+              </div>
+            </div>
+            <button
+              onClick={() => setLightboxIndex((i) => (i! + 1) % item.reviewImages)}
+              disabled={item.reviewImages <= 1}
+              className="text-white hover:text-sage-soft disabled:opacity-30 transition-colors"
+            >
+              <ChevronRight size={24} />
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );
