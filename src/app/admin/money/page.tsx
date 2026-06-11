@@ -91,27 +91,42 @@ export default function AdminMoneyPage() {
             승인 대기 중인 적립 요청이 없습니다.
           </div>
         ) : (
-          <div className="border border-border divide-y divide-border">
-            {pending.map((p) => (
-              <div key={p.id} className="px-5 py-3 flex items-center gap-4">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-semibold">{p.member}</span>
-                    <Badge variant="outline">{p.reason}</Badge>
-                  </div>
-                  <div className="text-[11px] text-muted-foreground mt-0.5">{p.date}</div>
-                </div>
-                <div className="text-sm font-semibold flex-shrink-0">+{p.amount.toLocaleString()}원</div>
-                <div className="flex gap-1.5 flex-shrink-0">
-                  <Button size="sm" variant="outline" onClick={() => handleReject(p.id)}>
-                    <X size={12} className="mr-1" /> 거절
-                  </Button>
-                  <Button size="sm" onClick={() => handleApprove(p)}>
-                    <Check size={12} className="mr-1" /> 승인
-                  </Button>
-                </div>
-              </div>
-            ))}
+          <div className="border border-border">
+            <table className="w-full text-sm">
+              <thead className="border-b border-border bg-muted">
+                <tr className="text-left text-xs font-medium text-muted-foreground">
+                  <th className="px-4 py-3">신청일</th>
+                  <th className="px-4 py-3">회원</th>
+                  <th className="px-4 py-3">사유</th>
+                  <th className="px-4 py-3 text-right">금액</th>
+                  <th className="px-4 py-3 text-right">작업</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {pending.map((p) => (
+                  <tr key={p.id}>
+                    <td className="px-4 py-3 text-muted-foreground">{p.date}</td>
+                    <td className="px-4 py-3 font-medium">{p.member}</td>
+                    <td className="px-4 py-3">
+                      <Badge variant="outline">{p.reason}</Badge>
+                    </td>
+                    <td className="px-4 py-3 text-right font-medium">
+                      +{p.amount.toLocaleString()}원
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="flex justify-end gap-1.5">
+                        <Button size="sm" variant="outline" onClick={() => handleReject(p.id)}>
+                          <X size={12} className="mr-1" /> 거절
+                        </Button>
+                        <Button size="sm" onClick={() => handleApprove(p)}>
+                          <Check size={12} className="mr-1" /> 승인
+                        </Button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         )}
       </div>
