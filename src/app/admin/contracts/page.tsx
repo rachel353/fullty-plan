@@ -16,8 +16,6 @@ import {
   type ContractTemplate,
   type ContractStatus,
   type ContractType,
-  type FieldMapping,
-  type ContractField,
 } from "@/lib/contracts";
 
 type Tab = "계약 현황" | "템플릿 관리";
@@ -35,15 +33,6 @@ const CONTRACT_TYPES: ContractType[] = ["렌탈", "위탁", "매입"];
 
 const fieldClass = "w-full h-9 border border-border px-3 text-xs bg-background outline-none focus:border-sage-ink";
 const textareaClass = "w-full border border-border px-3 py-2 text-xs bg-background outline-none focus:border-sage-ink resize-none";
-
-const EXAMPLE_MAPPINGS: FieldMapping[] = [
-  { docField: "계약자명", modusignKey: "{member_name}", ourData: "회원 이름", required: true },
-  { docField: "주소", modusignKey: "{address}", ourData: "회원 주소", required: true },
-  { docField: "상품명", modusignKey: "{product_name}", ourData: "상품명", required: true },
-  { docField: "렌탈 시작일", modusignKey: "{rental_start_date}", ourData: "렌탈 시작일", required: true },
-  { docField: "렌탈 종료일", modusignKey: "{rental_end_date}", ourData: "렌탈 종료일", required: true },
-  { docField: "서명", modusignKey: "{signature}", ourData: "서명 필드", required: true },
-];
 
 function todayStr() {
   return new Date().toISOString().slice(0, 10);
@@ -69,17 +58,6 @@ function buildDefaultValues(
     else values[f.id] = "";
   }
   return values;
-}
-
-function fieldsFromMappings(mappings: FieldMapping[]): ContractField[] {
-  return mappings
-    .filter((m) => m.modusignKey !== "{signature}" && m.docField.trim() !== "")
-    .map((m) => ({
-      id: m.modusignKey.replace(/[{}]/g, "") || m.docField,
-      label: m.docField,
-      type: "text" as const,
-      required: m.required,
-    }));
 }
 
 export default function AdminContractsPage() {
@@ -108,10 +86,8 @@ export default function AdminContractsPage() {
   const [tmplName, setTmplName] = useState("");
   const [tmplType, setTmplType] = useState<ContractType>("렌탈");
   const [tmplDesc, setTmplDesc] = useState("");
-  const [tmplModusignId, setTmplModusignId] = useState("");
   const [tmplSignerRole, setTmplSignerRole] = useState("");
   const [tmplActive, setTmplActive] = useState(true);
-  const [tmplMappings, setTmplMappings] = useState<FieldMapping[]>(EXAMPLE_MAPPINGS);
 
   // 확인 모달
   const [cancelTarget, setCancelTarget] = useState<Contract | null>(null);
@@ -327,10 +303,8 @@ export default function AdminContractsPage() {
     setTmplName("");
     setTmplType("렌탈");
     setTmplDesc("");
-    setTmplModusignId("");
     setTmplSignerRole("");
     setTmplActive(true);
-    setTmplMappings(EXAMPLE_MAPPINGS.map((m) => ({ ...m })));
     setTmplOpen(true);
   }
 
@@ -339,23 +313,9 @@ export default function AdminContractsPage() {
     setTmplName(t.name);
     setTmplType(t.contractType);
     setTmplDesc(t.description);
-    setTmplModusignId(t.modusignTemplateId);
     setTmplSignerRole(t.signerRoleName);
     setTmplActive(t.active);
-    setTmplMappings(t.fieldMappings.map((m) => ({ ...m })));
     setTmplOpen(true);
-  }
-
-  function updateMapping(index: number, key: keyof FieldMapping, value: string | boolean) {
-    setTmplMappings((prev) => prev.map((m, i) => (i === index ? { ...m, [key]: value } : m)));
-  }
-
-  function addMappingRow() {
-    setTmplMappings((prev) => [...prev, { docField: "", modusignKey: "", ourData: "", required: true }]);
-  }
-
-  function removeMappingRow(index: number) {
-    setTmplMappings((prev) => prev.filter((_, i) => i !== index));
   }
 
   function handleSaveTemplate() {
@@ -368,11 +328,8 @@ export default function AdminContractsPage() {
                 name: tmplName,
                 contractType: tmplType,
                 description: tmplDesc,
-                modusignTemplateId: tmplModusignId,
                 signerRoleName: tmplSignerRole,
                 active: tmplActive,
-                fieldMappingStatus: tmplMappings.every((m) => m.docField && m.modusignKey) ? "완료" : "미완료",
-                fieldMappings: tmplMappings,
               }
             : t
         )
@@ -384,14 +341,14 @@ export default function AdminContractsPage() {
         contractType: tmplType,
         description: tmplDesc,
         integrationType: "모두싸인 템플릿",
-        modusignTemplateId: tmplModusignId,
+        modusignTemplateId: "",
         signerRoleName: tmplSignerRole,
-        fieldMappingStatus: tmplMappings.every((m) => m.docField && m.modusignKey) ? "완료" : "미완료",
+        fieldMappingStatus: "미완료",
         active: tmplActive,
         version: "v1.0",
         updatedAt: todayStr(),
-        fields: fieldsFromMappings(tmplMappings),
-        fieldMappings: tmplMappings,
+        fields: [],
+        fieldMappings: [],
       };
       setTemplates((prev) => [...prev, newTemplate]);
     }
@@ -613,22 +570,17 @@ export default function AdminContractsPage() {
                   <p className="text-[11px] text-muted-foreground leading-relaxed">{t.description}</p>
 
                   <div className="grid grid-cols-2 gap-2">
-                    <InfoChip label="모두싸인 템플릿 ID" value={t.modusignTemplateId} mono />
-                    <InfoChip label="필드 매핑 상태" value={t.fieldMappingStatus} />
+                    <InfoChip label="전자서명 연동" value={t.fieldMappingStatus === "완료" ? "연동 완료" : "설정 필요"} />
+                    <InfoChip label="서명 대상" value={t.signerRoleName || "-"} />
                     <InfoChip label="버전" value={t.version} />
                     <InfoChip label="최종 수정일" value={t.updatedAt} />
                   </div>
 
-                  <div className="flex flex-wrap gap-1.5">
-                    {t.fieldMappings.map((m, i) => (
-                      <span
-                        key={i}
-                        className="text-[10px] px-2 py-0.5 border border-border bg-muted text-muted-foreground font-mono"
-                      >
-                        {m.docField} {m.modusignKey}
-                      </span>
-                    ))}
-                  </div>
+                  {t.fieldMappingStatus === "미완료" && (
+                    <p className="text-[10px] text-amber-600">
+                      전자서명 연동 설정이 필요합니다. 운영팀에 문의해 주세요.
+                    </p>
+                  )}
 
                   {inUse > 0 && (
                     <p className="text-[10px] text-amber-600">
@@ -900,86 +852,13 @@ export default function AdminContractsPage() {
                 className={fieldClass}
               />
             </ModalField>
-            <div className="grid grid-cols-2 gap-3">
-              <ModalField label="모두싸인 템플릿 ID">
-                <input
-                  value={tmplModusignId}
-                  onChange={(e) => setTmplModusignId(e.target.value)}
-                  placeholder="예: template_xxx_001"
-                  className={cn(fieldClass, "font-mono")}
-                />
-              </ModalField>
-              <ModalField label="서명자 역할명">
-                <input
-                  value={tmplSignerRole}
-                  onChange={(e) => setTmplSignerRole(e.target.value)}
-                  placeholder="예: 임차인"
-                  className={fieldClass}
-                />
-              </ModalField>
-            </div>
-
-            <ModalField label="필드 매핑 정보">
-              <div className="border border-border overflow-x-auto">
-                <table className="w-full text-xs">
-                  <thead className="bg-muted">
-                    <tr className="text-left text-[10px] text-muted-foreground whitespace-nowrap">
-                      <th className="px-2 py-1.5">계약서 필드명</th>
-                      <th className="px-2 py-1.5">모두싸인 필드 키</th>
-                      <th className="px-2 py-1.5">우리 서비스 데이터</th>
-                      <th className="px-2 py-1.5 text-center">필수 여부</th>
-                      <th className="px-2 py-1.5 w-8"></th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-border">
-                    {tmplMappings.map((m, i) => (
-                      <tr key={i}>
-                        <td className="p-1">
-                          <input
-                            value={m.docField}
-                            onChange={(e) => updateMapping(i, "docField", e.target.value)}
-                            className="w-full h-7 border border-border px-1.5 text-[11px] bg-background outline-none focus:border-sage-ink"
-                          />
-                        </td>
-                        <td className="p-1">
-                          <input
-                            value={m.modusignKey}
-                            onChange={(e) => updateMapping(i, "modusignKey", e.target.value)}
-                            className="w-full h-7 border border-border px-1.5 text-[11px] font-mono bg-background outline-none focus:border-sage-ink"
-                          />
-                        </td>
-                        <td className="p-1">
-                          <input
-                            value={m.ourData}
-                            onChange={(e) => updateMapping(i, "ourData", e.target.value)}
-                            className="w-full h-7 border border-border px-1.5 text-[11px] bg-background outline-none focus:border-sage-ink"
-                          />
-                        </td>
-                        <td className="p-1 text-center">
-                          <button
-                            type="button"
-                            onClick={() => updateMapping(i, "required", !m.required)}
-                            className={cn(
-                              "w-5 h-5 border inline-flex items-center justify-center text-[10px]",
-                              m.required ? "border-sage-ink bg-sage-ink text-background" : "border-border"
-                            )}
-                          >
-                            {m.required && "✓"}
-                          </button>
-                        </td>
-                        <td className="p-1 text-center">
-                          <button type="button" onClick={() => removeMappingRow(i)} className="text-muted-foreground hover:text-red-500">
-                            <X size={12} />
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-              <button type="button" onClick={addMappingRow} className="mt-1.5 text-[11px] text-sage-ink hover:underline">
-                + 필드 추가
-              </button>
+            <ModalField label="서명 대상 (역할명)">
+              <input
+                value={tmplSignerRole}
+                onChange={(e) => setTmplSignerRole(e.target.value)}
+                placeholder="예: 임차인"
+                className={fieldClass}
+              />
             </ModalField>
 
             <ModalField label="사용 여부">
@@ -1012,7 +891,7 @@ export default function AdminContractsPage() {
                 PDF 파일을 선택하세요
               </div>
               <p className="text-[10px] text-muted-foreground mt-1.5">
-                PDF 파일은 내부 미리보기용으로 사용됩니다. 실제 전자서명 발송은 연결된 모두싸인 템플릿을 기준으로 진행됩니다.
+                PDF 파일은 계약서 미리보기용으로 사용됩니다. 등록 후 전자서명 연동 설정은 운영팀에서 진행합니다.
               </p>
             </ModalField>
           </div>
