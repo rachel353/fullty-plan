@@ -97,9 +97,7 @@ const RENTAL_FIELDS: ContractField[] = [
   { id: "rental_start_date", label: "렌탈 시작일", type: "date", required: true },
   { id: "rental_end_date", label: "렌탈 종료일", type: "date", required: true },
   { id: "rental_price", label: "렌탈 금액", type: "text", required: true },
-  { id: "deposit", label: "보증금", type: "text", required: true },
   { id: "delivery_address", label: "배송지", type: "text", required: true },
-  { id: "special_terms", label: "특약사항", type: "textarea", required: false },
 ];
 
 const RENTAL_MAPPINGS: FieldMapping[] = [
@@ -121,7 +119,6 @@ const CONSIGNMENT_FIELDS: ContractField[] = [
   { id: "evaluation_price", label: "감정가", type: "text", required: true },
   { id: "consignment_price", label: "위탁 매입가", type: "text", required: true },
   { id: "settlement_date", label: "정산 예정일", type: "date", required: true },
-  { id: "special_terms", label: "특약사항", type: "textarea", required: false },
 ];
 
 const CONSIGNMENT_MAPPINGS: FieldMapping[] = [
@@ -195,9 +192,7 @@ export const contracts: Contract[] = [
       rental_start_date: "2026-06-15",
       rental_end_date: "2027-06-14",
       rental_price: "89,000원/월",
-      deposit: "200,000원",
       delivery_address: "서울 강남구 테헤란로 123",
-      special_terms: "배송 전 사전 연락 요망",
     },
   },
   {
@@ -228,7 +223,6 @@ export const contracts: Contract[] = [
       evaluation_price: "450,000원",
       consignment_price: "380,000원",
       settlement_date: "2026-06-20",
-      special_terms: "-",
     },
   },
   {
@@ -257,9 +251,7 @@ export const contracts: Contract[] = [
       rental_start_date: "",
       rental_end_date: "",
       rental_price: "",
-      deposit: "",
       delivery_address: "",
-      special_terms: "",
     },
   },
   {
@@ -289,9 +281,7 @@ export const contracts: Contract[] = [
       rental_start_date: "2026-05-10",
       rental_end_date: "2027-05-09",
       rental_price: "120,000원/월",
-      deposit: "300,000원",
       delivery_address: "서울 마포구 양화로 12",
-      special_terms: "-",
     },
   },
   {
@@ -321,7 +311,6 @@ export const contracts: Contract[] = [
       evaluation_price: "180,000원",
       consignment_price: "150,000원",
       settlement_date: "2026-06-10",
-      special_terms: "-",
     },
   },
   {
@@ -352,9 +341,7 @@ export const contracts: Contract[] = [
       rental_start_date: "2026-03-05",
       rental_end_date: "2027-03-04",
       rental_price: "65,000원/월",
-      deposit: "150,000원",
       delivery_address: "서울 강남구 테헤란로 123",
-      special_terms: "-",
     },
   },
 ];
