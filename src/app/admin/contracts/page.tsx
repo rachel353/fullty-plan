@@ -31,7 +31,7 @@ const STATUS_VARIANT: Record<ContractStatus, "default" | "outline" | "muted" | "
   "취소됨": "muted",
 };
 
-const CONTRACT_TYPES: ContractType[] = ["렌탈", "SELL", "BUY", "위탁", "기타"];
+const CONTRACT_TYPES: ContractType[] = ["렌탈", "위탁", "매입"];
 
 const fieldClass = "w-full h-9 border border-border px-3 text-xs bg-background outline-none focus:border-sage-ink";
 const textareaClass = "w-full border border-border px-3 py-2 text-xs bg-background outline-none focus:border-sage-ink resize-none";

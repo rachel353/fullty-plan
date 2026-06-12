@@ -25,7 +25,7 @@ const sections: SidebarSection[] = [
     items: [
       { href: "/admin/get", label: "GET 관리" },
       { href: "/admin/sell", label: "SELL 관리" },
-      { href: "/admin/contracts", label: "SELL 계약 관리" },
+      { href: "/admin/contracts", label: "전자계약 관리" },
     ],
   },
   {

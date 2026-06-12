@@ -1,6 +1,6 @@
 export type ContractStatus = "작성중" | "서명 대기" | "서명 완료" | "만료" | "취소됨";
 
-export type ContractType = "렌탈" | "SELL" | "BUY" | "위탁" | "기타";
+export type ContractType = "렌탈" | "위탁" | "매입";
 
 export type ContractFieldType = "text" | "date" | "textarea";
 
@@ -114,8 +114,8 @@ const CONSIGNMENT_FIELDS: ContractField[] = [
   { id: "product_name", label: "상품명", type: "text", required: true },
   { id: "brand", label: "브랜드", type: "text", required: true },
   { id: "evaluation_price", label: "감정가", type: "text", required: true },
-  { id: "consignment_price", label: "위탁 매입가", type: "text", required: true },
-  { id: "settlement_date", label: "정산 예정일", type: "date", required: true },
+  { id: "list_price", label: "위탁 판매가", type: "text", required: true },
+  { id: "listing_start_date", label: "판매 등록일", type: "date", required: true },
 ];
 
 const CONSIGNMENT_MAPPINGS: FieldMapping[] = [
@@ -123,8 +123,29 @@ const CONSIGNMENT_MAPPINGS: FieldMapping[] = [
   { docField: "주소", modusignKey: "{address}", ourData: "회원 주소", required: true },
   { docField: "상품명", modusignKey: "{product_name}", ourData: "상품명", required: true },
   { docField: "감정가", modusignKey: "{evaluation_price}", ourData: "감정가", required: true },
-  { docField: "위탁 매입가", modusignKey: "{consignment_price}", ourData: "위탁 매입가", required: true },
-  { docField: "정산 예정일", modusignKey: "{settlement_date}", ourData: "정산 예정일", required: true },
+  { docField: "위탁 판매가", modusignKey: "{list_price}", ourData: "위탁 판매가", required: true },
+  { docField: "판매 등록일", modusignKey: "{listing_start_date}", ourData: "판매 등록일", required: true },
+  { docField: "서명", modusignKey: "{signature}", ourData: "서명 필드", required: true },
+];
+
+const BUYOUT_FIELDS: ContractField[] = [
+  { id: "contract_name", label: "계약명", type: "text", required: true },
+  { id: "member_name", label: "매도인명", type: "text", required: true },
+  { id: "address", label: "주소", type: "text", required: true },
+  { id: "product_name", label: "상품명", type: "text", required: true },
+  { id: "brand", label: "브랜드", type: "text", required: true },
+  { id: "evaluation_price", label: "감정가", type: "text", required: true },
+  { id: "purchase_price", label: "매입가", type: "text", required: true },
+  { id: "payment_date", label: "지급 예정일", type: "date", required: true },
+];
+
+const BUYOUT_MAPPINGS: FieldMapping[] = [
+  { docField: "매도인명", modusignKey: "{member_name}", ourData: "회원 이름", required: true },
+  { docField: "주소", modusignKey: "{address}", ourData: "회원 주소", required: true },
+  { docField: "상품명", modusignKey: "{product_name}", ourData: "상품명", required: true },
+  { docField: "감정가", modusignKey: "{evaluation_price}", ourData: "감정가", required: true },
+  { docField: "매입가", modusignKey: "{purchase_price}", ourData: "매입가", required: true },
+  { docField: "지급 예정일", modusignKey: "{payment_date}", ourData: "지급 예정일", required: true },
   { docField: "서명", modusignKey: "{signature}", ourData: "서명 필드", required: true },
 ];
 
@@ -146,9 +167,9 @@ export const contractTemplates: ContractTemplate[] = [
   },
   {
     id: "tmpl002",
-    name: "자산화 위탁 계약서",
-    contractType: "SELL",
-    description: "자산화 위탁 조건 확인 및 전자서명을 위한 계약서입니다.",
+    name: "위탁 계약서",
+    contractType: "위탁",
+    description: "위탁 판매 조건 확인 및 전자서명을 위한 계약서입니다.",
     integrationType: "모두싸인 템플릿",
     modusignTemplateId: "template_consignment_001",
     signerRoleName: "위탁인",
@@ -158,6 +179,21 @@ export const contractTemplates: ContractTemplate[] = [
     updatedAt: "2026-05-20",
     fields: CONSIGNMENT_FIELDS,
     fieldMappings: CONSIGNMENT_MAPPINGS,
+  },
+  {
+    id: "tmpl003",
+    name: "매입 계약서",
+    contractType: "매입",
+    description: "매입 조건 확인 및 전자서명을 위한 계약서입니다.",
+    integrationType: "모두싸인 템플릿",
+    modusignTemplateId: "template_buyout_001",
+    signerRoleName: "매도인",
+    fieldMappingStatus: "완료",
+    active: true,
+    version: "v1.0",
+    updatedAt: "2026-05-20",
+    fields: BUYOUT_FIELDS,
+    fieldMappings: BUYOUT_MAPPINGS,
   },
 ];
 
@@ -193,8 +229,8 @@ export const contracts: Contract[] = [
   },
   {
     id: "ct002",
-    name: "자산화 위탁 계약서_이풀티",
-    contractType: "SELL",
+    name: "위탁 계약서_이풀티",
+    contractType: "위탁",
     memberId: "m002",
     memberName: "이풀티",
     memberEmail: "lee@example.com",
@@ -202,22 +238,22 @@ export const contracts: Contract[] = [
     linkedRefId: "SELL-20260610-002",
     linkedProductName: "Aeron Chair",
     templateId: "tmpl002",
-    templateName: "자산화 위탁 계약서",
+    templateName: "위탁 계약서",
     status: "서명 완료",
     sentAt: "2026-06-10",
     completedAt: "2026-06-10",
     signatureExpiry: "2026-06-24",
     messageToSigner: "계약서 내용을 확인하신 후 서명 부탁드립니다.",
-    internalMemo: "Aeron Chair 자산화 위탁 계약 건",
+    internalMemo: "Aeron Chair 위탁 계약 건",
     values: {
-      contract_name: "자산화 위탁 계약서_이풀티",
+      contract_name: "위탁 계약서_이풀티",
       member_name: "이풀티",
       address: "경기도 성남시 분당구 판교로 45",
       product_name: "Aeron Chair",
       brand: "Herman Miller",
       evaluation_price: "450,000원",
-      consignment_price: "380,000원",
-      settlement_date: "2026-06-20",
+      list_price: "380,000원",
+      listing_start_date: "2026-06-20",
     },
   },
   {
@@ -279,30 +315,30 @@ export const contracts: Contract[] = [
   },
   {
     id: "ct005",
-    name: "자산화 위탁 계약서_박빈티지",
-    contractType: "SELL",
+    name: "매입 계약서_박빈티지",
+    contractType: "매입",
     memberId: "m003",
     memberName: "박빈티지",
     memberEmail: "vintage@example.com",
     memberPhone: "010-2222-3333",
     linkedRefId: "SELL-20260528-005",
     linkedProductName: "CH24 Wishbone Chair",
-    templateId: "tmpl002",
-    templateName: "자산화 위탁 계약서",
+    templateId: "tmpl003",
+    templateName: "매입 계약서",
     status: "취소됨",
     sentAt: "2026-05-28",
     signatureExpiry: "2026-06-11",
     messageToSigner: "계약서 내용을 확인하신 후 서명 부탁드립니다.",
     internalMemo: "고객 요청으로 취소",
     values: {
-      contract_name: "자산화 위탁 계약서_박빈티지",
+      contract_name: "매입 계약서_박빈티지",
       member_name: "박빈티지",
       address: "부산 해운대구 센텀로 99",
       product_name: "CH24 Wishbone Chair",
       brand: "Carl Hansen & Søn",
       evaluation_price: "180,000원",
-      consignment_price: "150,000원",
-      settlement_date: "2026-06-10",
+      purchase_price: "150,000원",
+      payment_date: "2026-06-10",
     },
   },
   {
@@ -348,12 +384,20 @@ export const CONTRACT_BODY: Record<string, string[]> = {
     "본인은 위 약정 내용을 충분히 숙지하였으며 이에 동의하여 전자서명으로 계약을 체결합니다.",
   ],
   tmpl002: [
-    "제1조 (목적) 본 계약서는 주식회사 풀티(이하 '회사')와 자산화 서비스를 신청한 위탁인(이하 '위탁인') 간의 자산화 위탁에 관한 사항을 규정함을 목적으로 합니다.",
-    "제2조 (위탁 내용) 위탁인은 본 계약에 명시된 상품을 회사에 위탁하며, 회사는 이를 풀티 플랫폼을 통해 매각 또는 운용합니다.",
-    "제3조 (위탁 매입가 및 정산) 위탁 매입가는 본 계약에 명시된 금액으로 하며, 정산은 본 계약에 명시된 정산 예정일에 위탁인 명의 계좌로 지급됩니다.",
+    "제1조 (목적) 본 계약서는 주식회사 풀티(이하 '회사')와 위탁 판매를 신청한 위탁인(이하 '위탁인') 간의 위탁 판매에 관한 사항을 규정함을 목적으로 합니다.",
+    "제2조 (위탁 내용) 위탁인은 본 계약에 명시된 상품을 회사에 위탁하며, 회사는 이를 풀티 플랫폼을 통해 판매합니다.",
+    "제3조 (판매가 및 정산) 위탁 판매가는 본 계약에 명시된 금액을 기준으로 하며, 상품 판매 완료 후 판매가에서 위탁 수수료를 차감한 금액을 매월 1회 위탁인 명의 계좌로 정산합니다.",
     "제4조 (상품 상태 관리) 회사는 위탁 상품의 정상적인 관리 의무를 부담합니다. 단, 위탁인 과실로 인한 손상 시 회사의 책임 범위는 계약 시 별도 협의합니다.",
-    "제5조 (계약 해지) 위탁인의 계약 해지 요청 시 30일 전 서면 통보를 원칙으로 하며, 이미 진행 중인 매각 절차에는 영향을 미치지 않습니다.",
-    "제6조 (상품 반환) 계약 해지 시 회사는 위탁 상품을 위탁인에게 반환합니다. 단, 매각이 완료된 상품은 반환 대상에서 제외됩니다.",
+    "제5조 (계약 해지) 위탁인의 계약 해지 요청 시 30일 전 서면 통보를 원칙으로 하며, 이미 진행 중인 판매 절차에는 영향을 미치지 않습니다.",
+    "제6조 (상품 반환) 계약 해지 시 회사는 위탁 상품을 위탁인에게 반환합니다. 단, 판매가 완료된 상품은 반환 대상에서 제외됩니다.",
+    "본인은 위 계약 내용을 충분히 숙지하였으며 이에 동의하여 전자서명으로 계약을 체결합니다.",
+  ],
+  tmpl003: [
+    "제1조 (목적) 본 계약서는 주식회사 풀티(이하 '회사')와 상품을 매도하는 매도인(이하 '매도인') 간의 매입에 관한 사항을 규정함을 목적으로 합니다.",
+    "제2조 (소유권 이전) 매도인은 본 계약에 명시된 상품을 회사에 매도하며, 본 계약 서명 완료 시점에 해당 상품의 소유권은 회사로 이전됩니다.",
+    "제3조 (매입가 및 지급) 매입가는 본 계약에 명시된 금액으로 하며, 지급 예정일을 기준으로 매도인 명의 계좌로 지급됩니다. 매입가가 100만원 이상인 경우 지급 예정일에 70%, 그로부터 12일 이내에 나머지 30%를 분할 지급할 수 있습니다.",
+    "제4조 (상품 상태 확인) 매도인은 상품의 상태 및 하자 여부를 사실대로 고지하여야 하며, 인수 시 검수 결과에 따라 매입가가 조정될 수 있습니다.",
+    "제5조 (반환 및 환불 제한) 본 계약에 따라 소유권이 이전된 상품은 반환 및 환불 대상이 아니며, 매입가 지급 완료 후 계약은 종료됩니다.",
     "본인은 위 계약 내용을 충분히 숙지하였으며 이에 동의하여 전자서명으로 계약을 체결합니다.",
   ],
 };
