@@ -16,7 +16,6 @@ import {
   type ContractTemplate,
   type ContractStatus,
   type ContractType,
-  type SignatureMethod,
   type FieldMapping,
   type ContractField,
 } from "@/lib/contracts";
@@ -33,7 +32,6 @@ const STATUS_VARIANT: Record<ContractStatus, "default" | "outline" | "muted" | "
 };
 
 const CONTRACT_TYPES: ContractType[] = ["렌탈", "SELL", "BUY", "위탁", "기타"];
-const SIGNATURE_METHODS: SignatureMethod[] = ["모두싸인 링크로 서명", "사이트 내 서명 화면으로 연결"];
 
 const fieldClass = "w-full h-9 border border-border px-3 text-xs bg-background outline-none focus:border-sage-ink";
 const textareaClass = "w-full border border-border px-3 py-2 text-xs bg-background outline-none focus:border-sage-ink resize-none";
@@ -101,7 +99,6 @@ export default function AdminContractsPage() {
   const [sendTemplateId, setSendTemplateId] = useState("");
   const [sendValues, setSendValues] = useState<Record<string, string>>({});
   const [sendExpiry, setSendExpiry] = useState("");
-  const [sendMethod, setSendMethod] = useState<SignatureMethod>("모두싸인 링크로 서명");
   const [sendMessage, setSendMessage] = useState("계약서 내용을 확인하신 후 서명 부탁드립니다.");
   const [sendMemo, setSendMemo] = useState("");
 
@@ -167,7 +164,6 @@ export default function AdminContractsPage() {
     setSendTemplateId(tmpl?.id ?? "");
     setSendValues(buildDefaultValues(tmpl, member, ref?.productName));
     setSendExpiry(addDays(todayStr(), 14));
-    setSendMethod("모두싸인 링크로 서명");
     setSendMessage("계약서 내용을 확인하신 후 서명 부탁드립니다.");
     setSendMemo("");
     setSendStep("form");
@@ -182,7 +178,6 @@ export default function AdminContractsPage() {
     setSendTemplateId(c.templateId);
     setSendValues({ ...c.values });
     setSendExpiry(c.signatureExpiry || addDays(todayStr(), 14));
-    setSendMethod(c.signatureMethod);
     setSendMessage(c.messageToSigner);
     setSendMemo(c.internalMemo ?? "");
     setSendStep("form");
@@ -241,7 +236,6 @@ export default function AdminContractsPage() {
                 status: "서명 대기" as ContractStatus,
                 sentAt: today,
                 signatureExpiry: sendExpiry,
-                signatureMethod: sendMethod,
                 messageToSigner: sendMessage,
                 internalMemo: sendMemo,
                 values: sendValues,
@@ -265,7 +259,6 @@ export default function AdminContractsPage() {
         status: "서명 대기",
         sentAt: today,
         signatureExpiry: sendExpiry,
-        signatureMethod: sendMethod,
         messageToSigner: sendMessage,
         internalMemo: sendMemo,
         values: sendValues,
@@ -770,27 +763,17 @@ export default function AdminContractsPage() {
               {/* E. 서명 설정 */}
               <section className="space-y-2">
                 <SectionTitle>E. 서명 설정</SectionTitle>
-                <div className="grid grid-cols-2 gap-3">
-                  <ModalField label="서명 만료일">
-                    <input
-                      type="date"
-                      value={sendExpiry}
-                      onChange={(e) => setSendExpiry(e.target.value)}
-                      className={fieldClass}
-                    />
-                  </ModalField>
-                  <ModalField label="서명 방식">
-                    <select
-                      value={sendMethod}
-                      onChange={(e) => setSendMethod(e.target.value as SignatureMethod)}
-                      className={fieldClass}
-                    >
-                      {SIGNATURE_METHODS.map((m) => (
-                        <option key={m} value={m}>{m}</option>
-                      ))}
-                    </select>
-                  </ModalField>
-                </div>
+                <ModalField label="서명 만료일">
+                  <input
+                    type="date"
+                    value={sendExpiry}
+                    onChange={(e) => setSendExpiry(e.target.value)}
+                    className={cn(fieldClass, "max-w-[200px]")}
+                  />
+                </ModalField>
+                <p className="text-[11px] text-muted-foreground">
+                  전자서명은 모두싸인 링크로 발송됩니다. 서명자가 링크에서 서명을 완료하면 계약 현황에 자동 반영됩니다.
+                </p>
               </section>
 
               {/* F. 메시지 / 내부 메모 */}
@@ -857,7 +840,6 @@ export default function AdminContractsPage() {
 
               <dl className="border border-border divide-y divide-border text-[11px]">
                 <Row label="서명 만료일" value={sendExpiry} />
-                <Row label="서명 방식" value={sendMethod} />
               </dl>
 
               <p className="text-[11px] text-muted-foreground border border-sage-ink/20 bg-sage-soft/10 px-3 py-2">

@@ -2,8 +2,6 @@ export type ContractStatus = "작성중" | "서명 대기" | "서명 완료" | "
 
 export type ContractType = "렌탈" | "SELL" | "BUY" | "위탁" | "기타";
 
-export type SignatureMethod = "모두싸인 링크로 서명" | "사이트 내 서명 화면으로 연결";
-
 export type ContractFieldType = "text" | "date" | "textarea";
 
 export type ContractField = {
@@ -66,7 +64,6 @@ export type Contract = {
   sentAt?: string;
   completedAt?: string;
   signatureExpiry: string;
-  signatureMethod: SignatureMethod;
   messageToSigner: string;
   internalMemo?: string;
   values: Record<string, string>;
@@ -180,7 +177,6 @@ export const contracts: Contract[] = [
     status: "서명 대기",
     sentAt: "2026-06-11",
     signatureExpiry: "2026-06-25",
-    signatureMethod: "사이트 내 서명 화면으로 연결",
     messageToSigner: "계약서 내용을 확인하신 후 서명 부탁드립니다.",
     internalMemo: "USM Haller 렌탈 계약 건",
     values: {
@@ -211,7 +207,6 @@ export const contracts: Contract[] = [
     sentAt: "2026-06-10",
     completedAt: "2026-06-10",
     signatureExpiry: "2026-06-24",
-    signatureMethod: "모두싸인 링크로 서명",
     messageToSigner: "계약서 내용을 확인하신 후 서명 부탁드립니다.",
     internalMemo: "Aeron Chair 자산화 위탁 계약 건",
     values: {
@@ -239,7 +234,6 @@ export const contracts: Contract[] = [
     templateName: "렌탈 서비스 이용 약정서",
     status: "작성중",
     signatureExpiry: "",
-    signatureMethod: "모두싸인 링크로 서명",
     messageToSigner: "계약서 내용을 확인하신 후 서명 부탁드립니다.",
     internalMemo: "",
     values: {
@@ -269,7 +263,6 @@ export const contracts: Contract[] = [
     status: "만료",
     sentAt: "2026-05-01",
     signatureExpiry: "2026-05-15",
-    signatureMethod: "모두싸인 링크로 서명",
     messageToSigner: "계약서 내용을 확인하신 후 서명 부탁드립니다.",
     internalMemo: "Eames Lounge Chair 렌탈 계약 건",
     values: {
@@ -299,7 +292,6 @@ export const contracts: Contract[] = [
     status: "취소됨",
     sentAt: "2026-05-28",
     signatureExpiry: "2026-06-11",
-    signatureMethod: "사이트 내 서명 화면으로 연결",
     messageToSigner: "계약서 내용을 확인하신 후 서명 부탁드립니다.",
     internalMemo: "고객 요청으로 취소",
     values: {
@@ -329,7 +321,6 @@ export const contracts: Contract[] = [
     sentAt: "2026-03-01",
     completedAt: "2026-03-02",
     signatureExpiry: "2026-03-15",
-    signatureMethod: "모두싸인 링크로 서명",
     messageToSigner: "계약서 내용을 확인하신 후 서명 부탁드립니다.",
     internalMemo: "Tulip Table 렌탈 계약 건",
     values: {

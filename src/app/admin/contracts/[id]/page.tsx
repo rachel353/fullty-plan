@@ -52,7 +52,6 @@ export default function AdminContractDetailPage({ params }: { params: { id: stri
         <InfoRow label="발송일" value={contract.sentAt ?? "-"} />
         <InfoRow label="완료일" value={contract.completedAt ?? "-"} />
         <InfoRow label="서명 만료일" value={contract.signatureExpiry || "-"} />
-        <InfoRow label="서명 방식" value={contract.signatureMethod} />
       </section>
 
       {/* 메시지 / 메모 */}

@@ -5,8 +5,6 @@ import Link from "next/link";
 import { ChevronLeft, CheckCircle2 } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
-import { SignaturePad } from "@/components/SignaturePad";
-import { cn } from "@/lib/utils";
 import {
   contracts,
   contractTemplates,
@@ -29,8 +27,6 @@ export default function MypageContractDetailPage({ params }: { params: { id: str
   const [localContract, setLocalContract] = useState<Contract | null>(() =>
     contracts.find((c) => c.id === params.id && c.memberId === MY_MEMBER_ID) ?? null
   );
-  const [signatureDataUrl, setSignatureDataUrl] = useState<string | null>(null);
-  const [agreed, setAgreed] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
   if (!localContract) {
@@ -46,16 +42,8 @@ export default function MypageContractDetailPage({ params }: { params: { id: str
   const body = CONTRACT_BODY[localContract.templateId] ?? [];
   const isPending = localContract.status === "서명 대기";
   const isSigned = localContract.status === "서명 완료";
-  const useSitePad = localContract.signatureMethod === "사이트 내 서명 화면으로 연결";
-  const canSubmit = !!signatureDataUrl && agreed;
 
-  function handleSubmit() {
-    const today = new Date().toISOString().slice(0, 10);
-    setLocalContract((prev) => (prev ? { ...prev, status: "서명 완료", completedAt: today } : prev));
-    setSubmitted(true);
-  }
-
-  function handleModusignSign() {
+  function handleSign() {
     const today = new Date().toISOString().slice(0, 10);
     setLocalContract((prev) => (prev ? { ...prev, status: "서명 완료", completedAt: today } : prev));
     setSubmitted(true);
@@ -135,46 +123,12 @@ export default function MypageContractDetailPage({ params }: { params: { id: str
       {isPending && (
         <section className="space-y-5">
           <div className="text-[10px] text-muted-foreground tracking-widest uppercase">서명</div>
-          {useSitePad ? (
-            <>
-              <div className="space-y-1.5">
-                <label className="text-[11px] text-muted-foreground tracking-widest uppercase">
-                  서명 <span className="text-red-500">*</span>
-                </label>
-                <SignaturePad onChange={setSignatureDataUrl} />
-              </div>
-              <div className="border border-border p-4 flex items-start gap-3">
-                <button
-                  onClick={() => setAgreed((prev) => !prev)}
-                  className={cn(
-                    "mt-0.5 w-4 h-4 border flex items-center justify-center flex-shrink-0",
-                    agreed ? "border-sage-ink bg-sage-ink" : "border-border"
-                  )}
-                >
-                  {agreed && <span className="text-background text-[10px] font-bold">✓</span>}
-                </button>
-                <p className="text-[11px] text-muted-foreground leading-relaxed">
-                  본인은 위 계약서의 내용을 충분히 숙지하였으며, 이에 동의하여 전자 서명으로 계약을 체결합니다.
-                  전자 서명은 자필 서명과 동일한 법적 효력을 가집니다.
-                </p>
-              </div>
-              <Button className="w-full" disabled={!canSubmit} onClick={handleSubmit}>
-                계약 체결
-              </Button>
-              <p className="text-[10px] text-center text-muted-foreground">
-                서명 후에는 취소 및 수정이 불가능합니다. 내용을 충분히 확인 후 체결하세요.
-              </p>
-            </>
-          ) : (
-            <>
-              <p className="text-[11px] text-muted-foreground leading-relaxed border border-border bg-muted/30 px-4 py-3">
-                이 계약서는 모두싸인을 통해 전자서명을 진행합니다. 아래 버튼을 클릭하면 모두싸인 서명 페이지로 이동합니다.
-              </p>
-              <Button className="w-full" onClick={handleModusignSign}>
-                모두싸인에서 서명하기
-              </Button>
-            </>
-          )}
+          <p className="text-[11px] text-muted-foreground leading-relaxed border border-border bg-muted/30 px-4 py-3">
+            이 계약서는 모두싸인을 통해 전자서명을 진행합니다. 아래 버튼을 클릭하면 모두싸인 서명 페이지로 이동합니다.
+          </p>
+          <Button className="w-full" onClick={handleSign}>
+            모두싸인에서 서명하기
+          </Button>
         </section>
       )}
 
