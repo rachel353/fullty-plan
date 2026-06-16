@@ -296,6 +296,8 @@ function AdminProductsContent() {
           products={sellerFiltered.filter((p) => p.tab === "검수 대기")}
           processed={processed}
           columns={["상품", "셀러", "등급", "판매가"]}
+          previewCount={activeTab === "전체" ? 3 : undefined}
+          onShowAll={activeTab === "전체" ? () => setActiveTab("검수 대기") : undefined}
           renderAction={(p) => {
             const state = processed[p.id];
             if (state) return (
@@ -325,6 +327,8 @@ function AdminProductsContent() {
             : filtered}
           processed={processed}
           columns={["상품", "셀러", "등급", "판매가", "유형"]}
+          previewCount={activeTab === "전체" ? 3 : undefined}
+          onShowAll={activeTab === "전체" ? () => setActiveTab("판매중") : undefined}
           renderAction={(p) => (
             <div className="flex justify-end gap-2">
               <Link href={`/admin/products/${p.id}`}>
@@ -345,6 +349,8 @@ function AdminProductsContent() {
             : filtered}
           processed={processed}
           columns={["상품", "셀러", "등급", "렌탈가"]}
+          previewCount={activeTab === "전체" ? 3 : undefined}
+          onShowAll={activeTab === "전체" ? () => setActiveTab("렌탈중") : undefined}
           renderAction={(p) => (
             <Link href={`/admin/products/${p.id}`}>
               <Button size="sm" variant="ghost">상세</Button>
@@ -362,6 +368,8 @@ function AdminProductsContent() {
             : filtered}
           processed={processed}
           columns={["상품", "셀러", "등급", "판매가"]}
+          previewCount={activeTab === "전체" ? 3 : undefined}
+          onShowAll={activeTab === "전체" ? () => setActiveTab("품절") : undefined}
           renderAction={(p) => (
             <Link href={`/admin/products/${p.id}`}>
               <Button size="sm" variant="ghost">상세</Button>
@@ -379,6 +387,8 @@ function AdminProductsContent() {
             : filtered}
           processed={processed}
           columns={["상품", "셀러", "등급", "반려일", "반려 사유"]}
+          previewCount={activeTab === "전체" ? 3 : undefined}
+          onShowAll={activeTab === "전체" ? () => setActiveTab("반려") : undefined}
           renderAction={(p) => (
             <Link href={`/admin/products/${p.id}`}>
               <Button size="sm" variant="ghost">상세</Button>
@@ -441,15 +451,21 @@ function ProductTable({
   processed,
   columns,
   renderAction,
+  previewCount,
+  onShowAll,
 }: {
   products: AdminProduct[];
   processed: Record<string, { result: "승인" | "반려"; reason?: string }>;
   columns: string[];
   renderAction: (p: AdminProduct) => React.ReactNode;
+  previewCount?: number;
+  onShowAll?: () => void;
 }) {
   const [page, setPage] = useState(1);
   const totalPages = Math.ceil(products.length / PAGE_SIZE);
-  const paged = products.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const paged = previewCount
+    ? products.slice(0, previewCount)
+    : products.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   if (products.length === 0) return null;
   return (
@@ -504,7 +520,16 @@ function ProductTable({
         </tbody>
       </table>
     </div>
-    {(
+    {previewCount ? (
+      products.length > previewCount && onShowAll && (
+        <button
+          onClick={onShowAll}
+          className="w-full py-2.5 border border-dashed border-border text-xs text-muted-foreground hover:text-sage-ink hover:border-sage-ink transition-colors"
+        >
+          전체 {products.length}건 보기 →
+        </button>
+      )
+    ) : totalPages > 1 && (
       <div className="flex items-center justify-between text-xs text-muted-foreground">
         <span>{products.length}개 중 {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, products.length)}개</span>
         <div className="flex items-center gap-1">
